@@ -1,5 +1,5 @@
 /*
-CMUK DIGITAL SYSTEM - BRUTALIST ARCHITECTURE
+CREATIVE MERCH UK - BRUTALIST DESIGN SYSTEM
 Binary Plus Color Strategy Implementation
 */
 
@@ -77,6 +77,12 @@ h4, .h4 { font-size: clamp(1.25rem, 3vw, 2rem); }
 h5, .h5 { font-size: clamp(1rem, 2vw, 1.5rem); }
 h6, .h6 { font-size: 1rem; }
 
+.lead {
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
 /* Technical Text (Metadata, Labels) */
 .system-label,
 .system-meta,
@@ -109,6 +115,10 @@ h6, .h6 { font-size: 1rem; }
   line-height: 1;
 }
 
+.navbar-brand {
+  padding: 0 !important;
+}
+
 /* ============================================
    GRID ARCHITECTURE (Blueprint Borders)
    ============================================ */
@@ -135,7 +145,7 @@ h6, .h6 { font-size: 1rem; }
 /* Grid Containers */
 .system-container {
   border: var(--border-weight) solid var(--system-black);
-  padding: calc(var(--grid-unit) * 3);
+  padding: 0;
   background: var(--system-white);
 }
 
@@ -431,7 +441,7 @@ h6, .h6 { font-size: 1rem; }
 footer {
   border-top: var(--border-weight) solid var(--system-black);
   background: var(--system-white);
-  padding: calc(var(--grid-unit) * 6) 0;
+  padding: calc(var(--grid-unit) * 6) 0 0;
   margin-top: calc(var(--grid-unit) * 8);
 }
 
@@ -473,6 +483,64 @@ footer a:hover {
   animation: none !important;
   transform: none !important;
   opacity: 1 !important;
+}
+
+/* ============================================
+   OFFCANVAS & MODALS
+   ============================================ */
+.offcanvas {
+  background: var(--system-white);
+  border-left: var(--border-weight) solid var(--system-black);
+}
+
+.offcanvas-header {
+  border-bottom: var(--border-weight) solid var(--system-black);
+}
+
+.list-group-item {
+  border: var(--border-weight) solid var(--system-black);
+  background: var(--system-white);
+}
+
+.badge {
+  background: var(--system-green) !important;
+  color: var(--system-black) !important;
+  font-family: var(--font-technical);
+  border: var(--border-weight) solid var(--system-black);
+}
+
+/* ============================================
+   SEARCH POPUP
+   ============================================ */
+.search-popup {
+  background: var(--system-white);
+  border: var(--border-weight) solid var(--system-black);
+}
+
+.search-popup .form-control {
+  border-bottom: var(--border-weight) solid var(--system-black);
+}
+
+.cat-list {
+  list-style: none;
+  padding: 0;
+}
+
+.cat-list-item {
+  border-bottom: var(--border-weight) solid var(--system-black);
+  padding: 0.5rem 0;
+}
+
+.cat-list-item a {
+  color: var(--system-black);
+  text-decoration: none;
+  font-family: var(--font-technical);
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+.cat-list-item a:hover {
+  color: var(--system-green);
 }
 
 /* ============================================
