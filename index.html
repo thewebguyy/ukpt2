@@ -85,6 +85,10 @@
       <circle cx="5.5" cy="18.5" r="2.5"/>
       <circle cx="18.5" cy="18.5" r="2.5"/>
     </symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </symbol>
   </svg>
 
   <!-- Announcement Banner -->
@@ -130,12 +134,18 @@
             </ul>
           </div>
 
+          <!-- Sign In / Create Account -->
+          <a href="account.html" class="nav-icon nav-icon-text">
+            <svg class="icon"><use xlink:href="#icon-user"/></svg>
+            <span class="nav-text">SIGN IN / CREATE ACCOUNT</span>
+          </a>
+
           <a href="#wishlist" class="nav-icon">
             <svg class="icon"><use xlink:href="#icon-heart"/></svg>
           </a>
           <a href="#cart" class="nav-icon" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
             <svg class="icon"><use xlink:href="#icon-shopping-bag"/></svg>
-            <span class="badge-cart" id="cart-count">0</span>
+            <span class="badge-cart" id="cart-count"></span>
           </a>
         </div>
       </div>
@@ -378,7 +388,41 @@
     </div>
   </section>
 
-  <!-- Premium Services Section -->
+  <!-- Design Studio Section (NEW - Before Premium Services) -->
+  <section class="design-studio-section">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <h2 class="section-title text-start">CUSTOM DESIGN SERVICES</h2>
+          <p class="design-description">
+            Work with our design team to create something truly unique. From concept to execution, we bring your vision to life with professional-grade results.
+          </p>
+          <ul class="design-features">
+            <li>Bespoke design consultation</li>
+            <li>Professional mockups & proofs</li>
+            <li>Unlimited revisions</li>
+            <li>Fast turnaround times</li>
+          </ul>
+          <div class="d-flex gap-3">
+            <a href="designservice.html" class="btn btn-primary">
+              <span>START YOUR PROJECT</span>
+              <svg class="icon-sm"><use xlink:href="#icon-palette"/></svg>
+            </a>
+            <a href="studio.html" class="btn btn-outline">
+              <span>STUDIO AVAILABLE</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="studio-visual">
+            <span class="studio-label">DESIGN STUDIO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Premium Services Section (Changed from Send Items In, Installation, Workshops) -->
   <section id="premium-services" class="service-section">
     <div class="container">
       <h2 class="section-title">PREMIUM SERVICES</h2>
@@ -495,6 +539,63 @@
     </div>
   </section>
 
+  <!-- Clients We've Worked With Banner -->
+  <section class="clients-banner">
+    <div class="container">
+      <h3 class="clients-title">TRUSTED BY LEADING BRANDS</h3>
+      <div class="clients-scroll">
+        <div class="clients-content">
+          <div class="client-item">CLIENT LOGO 1</div>
+          <div class="client-item">CLIENT LOGO 2</div>
+          <div class="client-item">CLIENT LOGO 3</div>
+          <div class="client-item">CLIENT LOGO 4</div>
+          <div class="client-item">CLIENT LOGO 5</div>
+          <div class="client-item">CLIENT LOGO 6</div>
+          <div class="client-item">CLIENT LOGO 1</div>
+          <div class="client-item">CLIENT LOGO 2</div>
+          <div class="client-item">CLIENT LOGO 3</div>
+          <div class="client-item">CLIENT LOGO 4</div>
+          <div class="client-item">CLIENT LOGO 5</div>
+          <div class="client-item">CLIENT LOGO 6</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section class="reviews-section">
+    <div class="container">
+      <h2 class="section-title">WHAT OUR CLIENTS SAY</h2>
+      <p class="section-subtitle">Real feedback from satisfied customers</p>
+      
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"Absolutely brilliant service! The custom designs exceeded our expectations and the quality is outstanding. Will definitely be ordering again."</p>
+            <p class="review-author">— Sarah M., London</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"Perfect for our company event! The team was professional, responsive, and delivered exactly what we needed on time. Highly recommend!"</p>
+            <p class="review-author">— James T., Manchester</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"The quality of the prints and materials is exceptional. Creative Merch UK has become our go-to for all custom merchandise needs."</p>
+            <p class="review-author">— Emma R., Birmingham</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Newsletter -->
   <section class="newsletter-section">
     <div class="container">
@@ -590,7 +691,25 @@
     document.addEventListener('DOMContentLoaded', () => {
       showSlide(currentSlideIndex);
       startAutoSlide();
+      
+      // Update cart count display
+      updateCartDisplay();
     });
+
+    // Cart count update function
+    function updateCartDisplay() {
+      const cartCount = document.getElementById('cart-count');
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      
+      if (totalItems > 0) {
+        cartCount.textContent = totalItems;
+        cartCount.classList.add('has-items');
+      } else {
+        cartCount.textContent = '';
+        cartCount.classList.remove('has-items');
+      }
+    }
   </script>
 </body>
 
