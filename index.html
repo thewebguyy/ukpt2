@@ -96,11 +96,11 @@
     <div class="announcement-content">
       <span class="announcement-item">FREE DELIVERY OVER £100</span>
       <span class="announcement-item">CONTACT US</span>
-      <span class="announcement-item">INFO@CUSTOMISEMEUK.COM</span>
+      <span class="announcement-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="83cacdc5ccc3c0d6d0d7cccecad0c6cec6d6c8adc0ccce">[email&#160;protected]</a></span>
       <span class="announcement-item">07588770901</span>
       <span class="announcement-item">FREE DELIVERY OVER £100</span>
       <span class="announcement-item">CONTACT US</span>
-      <span class="announcement-item">INFO@CUSTOMISEMEUK.COM</span>
+      <span class="announcement-item"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="96dfd8d0d9d6d5c3c5c2d9dbdfc5d3dbd3c3ddb8d5d9db">[email&#160;protected]</a></span>
       <span class="announcement-item">07588770901</span>
     </div>
   </div>
@@ -261,21 +261,17 @@
                   <div class="col-md-4">
                     <h6 class="mega-title">SERVICES</h6>
                     <a class="dropdown-item" href="senditems.html">Send Items In</a>
-                    <a class="dropdown-item" href="#installation">Installation</a>
-                    <a class="dropdown-item" href="#workshops">Workshops</a>
                     <a class="dropdown-item" href="#subscriptions">Subscriptions</a>
                   </div>
                   <div class="col-md-4">
                     <h6 class="mega-title">INSTALLATION</h6>
-                    <a class="dropdown-item" href="#">Wall Vinyls</a>
-                    <a class="dropdown-item" href="#">Event Setup</a>
-                    <a class="dropdown-item" href="#">UK Coverage</a>
+                    <a class="dropdown-item" href="#installation">Wall Vinyls</a>
+                    <a class="dropdown-item" href="#installation">Event Setup</a>
                   </div>
                   <div class="col-md-4">
                     <h6 class="mega-title">WORKSHOPS</h6>
-                    <a class="dropdown-item" href="#">Design Basics</a>
-                    <a class="dropdown-item" href="#">DIY Party Decor</a>
-                    <a class="dropdown-item" href="#">Printing Techniques</a>
+                    <a class="dropdown-item" href="#workshops">Group Iron on Workshop</a>
+                    <a class="dropdown-item" href="#workshops">Individual Iron on Experience</a>
                   </div>
                 </div>
               </div>
@@ -633,7 +629,7 @@
           <h3 class="footer-title">CONTACT US</h3>
           <p class="text-grey-dark">
             <strong>EMAIL:</strong><br>
-            <a href="mailto:info@customisemeuk.com">info@customisemeuk.com</a>
+            <a href="/cdn-cgi/l/email-protection#721b1c141d32110701061d1f1b01171f1707195c111d1f"><span class="__cf_email__" data-cfemail="f29b9c949db2918781869d9f9b81979f978799dc919d9f">[email&#160;protected]</span></a>
           </p>
           <p class="text-grey-dark mb-3">
             <strong>PHONE:</strong><br>
@@ -657,7 +653,7 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/cart.js"></script>
   
   <script>
@@ -692,20 +688,20 @@
     });
 
     // Cart count update function
-    function updateCartDisplay() {
-      const cartCount = document.getElementById('cart-count');
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-      
-      if (totalItems > 0) {
-        cartCount.textContent = totalItems;
-        cartCount.classList.add('has-items');
-      } else {
-        cartCount.textContent = '';
-        cartCount.classList.remove('has-items');
+    function updateCartCount() {
+      const cart = getCart();
+      const count = cart.reduce((total, item) => total + item.quantity, 0);
+      const badge = document.getElementById('cart-count');
+      if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
       }
+    }
+
+    // Initialize cart count on page load
+    if (typeof updateCartDisplay === 'function') {
+      updateCartDisplay();
     }
   </script>
 </body>
-
 </html>
