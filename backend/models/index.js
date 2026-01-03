@@ -71,7 +71,13 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: {
     type: Date,
     select: false
-  }
+  },
+  googleId: {
+    type: String,
+    sparse: true,
+    unique: true
+  },
+  profilePicture: String
 }, {
   timestamps: true
 });
@@ -211,7 +217,7 @@ const productSchema = new mongoose.Schema({
 
 // Generate slug from name
 productSchema.pre('save', function(next) {
-  if (this.isModified('name')) {
+  if (this.isModified('name') || this.isNew) {
     this.slug = this.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')

@@ -104,6 +104,7 @@ app.get('/api/health', (req, res) => {
 
 // Import route modules
 const authRoutes = require('./routes/auth.routes');
+const googleAuthRoutes = require('./routes/google-auth.routes');
 const productRoutes = require('./routes/product.routes');
 const orderRoutes = require('./routes/order.routes');
 const contactRoutes = require('./routes/contact.routes');
@@ -116,6 +117,7 @@ const designRoutes = require('./routes/design.routes');
 
 // Mount routes
 app.use('/api/auth', authRoutes);
+app.use('/api/auth/google', googleAuthRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/contact', contactRoutes);
