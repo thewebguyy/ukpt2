@@ -132,6 +132,43 @@
       width: 100%;
       margin-bottom: 1rem;
     }
+
+    /* Loading State */
+    .loading-products {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
+      color: var(--color-grey-dark);
+    }
+
+    .loading-products .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--color-grey-light);
+      border-top-color: var(--color-black);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Empty State */
+    .empty-products {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
+      color: var(--color-grey-dark);
+    }
+
+    /* Product Image with actual image */
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     
     @media (max-width: 991px) {
       .filter-sidebar {
@@ -401,8 +438,8 @@
                 <label for="cat-stickers">Stickers & Labels</label>
               </div>
               <div class="filter-option">
-                <input type="checkbox" id="cat-party" onchange="filterProducts()">
-                <label for="cat-party">Party Decor</label>
+                <input type="checkbox" id="cat-party-decor" onchange="filterProducts()">
+                <label for="cat-party-decor">Party Decor</label>
               </div>
               <div class="filter-option">
                 <input type="checkbox" id="cat-accessories" onchange="filterProducts()">
@@ -420,56 +457,6 @@
               </div>
             </div>
 
-            <!-- Size Filter (for apparel) -->
-            <div class="filter-section">
-              <div class="filter-title">SIZE</div>
-              <div class="filter-option">
-                <input type="checkbox" id="size-xs" onchange="filterProducts()">
-                <label for="size-xs">XS</label>
-              </div>
-              <div class="filter-option">
-                <input type="checkbox" id="size-s" onchange="filterProducts()">
-                <label for="size-s">S</label>
-              </div>
-              <div class="filter-option">
-                <input type="checkbox" id="size-m" onchange="filterProducts()">
-                <label for="size-m">M</label>
-              </div>
-              <div class="filter-option">
-                <input type="checkbox" id="size-l" onchange="filterProducts()">
-                <label for="size-l">L</label>
-              </div>
-              <div class="filter-option">
-                <input type="checkbox" id="size-xl" onchange="filterProducts()">
-                <label for="size-xl">XL</label>
-              </div>
-            </div>
-
-            <!-- Color Filter -->
-            <div class="filter-section">
-              <div class="filter-title">COLOR</div>
-              <div class="filter-option">
-                <input type="checkbox" id="color-black" onchange="filterProducts()">
-                <label for="color-black">Black</label>
-              </div>
-              <div class="filter-option">
-                <input type="checkbox" id="color-white" onchange="filterProducts()">
-                <label for="color-white">White</label>
-              </div>
-              <div class="filter-option">
-                <input type="checkbox" id="color-grey" onchange="filterProducts()">
-                <label for="color-grey">Grey</label>
-              </div>
-              <div class="filter-option">
-                <input type="checkbox" id="color-navy" onchange="filterProducts()">
-                <label for="color-navy">Navy</label>
-              </div>
-              <div class="filter-option">
-                <input type="checkbox" id="color-red" onchange="filterProducts()">
-                <label for="color-red">Red</label>
-              </div>
-            </div>
-
             <button class="clear-filters" onclick="clearFilters()">Clear All Filters</button>
           </div>
         </div>
@@ -477,7 +464,7 @@
         <!-- Products Grid -->
         <div class="col-lg-9">
           <div class="products-header">
-            <div class="products-count" id="product-count">Showing 12 of 12 products</div>
+            <div class="products-count" id="product-count">Loading products...</div>
             <div class="sort-dropdown">
               <label for="sort-select" style="font-size: 0.875rem;">Sort by:</label>
               <select class="sort-select" id="sort-select" onchange="sortProducts()">
@@ -492,7 +479,11 @@
           </div>
 
           <div class="product-grid" id="products-container">
-            <!-- Products will be dynamically loaded here -->
+            <!-- Loading state -->
+            <div class="loading-products">
+              <div class="spinner"></div>
+              <p>Loading products from database...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -537,61 +528,129 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/cart.js"></script>
   
-  <script>
-    // Sample product data - In production, this would come from your backend
-    const allProducts = [
-      { id: 1, name: "Custom T-Shirt Design", category: "apparel", price: 24.99, sizes: ["S", "M", "L", "XL"], colors: ["black", "white", "grey"], image: "" },
-      { id: 2, name: "Vinyl Sticker Pack", category: "stickers", price: 9.99, sizes: [], colors: [], image: "" },
-      { id: 3, name: "Party Banner Set", category: "party-decor", price: 19.99, sizes: [], colors: ["black", "white"], image: "" },
-      { id: 4, name: "Custom Labels", category: "stickers", price: 14.99, sizes: [], colors: [], image: "" },
-      { id: 5, name: "Custom Hoodie", category: "apparel", price: 39.99, sizes: ["S", "M", "L", "XL"], colors: ["black", "grey", "navy"], image: "" },
-      { id: 6, name: "Wall Decals", category: "stickers", price: 12.99, sizes: [], colors: [], image: "" },
-      { id: 7, name: "Table Decor Pack", category: "party-decor", price: 24.99, sizes: [], colors: ["black", "white", "red"], image: "" },
-      { id: 8, name: "Custom Tote Bag", category: "accessories", price: 16.99, sizes: [], colors: ["black", "white", "navy"], image: "" },
-      { id: 9, name: "Birthday Banner", category: "party-decor", price: 22.99, sizes: [], colors: [], image: "" },
-      { id: 10, name: "Baseball Cap", category: "apparel", price: 18.99, sizes: [], colors: ["black", "white", "grey", "navy"], image: "" },
-      { id: 11, name: "Balloon Set", category: "party-decor", price: 15.99, sizes: [], colors: ["black", "white", "red"], image: "" },
-      { id: 12, name: "Sticker Sheets", category: "stickers", price: 7.99, sizes: [], colors: [], image: "" }
-    ];
+  <!-- ========================================
+       FIREBASE INTEGRATION - REAL-TIME PRODUCTS
+       ======================================== -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-    let displayedProducts = [...allProducts];
+    // ========================================
+    // FIREBASE CONFIGURATION
+    // ========================================
+    // TODO: Replace with your Firebase config from Firebase Console
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6pLJdRb4V5LUUrHdwSKRne-ZgXJoqqY8",
+      authDomain: "cmuksite.firebaseapp.com",
+      projectId: "cmuksite",
+      storageBucket: "cmuksite.firebasestorage.app",
+      messagingSenderId: "311601861870",
+      appId: "1:311601861870:web:4d3c04c418a789961dcfff"
+    };
 
-    // Initialize products on load
-    document.addEventListener('DOMContentLoaded', () => {
-      displayProducts(displayedProducts);
-      updateCartDisplay();
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ========================================
+    // GLOBAL VARIABLES
+    // ========================================
+    let allProducts = []; // All products from Firebase
+    let displayedProducts = []; // Filtered/sorted products
+    let isLoading = true;
+
+    // ========================================
+    // LISTEN TO FIREBASE PRODUCTS (REAL-TIME)
+    // ========================================
+    const productsContainer = document.getElementById('products-container');
+    const productCountEl = document.getElementById('product-count');
+
+    // Create query to get products ordered by creation date
+    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+    
+    // Listen to real-time updates
+    onSnapshot(q, (snapshot) => {
+      allProducts = [];
       
-      // Check URL parameters for category filtering
+      snapshot.forEach((doc) => {
+        allProducts.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+
+      isLoading = false;
+      displayedProducts = [...allProducts];
+      
+      // Check URL parameters for initial category filtering
       const urlParams = new URLSearchParams(window.location.search);
       const category = urlParams.get('category');
       if (category) {
-        document.getElementById(`cat-${category}`).checked = true;
-        document.getElementById('cat-all').checked = false;
-        filterProducts();
+        const catCheckbox = document.getElementById(`cat-${category}`);
+        if (catCheckbox) {
+          catCheckbox.checked = true;
+          document.getElementById('cat-all').checked = false;
+          filterProducts();
+        } else {
+          displayProducts(displayedProducts);
+        }
+      } else {
+        displayProducts(displayedProducts);
       }
+    }, (error) => {
+      console.error('Error fetching products from Firebase:', error);
+      isLoading = false;
+      productsContainer.innerHTML = `
+        <div class="empty-products">
+          <p>Failed to load products. Please refresh the page.</p>
+          <button class="btn btn-primary" onclick="location.reload()">Refresh Page</button>
+        </div>
+      `;
     });
 
+    // ========================================
+    // DISPLAY PRODUCTS FUNCTION
+    // ========================================
     function displayProducts(products) {
-      const container = document.getElementById('products-container');
-      
+      if (isLoading) {
+        productsContainer.innerHTML = `
+          <div class="loading-products">
+            <div class="spinner"></div>
+            <p>Loading products...</p>
+          </div>
+        `;
+        return;
+      }
+
       if (products.length === 0) {
-        container.innerHTML = '<div class="col-12 text-center"><p class="text-grey-dark">No products found matching your filters.</p></div>';
+        productsContainer.innerHTML = `
+          <div class="empty-products">
+            <p>No products found matching your filters.</p>
+          </div>
+        `;
+        productCountEl.textContent = 'No products found';
         return;
       }
       
-      container.innerHTML = products.map(product => `
+      productsContainer.innerHTML = products.map(product => `
         <div class="product-card" data-product-id="${product.id}">
           <a href="product.html?id=${product.id}">
             <div class="product-image">
-              <span>Product Image</span>
+              ${product.imageUrl ? 
+                `<img src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name)}" loading="lazy">` : 
+                `<span>Product Image</span>`
+              }
             </div>
           </a>
           <div class="product-info">
             <h3 class="product-title">
-              <a href="product.html?id=${product.id}" style="text-decoration: none; color: inherit;">${product.name}</a>
+              <a href="product.html?id=${product.id}" style="text-decoration: none; color: inherit;">
+                ${escapeHtml(product.name)}
+              </a>
             </h3>
             <p class="product-price">£${product.price.toFixed(2)}</p>
-            <button class="btn btn-primary w-100" onclick="addToCartQuick(${product.id}, '${product.name}', ${product.price})">
+            <button class="btn btn-primary w-100" onclick="addToCartFromFirebase('${product.id}', '${escapeHtml(product.name)}', ${product.price})">
               ADD TO CART
             </button>
           </div>
@@ -601,11 +660,17 @@
       updateProductCount(products.length, allProducts.length);
     }
 
+    // ========================================
+    // UPDATE PRODUCT COUNT
+    // ========================================
     function updateProductCount(shown, total) {
-      document.getElementById('product-count').textContent = `Showing ${shown} of ${total} products`;
+      productCountEl.textContent = `Showing ${shown} of ${total} product${total !== 1 ? 's' : ''}`;
     }
 
-    function filterProducts() {
+    // ========================================
+    // FILTER PRODUCTS
+    // ========================================
+    window.filterProducts = function() {
       let filtered = [...allProducts];
       
       // Category filter
@@ -614,7 +679,7 @@
         const categories = [];
         if (document.getElementById('cat-apparel').checked) categories.push('apparel');
         if (document.getElementById('cat-stickers').checked) categories.push('stickers');
-        if (document.getElementById('cat-party').checked) categories.push('party-decor');
+        if (document.getElementById('cat-party-decor').checked) categories.push('party-decor');
         if (document.getElementById('cat-accessories').checked) categories.push('accessories');
         
         if (categories.length > 0) {
@@ -627,33 +692,14 @@
       const maxPrice = parseFloat(document.getElementById('price-max').value) || Infinity;
       filtered = filtered.filter(p => p.price >= minPrice && p.price <= maxPrice);
       
-      // Size filter
-      const sizes = [];
-      ['xs', 's', 'm', 'l', 'xl'].forEach(size => {
-        if (document.getElementById(`size-${size}`).checked) {
-          sizes.push(size.toUpperCase());
-        }
-      });
-      if (sizes.length > 0) {
-        filtered = filtered.filter(p => p.sizes.some(s => sizes.includes(s)));
-      }
-      
-      // Color filter
-      const colors = [];
-      ['black', 'white', 'grey', 'navy', 'red'].forEach(color => {
-        if (document.getElementById(`color-${color}`).checked) {
-          colors.push(color);
-        }
-      });
-      if (colors.length > 0) {
-        filtered = filtered.filter(p => p.colors.length === 0 || p.colors.some(c => colors.includes(c)));
-      }
-      
       displayedProducts = filtered;
       sortProducts();
-    }
+    };
 
-    function sortProducts() {
+    // ========================================
+    // SORT PRODUCTS
+    // ========================================
+    window.sortProducts = function() {
       const sortValue = document.getElementById('sort-select').value;
       let sorted = [...displayedProducts];
       
@@ -671,7 +717,11 @@
           sorted.sort((a, b) => b.name.localeCompare(a.name));
           break;
         case 'newest':
-          sorted.sort((a, b) => b.id - a.id);
+          sorted.sort((a, b) => {
+            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+            return dateB - dateA;
+          });
           break;
         default:
           // Featured - keep original order
@@ -679,9 +729,12 @@
       }
       
       displayProducts(sorted);
-    }
+    };
 
-    function clearFilters() {
+    // ========================================
+    // CLEAR FILTERS
+    // ========================================
+    window.clearFilters = function() {
       // Reset all checkboxes
       document.querySelectorAll('.filter-option input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
@@ -698,9 +751,12 @@
       // Reload all products
       displayedProducts = [...allProducts];
       displayProducts(displayedProducts);
-    }
+    };
 
-    function handleSearch(event) {
+    // ========================================
+    // SEARCH PRODUCTS
+    // ========================================
+    window.handleSearch = function(event) {
       event.preventDefault();
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
       
@@ -709,38 +765,91 @@
       } else {
         displayedProducts = allProducts.filter(p => 
           p.name.toLowerCase().includes(searchTerm) ||
-          p.category.toLowerCase().includes(searchTerm)
+          p.category.toLowerCase().includes(searchTerm) ||
+          (p.description && p.description.toLowerCase().includes(searchTerm))
         );
       }
       
       displayProducts(displayedProducts);
-    }
+    };
 
-    function addToCartQuick(id, name, price) {
-      addToCart(id, name, price);
+    // ========================================
+    // ADD TO CART (FIREBASE VERSION)
+    // ========================================
+    window.addToCartFromFirebase = function(id, name, price) {
+      // Use existing cart.js function if available
+      if (typeof addToCart === 'function') {
+        addToCart(id, name, price);
+      } else {
+        // Fallback: Simple localStorage cart
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const existingItem = cart.find(item => item.id === id);
+        
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push({ id, name, price, quantity: 1 });
+        }
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // Update cart display if function exists
+        if (typeof updateCartDisplay === 'function') {
+          updateCartDisplay();
+        }
+      }
+      
+      // Show feedback
       alert(`${name} added to cart!`);
-    }
+    };
 
-    function toggleMobileFilters() {
+    // ========================================
+    // MOBILE FILTER TOGGLE
+    // ========================================
+    window.toggleMobileFilters = function() {
       document.getElementById('filter-sidebar').classList.toggle('show');
+    };
+
+    // ========================================
+    // HELPER FUNCTIONS
+    // ========================================
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
-    // Handle "All Products" checkbox
+    // ========================================
+    // CATEGORY CHECKBOX HANDLERS
+    // ========================================
     document.getElementById('cat-all').addEventListener('change', function() {
       if (this.checked) {
-        ['cat-apparel', 'cat-stickers', 'cat-party', 'cat-accessories'].forEach(id => {
-          document.getElementById(id).checked = false;
+        ['cat-apparel', 'cat-stickers', 'cat-party-decor', 'cat-accessories'].forEach(id => {
+          const checkbox = document.getElementById(id);
+          if (checkbox) checkbox.checked = false;
         });
       }
     });
 
-    // Uncheck "All" when any category is checked
-    ['cat-apparel', 'cat-stickers', 'cat-party', 'cat-accessories'].forEach(id => {
-      document.getElementById(id).addEventListener('change', function() {
-        if (this.checked) {
-          document.getElementById('cat-all').checked = false;
-        }
-      });
+    ['cat-apparel', 'cat-stickers', 'cat-party-decor', 'cat-accessories'].forEach(id => {
+      const checkbox = document.getElementById(id);
+      if (checkbox) {
+        checkbox.addEventListener('change', function() {
+          if (this.checked) {
+            document.getElementById('cat-all').checked = false;
+          }
+        });
+      }
+    });
+
+    // ========================================
+    // INITIALIZE CART DISPLAY
+    // ========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof updateCartDisplay === 'function') {
+        updateCartDisplay();
+      }
     });
   </script>
 </body>
