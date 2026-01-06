@@ -1,10 +1,25 @@
-// Shopping Cart Functionality for Creative Merch UK
+// ============================================
+// CART.JS - Complete Cart Management System
+// Creative Merch UK
+// ============================================
 
 // Initialize cart from localStorage
-let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+function getCart() {
+  const cart = localStorage.getItem('cart');
+  return cart ? JSON.parse(cart) : [];
+}
+
+// Save cart to localStorage
+function saveCart(cart) {
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartDisplay();
+}
 
 // Add item to cart
-function addToCart(id, name, price) {
+function addToCart(id, name, price, imageUrl = '') {
+  const cart = getCart();
+  
+  // Check if item already exists
   const existingItem = cart.find(item => item.id === id);
   
   if (existingItem) {
@@ -14,101 +29,138 @@ function addToCart(id, name, price) {
       id: id,
       name: name,
       price: price,
+      imageUrl: imageUrl,
       quantity: 1
     });
   }
   
-  saveCart();
-  updateCartDisplay();
-  renderCart();
+  saveCart(cart);
 }
 
 // Remove item from cart
 function removeFromCart(id) {
+  let cart = getCart();
   cart = cart.filter(item => item.id !== id);
-  saveCart();
-  updateCartDisplay();
-  renderCart();
+  saveCart(cart);
 }
 
-// Update quantity
-function updateQuantity(id, change) {
+// Update item quantity
+function updateQuantity(id, newQuantity) {
+  const cart = getCart();
   const item = cart.find(item => item.id === id);
+  
   if (item) {
-    item.quantity += change;
-    if (item.quantity <= 0) {
+    if (newQuantity <= 0) {
       removeFromCart(id);
     } else {
-      saveCart();
-      updateCartDisplay();
-      renderCart();
+      item.quantity = newQuantity;
+      saveCart(cart);
     }
   }
 }
 
-// Save cart to localStorage
-function saveCart() {
-  localStorage.setItem('cart', JSON.stringify(cart));
+// Get cart total
+function getCartTotal() {
+  const cart = getCart();
+  return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 }
 
-// Update cart count display
+// Get cart item count
+function getCartCount() {
+  const cart = getCart();
+  return cart.reduce((count, item) => count + item.quantity, 0);
+}
+
+// Clear entire cart
+function clearCart() {
+  localStorage.removeItem('cart');
+  updateCartDisplay();
+}
+
+// Update cart display in UI
 function updateCartDisplay() {
-  const cartCount = document.getElementById('cart-count');
-  if (!cartCount) return;
-  
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  
-  if (totalItems > 0) {
-    cartCount.textContent = totalItems;
-    cartCount.classList.add('has-items');
-  } else {
-    cartCount.textContent = '';
-    cartCount.classList.remove('has-items');
-  }
-}
-
-// Render cart items
-function renderCart() {
+  const cart = getCart();
   const cartItemsContainer = document.getElementById('cart-items');
-  const cartEmpty = document.getElementById('cart-empty');
-  const cartSummary = document.getElementById('cart-summary');
-  const cartSubtotal = document.getElementById('cart-subtotal');
+  const cartEmptyContainer = document.getElementById('cart-empty');
+  const cartSummaryContainer = document.getElementById('cart-summary');
+  const cartCountBadge = document.getElementById('cart-count');
+  const cartSubtotalElement = document.getElementById('cart-subtotal');
   
-  if (!cartItemsContainer) return;
+  // Update cart count badge
+  const count = getCartCount();
+  if (cartCountBadge) {
+    cartCountBadge.textContent = count;
+    if (count > 0) {
+      cartCountBadge.classList.add('has-items');
+    } else {
+      cartCountBadge.classList.remove('has-items');
+    }
+  }
   
+  // If cart is empty
   if (cart.length === 0) {
-    cartItemsContainer.innerHTML = '';
-    if (cartEmpty) cartEmpty.style.display = 'block';
-    if (cartSummary) cartSummary.style.display = 'none';
+    if (cartItemsContainer) cartItemsContainer.innerHTML = '';
+    if (cartEmptyContainer) cartEmptyContainer.style.display = 'block';
+    if (cartSummaryContainer) cartSummaryContainer.style.display = 'none';
     return;
   }
   
-  if (cartEmpty) cartEmpty.style.display = 'none';
-  if (cartSummary) cartSummary.style.display = 'block';
+  // Hide empty message, show summary
+  if (cartEmptyContainer) cartEmptyContainer.style.display = 'none';
+  if (cartSummaryContainer) cartSummaryContainer.style.display = 'block';
   
-  let subtotal = 0;
-  
-  cartItemsContainer.innerHTML = cart.map(item => {
-    subtotal += item.price * item.quantity;
-    return `
-      <div class="cart-item">
-        <div class="cart-item-image"></div>
-        <div class="cart-item-details">
-          <div class="cart-item-title">${item.name}</div>
-          <div class="cart-item-price">£${item.price.toFixed(2)} × ${item.quantity}</div>
+  // Render cart items
+  if (cartItemsContainer) {
+    cartItemsContainer.innerHTML = cart.map(item => `
+      <div class="cart-item" data-id="${item.id}">
+        <div class="cart-item-image">
+          ${item.imageUrl ? 
+            `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+            `<div style="width: 100%; height: 100%; background: var(--color-grey-light); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--color-grey);">No Image</div>`
+          }
         </div>
-        <button class="cart-item-remove" onclick="removeFromCart(${item.id})" aria-label="Remove item">×</button>
+        <div class="cart-item-details">
+          <div class="cart-item-title">${escapeHtml(item.name)}</div>
+          <div class="cart-item-price">£${item.price.toFixed(2)} × ${item.quantity}</div>
+          <div class="cart-item-total" style="font-weight: 600; margin-top: 0.25rem;">£${(item.price * item.quantity).toFixed(2)}</div>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart('${item.id}')" aria-label="Remove ${escapeHtml(item.name)} from cart">
+          ×
+        </button>
       </div>
-    `;
-  }).join('');
+    `).join('');
+  }
   
-  if (cartSubtotal) {
-    cartSubtotal.textContent = '£' + subtotal.toFixed(2);
+  // Update subtotal
+  const total = getCartTotal();
+  if (cartSubtotalElement) {
+    cartSubtotalElement.textContent = `£${total.toFixed(2)}`;
   }
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
+// Helper function to escape HTML
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Initialize cart display when page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', updateCartDisplay);
+} else {
   updateCartDisplay();
-  renderCart();
-});
+}
+
+// Export functions for use in other scripts
+if (typeof window !== 'undefined') {
+  window.addToCart = addToCart;
+  window.removeFromCart = removeFromCart;
+  window.updateQuantity = updateQuantity;
+  window.getCart = getCart;
+  window.getCartTotal = getCartTotal;
+  window.getCartCount = getCartCount;
+  window.clearCart = clearCart;
+  window.updateCartDisplay = updateCartDisplay;
+}

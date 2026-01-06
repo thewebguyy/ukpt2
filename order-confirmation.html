@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Order Confirmed - Creative Merch UK</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    .confirmation-section {
+      padding: 4rem 0;
+      min-height: calc(100vh - 200px);
+      display: flex;
+      align-items: center;
+    }
+
+    .confirmation-box {
+      background: var(--color-white);
+      padding: 3rem;
+      border-radius: 0px;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: #059669;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      animation: scaleIn 0.5s ease-out;
+    }
+
+    .success-icon svg {
+      width: 48px;
+      height: 48px;
+      color: white;
+      stroke-width: 3;
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .order-number {
+      font-size: 0.875rem;
+      color: var(--color-grey-dark);
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: var(--color-grey-light);
+      border-radius: 0px;
+    }
+
+    .order-number strong {
+      color: var(--color-black);
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+    }
+
+    .confirmation-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .order-summary-box {
+      background: var(--color-grey-light);
+      padding: 2rem;
+      margin-top: 2rem;
+      text-align: left;
+      border-radius: 0px;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--color-grey);
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 1rem;
+      margin-top: 1rem;
+      border-top: 2px solid var(--color-black);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .confirmation-box {
+        padding: 2rem 1.5rem;
+      }
+
+      .confirmation-section {
+        padding: 2rem 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- SVG Icons -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="20 6 9 17 4 12"/>
+    </symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </symbol>
+    <symbol id="icon-shopping-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <path d="M16 10a4 4 0 0 1-8 0"/>
+    </symbol>
+    <symbol id="icon-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="m21 21-4.35-4.35"/>
+    </symbol>
+    <symbol id="icon-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </symbol>
+  </svg>
+
+  <!-- Announcement Banner -->
+  <div class="announcement-banner">
+    <div class="announcement-content">
+      <span class="announcement-item">FREE DELIVERY OVER £100</span>
+      <span class="announcement-item">CONTACT US</span>
+      <span class="announcement-item">INFO@CUSTOMISEMEUK.COM</span>
+      <span class="announcement-item">07588770901</span>
+      <span class="announcement-item">FREE DELIVERY OVER £100</span>
+      <span class="announcement-item">CONTACT US</span>
+      <span class="announcement-item">INFO@CUSTOMISEMEUK.COM</span>
+      <span class="announcement-item">07588770901</span>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container">
+      <div class="top-bar-content">
+        <a class="navbar-brand" href="index.html">
+          <img src="icon.png" alt="Creative Merch UK" class="logo-image">
+        </a>
+        
+        <form class="search-bar-form-compact">
+          <svg class="search-icon"><use xlink:href="#icon-search"/></svg>
+          <input type="search" class="search-input" placeholder="Search products...">
+        </form>
+        
+        <div class="d-flex align-items-center gap-3">
+          <div class="dropdown">
+            <a href="#" class="nav-icon" data-bs-toggle="dropdown" aria-expanded="false">
+              <svg class="icon"><use xlink:href="#icon-globe"/></svg>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end region-dropdown">
+              <li><a class="dropdown-item" href="#"><span class="flag">🇬🇧</span> UNITED KINGDOM</a></li>
+              <li><a class="dropdown-item" href="#"><span class="flag">🇪🇺</span> EUROPE</a></li>
+              <li><a class="dropdown-item" href="#"><span class="flag">🇺🇸</span> AMERICA</a></li>
+            </ul>
+          </div>
+          <a href="#wishlist" class="nav-icon"><svg class="icon"><use xlink:href="#icon-heart"/></svg></a>
+          <a href="shop.html" class="nav-icon">
+            <svg class="icon"><use xlink:href="#icon-shopping-bag"/></svg>
+          </a>
+          <a href="account.html" class="nav-icon nav-icon-text">
+            <svg class="icon"><use xlink:href="#icon-user"/></svg>
+            <span class="nav-text">SIGN IN / SIGN UP</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation -->
+  <nav class="navbar navbar-expand-lg main-nav">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown mega-menu">
+            <a class="nav-link dropdown-toggle" href="shop.html">SHOP</a>
+            <div class="dropdown-menu mega-dropdown">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-3">
+                    <h6 class="mega-title">CATEGORIES</h6>
+                    <a class="dropdown-item" href="shop.html">ALL PRODUCTS</a>
+                    <a class="dropdown-item" href="shop.html?category=apparel">APPAREL</a>
+                    <a class="dropdown-item" href="shop.html?category=stickers">STICKERS & LABELS</a>
+                    <a class="dropdown-item" href="shop.html?category=party-decor">PARTY DECOR</a>
+                    <a class="dropdown-item" href="shop.html?category=accessories">ACCESSORIES</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item dropdown mega-menu">
+            <a class="nav-link dropdown-toggle" href="designstudio.html">DESIGN STUDIO</a>
+            <div class="dropdown-menu mega-dropdown">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h6 class="mega-title">SERVICES</h6>
+                    <a class="dropdown-item" href="designservice.html">Custom Design</a>
+                  </div>
+                  <div class="col-md-6">
+                    <h6 class="mega-title">RESOURCES</h6>
+                    <a class="dropdown-item" href="designstudio.html#resources">Design Templates</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item dropdown mega-menu">
+            <a class="nav-link dropdown-toggle" href="premiumservices.html">PREMIUM SERVICES</a>
+            <div class="dropdown-menu mega-dropdown">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-4">
+                    <h6 class="mega-title">SERVICES</h6>
+                    <a class="dropdown-item" href="senditems.html">Send Items In</a>
+                    <a class="dropdown-item" href="subscriptions.html">Subscriptions</a>
+                  </div>
+                  <div class="col-md-4">
+                    <h6 class="mega-title">INSTALLATION</h6>
+                    <a class="dropdown-item" href="installation.html">Vinyl Installation</a>
+                  </div>
+                  <div class="col-md-4">
+                    <h6 class="mega-title">WORKSHOPS</h6>
+                    <a class="dropdown-item" href="contact.html?service=workshop">Group Iron on Workshop</a>
+                    <a class="dropdown-item" href="contact.html?service=workshop">Individual Iron on Experience</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Order Confirmation Section -->
+  <section class="confirmation-section">
+    <div class="container">
+      <div class="confirmation-box">
+        <div class="success-icon">
+          <svg><use xlink:href="#icon-check"/></svg>
+        </div>
+        
+        <h1>Order Confirmed!</h1>
+        <p class="text-grey-dark" style="font-size: 1.125rem; margin-bottom: 2rem;">
+          Thank you for your purchase. We've received your order and will begin processing it shortly.
+        </p>
+
+        <div class="order-number">
+          <div style="margin-bottom: 0.5rem;">Your Order Number:</div>
+          <strong id="order-number">Loading...</strong>
+        </div>
+
+        <p class="text-grey-dark" style="font-size: 0.875rem;">
+          A confirmation email has been sent to your email address with your order details and tracking information.
+        </p>
+
+        <!-- Order Summary -->
+        <div class="order-summary-box" id="order-summary" style="display: none;">
+          <h5 style="margin-bottom: 1rem;">Order Summary</h5>
+          <div id="order-items"></div>
+          <div class="order-total">
+            <span>Total:</span>
+            <span id="order-total">£0.00</span>
+          </div>
+        </div>
+
+        <div class="confirmation-actions">
+          <button class="btn btn-primary btn-lg" onclick="window.location.href='shop.html'">
+            Continue Shopping
+          </button>
+          <button class="btn btn-outline" onclick="window.print()">
+            Print Receipt
+          </button>
+        </div>
+
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--color-grey-light);">
+          <p class="text-grey-dark" style="font-size: 0.875rem; margin-bottom: 0.5rem;">
+            <strong>What happens next?</strong>
+          </p>
+          <p class="text-grey-dark" style="font-size: 0.875rem;">
+            • We'll send you an email confirmation shortly<br>
+            • Your order will be processed within 1-2 business days<br>
+            • You'll receive tracking information once shipped<br>
+            • Estimated delivery: 3-5 business days
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="text-center">
+        <p class="text-grey-dark">© 2026 Customise Me UK. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/cart.js"></script>
+  
+  <script>
+    // Get order number from URL or generate one
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderNumber = urlParams.get('order') || generateOrderNumber();
+    
+    function generateOrderNumber() {
+      const timestamp = Date.now();
+      const random = Math.floor(Math.random() * 1000);
+      return `CMUK-${timestamp}-${random}`;
+    }
+    
+    // Display order number
+    document.getElementById('order-number').textContent = orderNumber;
+    
+    // Display order summary if cart exists
+    const cart = getCart();
+    if (cart && cart.length > 0) {
+      const orderSummary = document.getElementById('order-summary');
+      const orderItems = document.getElementById('order-items');
+      const orderTotal = document.getElementById('order-total');
+      
+      orderSummary.style.display = 'block';
+      
+      orderItems.innerHTML = cart.map(item => `
+        <div class="order-item">
+          <div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <div class="text-grey-dark" style="font-size: 0.875rem;">Qty: ${item.quantity}</div>
+          </div>
+          <div style="font-weight: 600;">£${(item.price * item.quantity).toFixed(2)}</div>
+        </div>
+      `).join('');
+      
+      const total = getCartTotal();
+      orderTotal.textContent = `£${total.toFixed(2)}`;
+      
+      // Clear cart after successful order
+      clearCart();
+    }
+    
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
