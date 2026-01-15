@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login - C Merch UK</title>
+  <title>Admin Login - Customise Me UK</title>
   <link rel="stylesheet" href="admin-styles.css">
 </head>
 <body>
@@ -57,7 +57,6 @@
     // ========================================
     // FIREBASE CONFIGURATION
     // ========================================
-    // TODO: Replace with your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyA6pLJdRb4V5LUUrHdwSKRne-ZgXJoqqY8",
       authDomain: "cmuksite.firebaseapp.com",
@@ -139,6 +138,9 @@
             break;
           case 'auth/network-request-failed':
             errorMsg = 'Network error. Please check your connection.';
+            break;
+          case 'auth/invalid-credential':
+            errorMsg = 'Invalid email or password. Please try again.';
             break;
           default:
             errorMsg = error.message || 'An unexpected error occurred.';
