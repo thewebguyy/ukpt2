@@ -378,7 +378,7 @@
 
                 <div class="form-row">
                   <button type="submit" class="btn btn-primary" id="reviewBtn">
-                    <span id="reviewText">Add Review</span>
+                    <span id="reviewBtnText">Add Review</span>
                     <span id="reviewSpinner" class="spinner" style="display: none;"></span>
                   </button>
                   <button type="button" class="btn btn-secondary" onclick="hideAddReviewForm()">Cancel</button>
@@ -403,7 +403,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
     // Firebase Configuration
@@ -498,7 +498,7 @@
           container.innerHTML = products.map(product => `
             <div class="product-item">
               <div class="product-image">
-                <img src="${product.images && product.images[0] ? product.images[0] : 'placeholder.jpg'}" alt="${product.name}">
+                <img src="${product.images && product.images[0] ? product.images[0] : 'placeholder.jpg'}" alt="${product.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22%3E%3Crect fill=%22%23ddd%22 width=%22150%22 height=%22150%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2214%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3ENo Image%3C/text%3E%3C/svg%3E'">
               </div>
               <div class="product-details">
                 <h3>${product.name}</h3>
@@ -555,7 +555,7 @@
         const sizes = sizesInput ? sizesInput.split(',').map(s => s.trim()).filter(s => s) : [];
         const colorsInput = document.getElementById('productColors').value;
         const colors = colorsInput ? colorsInput.split(',').map(c => c.trim()).filter(c => c) : [];
-        const imageFiles = document.getElementById('productImages').files;
+        const imageFiles = Array.from(document.getElementById('productImages').files);
         
         if (imageFiles.length === 0) {
           throw new Error('Please select at least one image');
@@ -565,25 +565,35 @@
           throw new Error('Maximum 5 images allowed');
         }
 
+        console.log(`Uploading ${imageFiles.length} images...`);
+
         // Upload images
         const imageUrls = [];
         for (let i = 0; i < imageFiles.length; i++) {
           const file = imageFiles[i];
           const timestamp = Date.now();
-          const storageRef = ref(storage, `products/${timestamp}_${i}_${file.name}`);
+          const randomId = Math.random().toString(36).substring(7);
+          const fileName = `${timestamp}_${randomId}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+          const storageRef = ref(storage, `products/${fileName}`);
           
           document.getElementById('uploadStatus').textContent = `Uploading image ${i + 1} of ${imageFiles.length}...`;
           const progress = ((i + 1) / imageFiles.length) * 100;
           document.getElementById('progressFill').style.width = `${progress}%`;
           
-          await uploadBytes(storageRef, file);
+          console.log(`Uploading file: ${fileName}`);
+          const uploadResult = await uploadBytes(storageRef, file);
+          console.log('Upload result:', uploadResult);
+          
           const url = await getDownloadURL(storageRef);
+          console.log('Image URL:', url);
           imageUrls.push(url);
         }
 
+        console.log('All images uploaded:', imageUrls);
+
         // Add product to Firestore
         document.getElementById('uploadStatus').textContent = 'Saving product...';
-        await addDoc(collection(db, 'products'), {
+        const productData = {
           name,
           price,
           description,
@@ -593,7 +603,11 @@
           images: imageUrls,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
-        });
+        };
+        
+        console.log('Saving product data:', productData);
+        const docRef = await addDoc(collection(db, 'products'), productData);
+        console.log('Product saved with ID:', docRef.id);
 
         messageDiv.textContent = 'Product uploaded successfully!';
         messageDiv.className = 'form-message success';
@@ -602,10 +616,14 @@
         // Reset form
         document.getElementById('uploadForm').reset();
         document.getElementById('imagePreviews').innerHTML = '';
+        document.getElementById('descCharCount').textContent = '0';
         
         // Reload products
         await loadProducts();
         populateEditProductSelect();
+        
+        // Scroll to top of form
+        document.querySelector('#upload-tab').scrollIntoView({ behavior: 'smooth' });
         
       } catch (error) {
         console.error('Upload error:', error);
@@ -621,7 +639,7 @@
       }
     });
 
-    // Image preview for upload
+    // Image preview for upload - FIXED
     document.getElementById('productImages').addEventListener('change', function(e) {
       const previews = document.getElementById('imagePreviews');
       previews.innerHTML = '';
@@ -632,7 +650,10 @@
         alert('Maximum 5 images allowed. Only the first 5 will be uploaded.');
       }
       
-      files.slice(0, 5).forEach((file, index) => {
+      const filesToShow = files.slice(0, 5);
+      console.log(`Showing ${filesToShow.length} image previews`);
+      
+      filesToShow.forEach((file, index) => {
         const reader = new FileReader();
         reader.onload = function(e) {
           const div = document.createElement('div');
@@ -698,6 +719,8 @@
         if (docSnap.exists()) {
           const product = docSnap.data();
           
+          console.log('Loading product for edit:', product);
+          
           document.getElementById('editProductId').value = productId;
           document.getElementById('editProductName').value = product.name || '';
           document.getElementById('editProductPrice').value = product.price || '';
@@ -718,7 +741,7 @@
           if (product.images && product.images.length > 0) {
             currentImagesDiv.innerHTML = product.images.map((url, index) => `
               <div class="image-preview">
-                <img src="${url}" alt="Current image ${index + 1}">
+                <img src="${url}" alt="Current image ${index + 1}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22%3E%3Crect fill=%22%23ddd%22 width=%22150%22 height=%22150%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2214%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3EError%3C/text%3E%3C/svg%3E'">
                 <button type="button" class="btn-remove-image" onclick="removeCurrentImage(${index})" title="Remove image">×</button>
                 <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; padding: 4px; font-size: 12px; text-align: center;">
                   ${index === 0 ? 'Main Image' : `Image ${index + 1}`}
@@ -728,6 +751,10 @@
           } else {
             currentImagesDiv.innerHTML = '<p class="text-grey-dark">No images</p>';
           }
+          
+          // Clear new image previews
+          document.getElementById('editImagePreviews').innerHTML = '';
+          document.getElementById('editProductImages').value = '';
           
           container.style.display = 'block';
           
@@ -745,7 +772,7 @@
       document.getElementById('editDescCharCount').textContent = this.value.length;
     });
 
-    // Image preview for edit
+    // Image preview for edit - FIXED
     document.getElementById('editProductImages').addEventListener('change', function(e) {
       const previews = document.getElementById('editImagePreviews');
       previews.innerHTML = '';
@@ -754,8 +781,11 @@
       const currentImageCount = window.currentProductImages ? window.currentProductImages.length : 0;
       const totalImages = currentImageCount + files.length;
       
+      console.log(`Current images: ${currentImageCount}, New images: ${files.length}, Total: ${totalImages}`);
+      
       if (totalImages > 5) {
         alert(`Maximum 5 images total. You have ${currentImageCount} existing images. You can add ${5 - currentImageCount} more.`);
+        this.value = ''; // Clear the file input
         return;
       }
       
@@ -784,7 +814,7 @@
       }
     };
 
-    // Edit Product Form
+    // Edit Product Form - FIXED
     document.getElementById('editForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -809,7 +839,11 @@
         const sizes = sizesInput ? sizesInput.split(',').map(s => s.trim()).filter(s => s) : [];
         const colorsInput = document.getElementById('editProductColors').value;
         const colors = colorsInput ? colorsInput.split(',').map(c => c.trim()).filter(c => c) : [];
-        const newImageFiles = document.getElementById('editProductImages').files;
+        const newImageFiles = Array.from(document.getElementById('editProductImages').files);
+        
+        console.log('Updating product:', productId);
+        console.log('Current images:', window.currentProductImages);
+        console.log('New images to upload:', newImageFiles.length);
         
         // Start with existing images
         let imageUrls = [...window.currentProductImages];
@@ -819,10 +853,14 @@
           for (let i = 0; i < newImageFiles.length; i++) {
             const file = newImageFiles[i];
             const timestamp = Date.now();
-            const storageRef = ref(storage, `products/${timestamp}_${i}_${file.name}`);
+            const randomId = Math.random().toString(36).substring(7);
+            const fileName = `${timestamp}_${randomId}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+            const storageRef = ref(storage, `products/${fileName}`);
             
+            console.log(`Uploading new image ${i + 1}: ${fileName}`);
             await uploadBytes(storageRef, file);
             const url = await getDownloadURL(storageRef);
+            console.log('New image URL:', url);
             imageUrls.push(url);
           }
         }
@@ -831,9 +869,11 @@
           throw new Error('Product must have at least one image');
         }
 
-        // Update product in Firestore
+        console.log('Final image URLs:', imageUrls);
+
+        // Update product in Firestore - USING setDoc with merge instead of updateDoc
         const docRef = doc(db, 'products', productId);
-        await updateDoc(docRef, {
+        const updateData = {
           name,
           price,
           description,
@@ -842,15 +882,32 @@
           colors,
           images: imageUrls,
           updatedAt: serverTimestamp()
-        });
+        };
+        
+        console.log('Updating with data:', updateData);
+        
+        // Use setDoc with merge:true to ensure the update works
+        await setDoc(docRef, updateData, { merge: true });
+        
+        console.log('Product updated successfully');
 
         messageDiv.textContent = 'Product updated successfully!';
         messageDiv.className = 'form-message success';
         messageDiv.style.display = 'block';
         
-        // Reload products
+        // Clear new image input
+        document.getElementById('editProductImages').value = '';
+        document.getElementById('editImagePreviews').innerHTML = '';
+        
+        // Reload products and re-populate select
         await loadProducts();
-        populateEditProductSelect();
+        await populateEditProductSelect();
+        
+        // Reload the current product to show updated data
+        await loadProductForEdit();
+        
+        // Scroll to message
+        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         
       } catch (error) {
         console.error('Update error:', error);
@@ -979,12 +1036,11 @@
     window.updateOrderStatus = async function(orderId, newStatus) {
       try {
         const docRef = doc(db, 'orders', orderId);
-        await updateDoc(docRef, {
+        await setDoc(docRef, {
           status: newStatus,
           updatedAt: serverTimestamp()
-        });
+        }, { merge: true });
         
-        // Optional: Send email notification to customer
         console.log(`Order ${orderId} status updated to ${newStatus}`);
       } catch (error) {
         console.error('Error updating order status:', error);
@@ -1057,10 +1113,10 @@
         window.currentHomepageImages.splice(index, 1);
         
         const docRef = doc(db, 'settings', 'homepage');
-        await updateDoc(docRef, {
+        await setDoc(docRef, {
           images: window.currentHomepageImages,
           updatedAt: serverTimestamp()
-        });
+        }, { merge: true });
         
         await loadHomepageImages();
       } catch (error) {
@@ -1105,7 +1161,7 @@
       try {
         const title = document.getElementById('homepageTitle').value;
         const subtitle = document.getElementById('homepageSubtitle').value;
-        const newImageFiles = document.getElementById('homepageImages').files;
+        const newImageFiles = Array.from(document.getElementById('homepageImages').files);
         
         let imageUrls = window.currentHomepageImages || [];
         
@@ -1114,7 +1170,9 @@
           for (let i = 0; i < Math.min(newImageFiles.length, 5); i++) {
             const file = newImageFiles[i];
             const timestamp = Date.now();
-            const storageRef = ref(storage, `homepage/${timestamp}_${i}_${file.name}`);
+            const randomId = Math.random().toString(36).substring(7);
+            const fileName = `${timestamp}_${randomId}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+            const storageRef = ref(storage, `homepage/${fileName}`);
             
             await uploadBytes(storageRef, file);
             const url = await getDownloadURL(storageRef);
@@ -1125,23 +1183,14 @@
           imageUrls = imageUrls.slice(-5);
         }
         
-        // Save to Firestore
+        // Save to Firestore using setDoc with merge
         const docRef = doc(db, 'settings', 'homepage');
-        await updateDoc(docRef, {
+        await setDoc(docRef, {
           title,
           subtitle,
           images: imageUrls,
           updatedAt: serverTimestamp()
-        }).catch(async () => {
-          // Document doesn't exist, create it
-          await addDoc(collection(db, 'settings'), {
-            title,
-            subtitle,
-            images: imageUrls,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          });
-        });
+        }, { merge: true });
 
         messageDiv.textContent = 'Homepage updated successfully!';
         messageDiv.className = 'form-message success';
@@ -1241,7 +1290,9 @@
         
         // Upload logo
         const timestamp = Date.now();
-        const storageRef = ref(storage, `partners/${timestamp}_${logoFile.name}`);
+        const randomId = Math.random().toString(36).substring(7);
+        const fileName = `${timestamp}_${randomId}_${logoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+        const storageRef = ref(storage, `partners/${fileName}`);
         await uploadBytes(storageRef, logoFile);
         const logoUrl = await getDownloadURL(storageRef);
         
@@ -1353,7 +1404,7 @@
       e.preventDefault();
       
       const btn = document.getElementById('reviewBtn');
-      const text = document.getElementById('reviewText');
+      const text = document.getElementById('reviewBtnText');
       const spinner = document.getElementById('reviewSpinner');
       const messageDiv = document.getElementById('reviewMessage');
       
