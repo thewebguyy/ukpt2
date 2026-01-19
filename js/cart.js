@@ -16,24 +16,24 @@ function saveCart(cart) {
 }
 
 // Add item to cart
-function addToCart(id, name, price, imageUrl = '') {
+function addToCart(id, name, price, imageUrl = '', quantity = 1) {
   const cart = getCart();
-  
+
   // Check if item already exists
   const existingItem = cart.find(item => item.id === id);
-  
+
   if (existingItem) {
-    existingItem.quantity += 1;
+    existingItem.quantity += quantity;
   } else {
     cart.push({
       id: id,
       name: name,
       price: price,
       imageUrl: imageUrl,
-      quantity: 1
+      quantity: quantity
     });
   }
-  
+
   saveCart(cart);
 }
 
@@ -48,7 +48,7 @@ function removeFromCart(id) {
 function updateQuantity(id, newQuantity) {
   const cart = getCart();
   const item = cart.find(item => item.id === id);
-  
+
   if (item) {
     if (newQuantity <= 0) {
       removeFromCart(id);
@@ -85,7 +85,7 @@ function updateCartDisplay() {
   const cartSummaryContainer = document.getElementById('cart-summary');
   const cartCountBadge = document.getElementById('cart-count');
   const cartSubtotalElement = document.getElementById('cart-subtotal');
-  
+
   // Update cart count badge
   const count = getCartCount();
   if (cartCountBadge) {
@@ -96,7 +96,7 @@ function updateCartDisplay() {
       cartCountBadge.classList.remove('has-items');
     }
   }
-  
+
   // If cart is empty
   if (cart.length === 0) {
     if (cartItemsContainer) cartItemsContainer.innerHTML = '';
@@ -104,20 +104,20 @@ function updateCartDisplay() {
     if (cartSummaryContainer) cartSummaryContainer.style.display = 'none';
     return;
   }
-  
+
   // Hide empty message, show summary
   if (cartEmptyContainer) cartEmptyContainer.style.display = 'none';
   if (cartSummaryContainer) cartSummaryContainer.style.display = 'block';
-  
+
   // Render cart items
   if (cartItemsContainer) {
     cartItemsContainer.innerHTML = cart.map(item => `
       <div class="cart-item" data-id="${item.id}">
         <div class="cart-item-image">
-          ${item.imageUrl ? 
-            `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" style="width: 100%; height: 100%; object-fit: cover;">` : 
-            `<div style="width: 100%; height: 100%; background: var(--color-grey-light); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--color-grey);">No Image</div>`
-          }
+          ${item.imageUrl ?
+        `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" style="width: 100%; height: 100%; object-fit: cover;">` :
+        `<div style="width: 100%; height: 100%; background: var(--color-grey-light); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--color-grey);">No Image</div>`
+      }
         </div>
         <div class="cart-item-details">
           <div class="cart-item-title">${escapeHtml(item.name)}</div>
@@ -130,7 +130,7 @@ function updateCartDisplay() {
       </div>
     `).join('');
   }
-  
+
   // Update subtotal
   const total = getCartTotal();
   if (cartSubtotalElement) {

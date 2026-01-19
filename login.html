@@ -1,41 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login - Customise Me UK</title>
   <link rel="stylesheet" href="admin-styles.css">
 </head>
+
 <body>
   <div class="login-container">
     <div class="login-box">
       <h1>Customise Me UK</h1>
       <h2>Admin Portal</h2>
-      
+
       <form id="loginForm">
         <div class="form-group">
           <label for="email">Email Address</label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            required 
-            placeholder="admin@customisemeuk.com"
-            autocomplete="email"
-          >
+          <input type="email" id="email" name="email" required placeholder="admin@customisemeuk.com"
+            autocomplete="email">
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            required 
-            placeholder="Enter your password"
-            autocomplete="current-password"
-            minlength="6"
-          >
+          <input type="password" id="password" name="password" required placeholder="Enter your password"
+            autocomplete="current-password" minlength="6">
         </div>
 
         <button type="submit" class="btn btn-primary" id="loginBtn">
@@ -93,7 +82,7 @@
 
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
@@ -108,18 +97,47 @@
       hideError();
 
       try {
-        // Sign in with Firebase Auth
+        // 1. Sign in with Firebase Auth
         await signInWithEmailAndPassword(auth, email, password);
-        
+        console.log('Firebase login successful');
+
+        // 2. Sign in with Backend API
+        try {
+          const response = await fetch('http://localhost:5000/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            console.log('Backend login successful');
+            // Store backend token
+            localStorage.setItem('authToken', data.data.token);
+            // Also store user info if needed
+            localStorage.setItem('user', JSON.stringify(data.data.user));
+          } else {
+            console.warn('Backend login failed:', data.message);
+            // Optional: Decouple backend login failure if you want to allow Firebase-only access
+            // But for "Sync" to work, we need the token. 
+            // We will proceed but alert the user or log it.
+            // For now, we proceed to dashboard, but Sync features might fail.
+          }
+        } catch (backendError) {
+          console.error('Backend connection error:', backendError);
+        }
+
         // Success - redirect will happen via onAuthStateChanged
-        console.log('Login successful');
-        
+
       } catch (error) {
         console.error('Login error:', error);
-        
+
         // Handle specific Firebase auth errors
         let errorMsg = 'Login failed. Please try again.';
-        
+
         switch (error.code) {
           case 'auth/user-not-found':
             errorMsg = 'No account found with this email address.';
@@ -145,7 +163,7 @@
           default:
             errorMsg = error.message || 'An unexpected error occurred.';
         }
-        
+
         showError(errorMsg);
         setLoading(false);
       }
@@ -175,4 +193,5 @@
     passwordInput.addEventListener('input', hideError);
   </script>
 </body>
+
 </html>

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Shop - Creative Merch UK</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <style>
     .filter-sidebar {
       position: sticky;
@@ -19,17 +20,17 @@
       background: var(--color-grey-light);
       border-radius: 0px;
     }
-    
+
     .filter-section {
       margin-bottom: 2rem;
       padding-bottom: 2rem;
       border-bottom: 1px solid var(--color-grey);
     }
-    
+
     .filter-section:last-child {
       border-bottom: none;
     }
-    
+
     .filter-title {
       font-size: 0.875rem;
       font-weight: 600;
@@ -37,7 +38,7 @@
       letter-spacing: 0.05em;
       margin-bottom: 1rem;
     }
-    
+
     .filter-option {
       display: flex;
       align-items: center;
@@ -46,29 +47,29 @@
       cursor: pointer;
       transition: color 0.2s ease;
     }
-    
+
     .filter-option:hover {
       color: var(--color-black);
     }
-    
+
     .filter-option input[type="checkbox"] {
       width: 18px;
       height: 18px;
       cursor: pointer;
     }
-    
+
     .filter-option label {
       cursor: pointer;
       font-size: 0.875rem;
       flex: 1;
     }
-    
+
     .price-range {
       display: flex;
       gap: 1rem;
       align-items: center;
     }
-    
+
     .price-input {
       flex: 1;
       padding: 0.5rem;
@@ -76,7 +77,7 @@
       border-radius: 0px;
       font-size: 0.875rem;
     }
-    
+
     .products-header {
       display: flex;
       justify-content: space-between;
@@ -85,18 +86,18 @@
       padding-bottom: 1rem;
       border-bottom: 1px solid var(--color-grey-light);
     }
-    
+
     .products-count {
       font-size: 0.875rem;
       color: var(--color-grey-dark);
     }
-    
+
     .sort-dropdown {
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .sort-select {
       padding: 0.5rem 1rem;
       border: 1px solid var(--color-grey);
@@ -105,13 +106,13 @@
       background: var(--color-white);
       cursor: pointer;
     }
-    
+
     .product-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
     }
-    
+
     .clear-filters {
       background: none;
       border: none;
@@ -122,11 +123,11 @@
       padding: 0;
       margin-top: 1rem;
     }
-    
+
     .clear-filters:hover {
       color: var(--color-black);
     }
-    
+
     .mobile-filter-toggle {
       display: none;
       width: 100%;
@@ -152,7 +153,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* Empty State */
@@ -169,7 +172,7 @@
       height: 100%;
       object-fit: cover;
     }
-    
+
     @media (max-width: 991px) {
       .filter-sidebar {
         display: none;
@@ -181,21 +184,21 @@
         z-index: 1000;
         height: calc(100vh - 140px);
       }
-      
+
       .filter-sidebar.show {
         display: block;
       }
-      
+
       .mobile-filter-toggle {
         display: block;
       }
-      
+
       .product-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
       }
     }
-    
+
     @media (max-width: 576px) {
       .product-grid {
         grid-template-columns: 1fr;
@@ -208,28 +211,29 @@
   <!-- SVG Icons -->
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/>
-      <path d="m21 21-4.35-4.35"/>
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
     </symbol>
     <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </symbol>
     <symbol id="icon-shopping-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <path d="M16 10a4 4 0 0 1-8 0"/>
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
     </symbol>
     <symbol id="icon-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      <path
+        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </symbol>
     <symbol id="icon-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="2" y1="12" x2="22" y2="12"/>
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     </symbol>
     <symbol id="icon-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
     </symbol>
   </svg>
 
@@ -258,16 +262,20 @@
         <a class="navbar-brand" href="index.html">
           <img src="icon.png" alt="Creative Merch UK" class="logo-image">
         </a>
-        
+
         <form class="search-bar-form-compact" onsubmit="handleSearch(event)">
-          <svg class="search-icon"><use xlink:href="#icon-search"/></svg>
+          <svg class="search-icon">
+            <use xlink:href="#icon-search" />
+          </svg>
           <input type="search" class="search-input" id="search-input" placeholder="Search products...">
         </form>
-        
+
         <div class="d-flex align-items-center gap-3">
           <div class="dropdown">
             <a href="#" class="nav-icon" data-bs-toggle="dropdown" aria-expanded="false">
-              <svg class="icon"><use xlink:href="#icon-globe"/></svg>
+              <svg class="icon">
+                <use xlink:href="#icon-globe" />
+              </svg>
             </a>
             <ul class="dropdown-menu dropdown-menu-end region-dropdown">
               <li><a class="dropdown-item" href="#"><span class="flag">🇬🇧</span> UNITED KINGDOM</a></li>
@@ -275,13 +283,19 @@
               <li><a class="dropdown-item" href="#"><span class="flag">🇺🇸</span> AMERICA</a></li>
             </ul>
           </div>
-          <a href="#wishlist" class="nav-icon"><svg class="icon"><use xlink:href="#icon-heart"/></svg></a>
+          <a href="#wishlist" class="nav-icon"><svg class="icon">
+              <use xlink:href="#icon-heart" />
+            </svg></a>
           <a href="#cart" class="nav-icon" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
-            <svg class="icon"><use xlink:href="#icon-shopping-bag"/></svg>
+            <svg class="icon">
+              <use xlink:href="#icon-shopping-bag" />
+            </svg>
             <span class="badge-cart" id="cart-count"></span>
           </a>
           <a href="account.html" class="nav-icon nav-icon-text">
-            <svg class="icon"><use xlink:href="#icon-user"/></svg>
+            <svg class="icon">
+              <use xlink:href="#icon-user" />
+            </svg>
             <span class="nav-text">SIGN IN / SIGN UP</span>
           </a>
         </div>
@@ -412,7 +426,9 @@
 
       <!-- Mobile Filter Toggle -->
       <button class="btn btn-outline mobile-filter-toggle" onclick="toggleMobileFilters()">
-        <svg class="icon-sm"><use xlink:href="#icon-filter"/></svg>
+        <svg class="icon-sm">
+          <use xlink:href="#icon-filter" />
+        </svg>
         <span>FILTERS & SORT</span>
       </button>
 
@@ -421,7 +437,7 @@
         <div class="col-lg-3" id="filter-sidebar">
           <div class="filter-sidebar">
             <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem;">FILTERS</h3>
-            
+
             <!-- Category Filter -->
             <div class="filter-section">
               <div class="filter-title">CATEGORY</div>
@@ -496,7 +512,8 @@
       <div class="row">
         <div class="col-md-4 footer-section">
           <h3 class="footer-title">ABOUT US</h3>
-          <p class="text-grey-dark">Creative Merch UK offers premium designs, custom prints, and party essentials crafted with care.</p>
+          <p class="text-grey-dark">Creative Merch UK offers premium designs, custom prints, and party essentials
+            crafted with care.</p>
         </div>
         <div class="col-md-4 footer-section">
           <h3 class="footer-title">QUICK LINKS</h3>
@@ -527,92 +544,76 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/cart.js"></script>
-  
-  <!-- ========================================
-       FIREBASE INTEGRATION - REAL-TIME PRODUCTS
-       ======================================== -->
-  <script type="module">
-    // Import Firebase modules
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getFirestore, collection, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-    // ========================================
-    // FIREBASE CONFIGURATION
-    // ========================================
-    // TODO: Replace with your Firebase config from Firebase Console
-    const firebaseConfig = {
-      apiKey: "AIzaSyA6pLJdRb4V5LUUrHdwSKRne-ZgXJoqqY8",
-      authDomain: "cmuksite.firebaseapp.com",
-      projectId: "cmuksite",
-      storageBucket: "cmuksite.firebasestorage.app",
-      messagingSenderId: "311601861870",
-      appId: "1:311601861870:web:4d3c04c418a789961dcfff"
-    };
+  <script src="js/api-integration.js"></script>
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
+  <script>
     // ========================================
     // GLOBAL VARIABLES
     // ========================================
-    let allProducts = []; // All products from Firebase
-    let displayedProducts = []; // Filtered/sorted products
+    let allProducts = [];
+    let displayedProducts = [];
     let isLoading = true;
 
     // ========================================
-    // LISTEN TO FIREBASE PRODUCTS (REAL-TIME)
+    // INITIALIZATION
     // ========================================
-    const productsContainer = document.getElementById('products-container');
-    const productCountEl = document.getElementById('product-count');
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProducts();
+    });
 
-    // Create query to get products ordered by creation date
-    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-    
-    // Listen to real-time updates
-    onSnapshot(q, (snapshot) => {
-      allProducts = [];
-      
-      snapshot.forEach((doc) => {
-        allProducts.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
+    async function loadProducts() {
+      try {
+        const productCountEl = document.getElementById('product-count');
+        const productsContainer = document.getElementById('products-container');
 
-      isLoading = false;
-      displayedProducts = [...allProducts];
-      
-      // Check URL parameters for initial category filtering
-      const urlParams = new URLSearchParams(window.location.search);
-      const category = urlParams.get('category');
-      if (category) {
-        const catCheckbox = document.getElementById(`cat-${category}`);
-        if (catCheckbox) {
-          catCheckbox.checked = true;
-          document.getElementById('cat-all').checked = false;
-          filterProducts();
+        // Fetch products from API
+        // Fetching a large limit to allow client-side filtering effectively for MVP
+        allProducts = await ProductService.getProducts({ limit: 100 });
+
+        isLoading = false;
+        displayedProducts = [...allProducts];
+
+        // Check URL parameters for initial category filtering
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+
+        if (category) {
+          const catCheckbox = document.getElementById(`cat-${category}`);
+          if (catCheckbox) {
+            catCheckbox.checked = true;
+            document.getElementById('cat-all').checked = false;
+            filterProducts();
+          } else {
+            // If category matches but no checkbox (e.g. subcategory or hidden), 
+            // we could filter manually or just display all.
+            // For now, let's filter the array if possible
+            displayedProducts = allProducts.filter(p => p.category === category);
+            displayProducts(displayedProducts);
+          }
         } else {
           displayProducts(displayedProducts);
         }
-      } else {
-        displayProducts(displayedProducts);
+
+      } catch (error) {
+        console.error('Error loading products:', error);
+        isLoading = false;
+        document.getElementById('products-container').innerHTML = `
+          <div class="empty-products">
+            <p>Failed to load products. Please refresh the page.</p>
+            <button class="btn btn-primary" onclick="location.reload()">Refresh Page</button>
+          </div>
+        `;
       }
-    }, (error) => {
-      console.error('Error fetching products from Firebase:', error);
-      isLoading = false;
-      productsContainer.innerHTML = `
-        <div class="empty-products">
-          <p>Failed to load products. Please refresh the page.</p>
-          <button class="btn btn-primary" onclick="location.reload()">Refresh Page</button>
-        </div>
-      `;
-    });
+    }
 
     // ========================================
     // DISPLAY PRODUCTS FUNCTION
     // ========================================
     function displayProducts(products) {
+      const productsContainer = document.getElementById('products-container');
+      const productCountEl = document.getElementById('product-count');
+
       if (isLoading) {
         productsContainer.innerHTML = `
           <div class="loading-products">
@@ -623,7 +624,7 @@
         return;
       }
 
-      if (products.length === 0) {
+      if (!products || products.length === 0) {
         productsContainer.innerHTML = `
           <div class="empty-products">
             <p>No products found matching your filters.</p>
@@ -632,31 +633,31 @@
         productCountEl.textContent = 'No products found';
         return;
       }
-      
+
       productsContainer.innerHTML = products.map(product => `
-        <div class="product-card" data-product-id="${product.id}">
-          <a href="product.html?id=${product.id}">
+        <div class="product-card" data-product-id="${product._id}">
+          <a href="product.html?id=${product._id}">
             <div class="product-image">
-              ${product.imageUrl ? 
-                `<img src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name)}" loading="lazy">` : 
-                `<span>Product Image</span>`
-              }
+              ${product.imageUrl ?
+          `<img src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name)}" loading="lazy">` :
+          `<span>Product Image</span>`
+        }
             </div>
           </a>
           <div class="product-info">
             <h3 class="product-title">
-              <a href="product.html?id=${product.id}" style="text-decoration: none; color: inherit;">
+              <a href="product.html?id=${product._id}" style="text-decoration: none; color: inherit;">
                 ${escapeHtml(product.name)}
               </a>
             </h3>
             <p class="product-price">£${product.price.toFixed(2)}</p>
-            <button class="btn btn-primary w-100" onclick="addToCartFromFirebase('${product.id}', '${escapeHtml(product.name)}', ${product.price})">
+            <button class="btn btn-primary w-100" onclick="addToCart('${product._id}', '${escapeHtml(product.name)}', ${product.price}, '${escapeHtml(product.imageUrl || '')}')">
               ADD TO CART
             </button>
           </div>
         </div>
       `).join('');
-      
+
       updateProductCount(products.length, allProducts.length);
     }
 
@@ -664,15 +665,16 @@
     // UPDATE PRODUCT COUNT
     // ========================================
     function updateProductCount(shown, total) {
+      const productCountEl = document.getElementById('product-count');
       productCountEl.textContent = `Showing ${shown} of ${total} product${total !== 1 ? 's' : ''}`;
     }
 
     // ========================================
     // FILTER PRODUCTS
     // ========================================
-    window.filterProducts = function() {
+    window.filterProducts = function () {
       let filtered = [...allProducts];
-      
+
       // Category filter
       const allChecked = document.getElementById('cat-all').checked;
       if (!allChecked) {
@@ -681,17 +683,17 @@
         if (document.getElementById('cat-stickers').checked) categories.push('stickers');
         if (document.getElementById('cat-party-decor').checked) categories.push('party-decor');
         if (document.getElementById('cat-accessories').checked) categories.push('accessories');
-        
+
         if (categories.length > 0) {
           filtered = filtered.filter(p => categories.includes(p.category));
         }
       }
-      
+
       // Price filter
       const minPrice = parseFloat(document.getElementById('price-min').value) || 0;
       const maxPrice = parseFloat(document.getElementById('price-max').value) || Infinity;
       filtered = filtered.filter(p => p.price >= minPrice && p.price <= maxPrice);
-      
+
       displayedProducts = filtered;
       sortProducts();
     };
@@ -699,11 +701,11 @@
     // ========================================
     // SORT PRODUCTS
     // ========================================
-    window.sortProducts = function() {
+    window.sortProducts = function () {
       const sortValue = document.getElementById('sort-select').value;
       let sorted = [...displayedProducts];
-      
-      switch(sortValue) {
+
+      switch (sortValue) {
         case 'price-low':
           sorted.sort((a, b) => a.price - b.price);
           break;
@@ -718,8 +720,8 @@
           break;
         case 'newest':
           sorted.sort((a, b) => {
-            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
-            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+            const dateA = new Date(a.createdAt || 0);
+            const dateB = new Date(b.createdAt || 0);
             return dateB - dateA;
           });
           break;
@@ -727,27 +729,27 @@
           // Featured - keep original order
           break;
       }
-      
+
       displayProducts(sorted);
     };
 
     // ========================================
     // CLEAR FILTERS
     // ========================================
-    window.clearFilters = function() {
+    window.clearFilters = function () {
       // Reset all checkboxes
       document.querySelectorAll('.filter-option input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
       });
       document.getElementById('cat-all').checked = true;
-      
+
       // Reset price inputs
       document.getElementById('price-min').value = '';
       document.getElementById('price-max').value = '';
-      
+
       // Reset sort
       document.getElementById('sort-select').value = 'featured';
-      
+
       // Reload all products
       displayedProducts = [...allProducts];
       displayProducts(displayedProducts);
@@ -756,101 +758,84 @@
     // ========================================
     // SEARCH PRODUCTS
     // ========================================
-    window.handleSearch = function(event) {
+    window.handleSearch = function (event) {
       event.preventDefault();
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
-      
+
       if (searchTerm.trim() === '') {
         displayedProducts = [...allProducts];
       } else {
-        displayedProducts = allProducts.filter(p => 
+        displayedProducts = allProducts.filter(p =>
           p.name.toLowerCase().includes(searchTerm) ||
           p.category.toLowerCase().includes(searchTerm) ||
           (p.description && p.description.toLowerCase().includes(searchTerm))
         );
       }
-      
+
       displayProducts(displayedProducts);
     };
 
-    // ========================================
-    // ADD TO CART (FIREBASE VERSION)
-    // ========================================
-    window.addToCartFromFirebase = function(id, name, price) {
-      // Use existing cart.js function if available
-      if (typeof addToCart === 'function') {
-        addToCart(id, name, price);
-      } else {
-        // Fallback: Simple localStorage cart
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const existingItem = cart.find(item => item.id === id);
-        
-        if (existingItem) {
-          existingItem.quantity += 1;
-        } else {
-          cart.push({ id, name, price, quantity: 1 });
-        }
-        
-        localStorage.setItem('cart', JSON.stringify(cart));
-        
-        // Update cart display if function exists
-        if (typeof updateCartDisplay === 'function') {
-          updateCartDisplay();
-        }
-      }
-      
-      // Show feedback
-      alert(`${name} added to cart!`);
-    };
-
-    // ========================================
-    // MOBILE FILTER TOGGLE
-    // ========================================
-    window.toggleMobileFilters = function() {
-      document.getElementById('filter-sidebar').classList.toggle('show');
-    };
-
-    // ========================================
-    // HELPER FUNCTIONS
-    // ========================================
+    // Helper function to escape HTML
     function escapeHtml(text) {
       if (!text) return '';
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
     }
+  </script>
+  // Show feedback
+  alert(`${name} added to cart!`);
+  };
 
-    // ========================================
-    // CATEGORY CHECKBOX HANDLERS
-    // ========================================
-    document.getElementById('cat-all').addEventListener('change', function() {
-      if (this.checked) {
-        ['cat-apparel', 'cat-stickers', 'cat-party-decor', 'cat-accessories'].forEach(id => {
-          const checkbox = document.getElementById(id);
-          if (checkbox) checkbox.checked = false;
-        });
-      }
-    });
+  // ========================================
+  // MOBILE FILTER TOGGLE
+  // ========================================
+  window.toggleMobileFilters = function() {
+  document.getElementById('filter-sidebar').classList.toggle('show');
+  };
 
-    ['cat-apparel', 'cat-stickers', 'cat-party-decor', 'cat-accessories'].forEach(id => {
-      const checkbox = document.getElementById(id);
-      if (checkbox) {
-        checkbox.addEventListener('change', function() {
-          if (this.checked) {
-            document.getElementById('cat-all').checked = false;
-          }
-        });
-      }
-    });
+  // ========================================
+  // HELPER FUNCTIONS
+  // ========================================
+  function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+  }
 
-    // ========================================
-    // INITIALIZE CART DISPLAY
-    // ========================================
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof updateCartDisplay === 'function') {
-        updateCartDisplay();
-      }
-    });
+  // ========================================
+  // CATEGORY CHECKBOX HANDLERS
+  // ========================================
+  document.getElementById('cat-all').addEventListener('change', function() {
+  if (this.checked) {
+  ['cat-apparel', 'cat-stickers', 'cat-party-decor', 'cat-accessories'].forEach(id => {
+  const checkbox = document.getElementById(id);
+  if (checkbox) checkbox.checked = false;
+  });
+  }
+  });
+
+  ['cat-apparel', 'cat-stickers', 'cat-party-decor', 'cat-accessories'].forEach(id => {
+  const checkbox = document.getElementById(id);
+  if (checkbox) {
+  checkbox.addEventListener('change', function() {
+  if (this.checked) {
+  document.getElementById('cat-all').checked = false;
+  }
+  });
+  }
+  });
+
+  // ========================================
+  // INITIALIZE CART DISPLAY
+  // ========================================
+  document.addEventListener('DOMContentLoaded', () => {
+  if (typeof updateCartDisplay === 'function') {
+  updateCartDisplay();
+  }
+  });
   </script>
 </body>
+
 </html>

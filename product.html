@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Product Details - Creative Merch UK</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <style>
     .product-detail-section {
       padding: 2rem 0;
@@ -144,7 +145,7 @@
       background: transparent;
     }
 
-    .breadcrumb-item + .breadcrumb-item::before {
+    .breadcrumb-item+.breadcrumb-item::before {
       content: "→";
       padding-right: 0.5rem;
     }
@@ -177,7 +178,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .error-state {
@@ -191,34 +194,35 @@
   <!-- SVG Icons -->
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/>
-      <path d="m21 21-4.35-4.35"/>
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
     </symbol>
     <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </symbol>
     <symbol id="icon-shopping-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <path d="M16 10a4 4 0 0 1-8 0"/>
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
     </symbol>
     <symbol id="icon-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      <path
+        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </symbol>
     <symbol id="icon-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="2" y1="12" x2="22" y2="12"/>
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     </symbol>
     <symbol id="icon-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="1" y="3" width="15" height="13"/>
-      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
-      <circle cx="5.5" cy="18.5" r="2.5"/>
-      <circle cx="18.5" cy="18.5" r="2.5"/>
+      <rect x="1" y="3" width="15" height="13" />
+      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+      <circle cx="5.5" cy="18.5" r="2.5" />
+      <circle cx="18.5" cy="18.5" r="2.5" />
     </symbol>
     <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
     </symbol>
   </svg>
 
@@ -243,16 +247,20 @@
         <a class="navbar-brand" href="index.html">
           <img src="icon.png" alt="Creative Merch UK" class="logo-image">
         </a>
-        
+
         <form class="search-bar-form-compact">
-          <svg class="search-icon"><use xlink:href="#icon-search"/></svg>
+          <svg class="search-icon">
+            <use xlink:href="#icon-search" />
+          </svg>
           <input type="search" class="search-input" placeholder="Search products...">
         </form>
-        
+
         <div class="d-flex align-items-center gap-3">
           <div class="dropdown">
             <a href="#" class="nav-icon" data-bs-toggle="dropdown" aria-expanded="false">
-              <svg class="icon"><use xlink:href="#icon-globe"/></svg>
+              <svg class="icon">
+                <use xlink:href="#icon-globe" />
+              </svg>
             </a>
             <ul class="dropdown-menu dropdown-menu-end region-dropdown">
               <li><a class="dropdown-item" href="#"><span class="flag">🇬🇧</span> UNITED KINGDOM</a></li>
@@ -260,13 +268,19 @@
               <li><a class="dropdown-item" href="#"><span class="flag">🇺🇸</span> AMERICA</a></li>
             </ul>
           </div>
-          <a href="#wishlist" class="nav-icon"><svg class="icon"><use xlink:href="#icon-heart"/></svg></a>
+          <a href="#wishlist" class="nav-icon"><svg class="icon">
+              <use xlink:href="#icon-heart" />
+            </svg></a>
           <a href="#cart" class="nav-icon" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
-            <svg class="icon"><use xlink:href="#icon-shopping-bag"/></svg>
+            <svg class="icon">
+              <use xlink:href="#icon-shopping-bag" />
+            </svg>
             <span class="badge-cart" id="cart-count"></span>
           </a>
           <a href="account.html" class="nav-icon nav-icon-text">
-            <svg class="icon"><use xlink:href="#icon-user"/></svg>
+            <svg class="icon">
+              <use xlink:href="#icon-user" />
+            </svg>
             <span class="nav-text">SIGN IN / SIGN UP</span>
           </a>
         </div>
@@ -404,11 +418,11 @@
         <div class="col-md-6">
           <div class="product-details-box">
             <span class="product-category-badge" id="product-category">CATEGORY</span>
-            
+
             <h1 class="product-title-main" id="product-name">Product Name</h1>
-            
+
             <div class="product-price-main" id="product-price">£0.00</div>
-            
+
             <div class="product-description-full" id="product-description">
               Loading description...
             </div>
@@ -436,14 +450,18 @@
             <!-- Product Meta -->
             <div class="product-meta">
               <div class="product-meta-item">
-                <svg class="product-meta-icon"><use xlink:href="#icon-truck"/></svg>
+                <svg class="product-meta-icon">
+                  <use xlink:href="#icon-truck" />
+                </svg>
                 <div>
                   <strong>Free UK Shipping</strong>
                   <p class="mb-0 text-grey-dark" style="font-size: 0.875rem;">On orders over £50</p>
                 </div>
               </div>
               <div class="product-meta-item">
-                <svg class="product-meta-icon"><use xlink:href="#icon-shield"/></svg>
+                <svg class="product-meta-icon">
+                  <use xlink:href="#icon-shield" />
+                </svg>
                 <div>
                   <strong>Quality Guarantee</strong>
                   <p class="mb-0 text-grey-dark" style="font-size: 0.875rem;">Premium materials & craftsmanship</p>
@@ -467,29 +485,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/cart.js"></script>
-  
-  <!-- ========================================
-       FIREBASE INTEGRATION - PRODUCT DETAILS
-       ======================================== -->
-  <script type="module">
-    // Import Firebase modules
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-    // Firebase configuration (same as shop.html)
-    const firebaseConfig = {
-      apiKey: "AIzaSyA6pLJdRb4V5LUUrHdwSKRne-ZgXJoqqY8",
-      authDomain: "cmuksite.firebaseapp.com",
-      projectId: "cmuksite",
-      storageBucket: "cmuksite.firebasestorage.app",
-      messagingSenderId: "311601861870",
-      appId: "1:311601861870:web:4d3c04c418a789961dcfff"
-    };
+  <script src="js/api-integration.js"></script>
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
+  <script>
     let currentProduct = null;
     let currentQuantity = 1;
 
@@ -497,23 +496,26 @@
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
 
-    if (!productId) {
-      showError();
-    } else {
-      loadProduct(productId);
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize cart display
+      if (typeof updateCartDisplay === 'function') {
+        updateCartDisplay();
+      }
 
-    // Load product from Firebase
+      if (!productId) {
+        showError();
+      } else {
+        loadProduct(productId);
+      }
+    });
+
+    // Load product from API
     async function loadProduct(id) {
       try {
-        const productRef = doc(db, 'products', id);
-        const productSnap = await getDoc(productRef);
+        const product = await ProductService.getProduct(id);
 
-        if (productSnap.exists()) {
-          currentProduct = {
-            id: productSnap.id,
-            ...productSnap.data()
-          };
+        if (product) {
+          currentProduct = product;
           displayProduct(currentProduct);
         } else {
           showError();
@@ -527,77 +529,94 @@
     // Display product details
     function displayProduct(product) {
       // Hide loading, show content
-      document.getElementById('loading-state').style.display = 'none';
-      document.getElementById('product-content').style.display = 'block';
+      const loadingState = document.getElementById('loading-state');
+      const productContent = document.getElementById('product-content');
+
+      if (loadingState) loadingState.style.display = 'none';
+      if (productContent) productContent.style.display = 'block';
 
       // Update page title
       document.title = `${product.name} - Creative Merch UK`;
 
       // Category badge & breadcrumb
-      const categoryDisplay = product.category.toUpperCase().replace('-', ' ');
-      document.getElementById('product-category').textContent = categoryDisplay;
-      document.getElementById('breadcrumb-category').textContent = categoryDisplay;
-      document.getElementById('breadcrumb-category').href = `shop.html?category=${product.category}`;
-      document.getElementById('breadcrumb-product').textContent = product.name;
+      const categoryDisplay = (product.category || '').toUpperCase().replace('-', ' ');
+      const categoryEl = document.getElementById('product-category');
+      const breadcrumbCat = document.getElementById('breadcrumb-category');
+      const breadcrumbProd = document.getElementById('breadcrumb-product');
 
-      // Product name
-      document.getElementById('product-name').textContent = product.name;
+      if (categoryEl) categoryEl.textContent = categoryDisplay;
+      if (breadcrumbCat) {
+        breadcrumbCat.textContent = categoryDisplay;
+        breadcrumbCat.href = `shop.html?category=${product.category}`;
+      }
+      if (breadcrumbProd) breadcrumbProd.textContent = product.name;
 
-      // Product price
-      document.getElementById('product-price').textContent = `£${product.price.toFixed(2)}`;
+      // Product info
+      const nameEl = document.getElementById('product-name');
+      const priceEl = document.getElementById('product-price');
+      const descEl = document.getElementById('product-description');
 
-      // Product description
-      document.getElementById('product-description').textContent = product.description;
+      if (nameEl) nameEl.textContent = product.name;
+      if (priceEl) priceEl.textContent = `£${product.price ? product.price.toFixed(2) : '0.00'}`;
+      if (descEl) descEl.textContent = product.description;
 
       // Product image
       const imageContainer = document.getElementById('main-image-container');
-      if (product.imageUrl) {
-        imageContainer.innerHTML = `<img src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name)}" loading="eager">`;
-      } else {
-        imageContainer.innerHTML = `<span class="text-grey">No image available</span>`;
+      if (imageContainer) {
+        if (product.imageUrl) {
+          imageContainer.innerHTML = `<img src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name)}" loading="eager">`;
+        } else {
+          imageContainer.innerHTML = `<span class="text-grey">No image available</span>`;
+        }
       }
     }
 
     // Show error state
     function showError() {
-      document.getElementById('loading-state').style.display = 'none';
-      document.getElementById('error-state').style.display = 'block';
+      const loadingState = document.getElementById('loading-state');
+      const errorState = document.getElementById('error-state');
+
+      if (loadingState) loadingState.style.display = 'none';
+      if (errorState) errorState.style.display = 'block';
     }
 
     // Change quantity
-    window.changeQuantity = function(delta) {
+    window.changeQuantity = function (delta) {
       const quantityInput = document.getElementById('quantity');
       let newQuantity = currentQuantity + delta;
-      
+
       if (newQuantity < 1) newQuantity = 1;
-      
+
       currentQuantity = newQuantity;
-      quantityInput.value = newQuantity;
+      if (quantityInput) quantityInput.value = newQuantity;
     };
 
     // Add to cart
-    window.addProductToCart = function() {
+    window.addProductToCart = function () {
       if (!currentProduct) return;
 
-      // Use cart.js functions
-      for (let i = 0; i < currentQuantity; i++) {
-        addToCart(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.imageUrl);
-      }
+      // Use addToCart from cart.js
+      addToCart(currentProduct._id || currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.imageUrl, currentQuantity);
 
       // Show success feedback
       const btn = document.getElementById('add-to-cart-btn');
-      const originalText = btn.textContent;
-      btn.textContent = '✓ ADDED TO CART';
-      btn.style.background = '#059669';
+      if (btn) {
+        const originalText = btn.textContent;
+        btn.textContent = '✓ ADDED TO CART';
+        btn.style.background = '#059669';
 
-      setTimeout(() => {
-        btn.textContent = originalText;
-        btn.style.background = '';
-      }, 2000);
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '';
+        }, 2000);
+      }
 
       // Show cart offcanvas
-      const cartOffcanvas = new bootstrap.Offcanvas(document.getElementById('cartOffcanvas'));
-      cartOffcanvas.show();
+      const cartEl = document.getElementById('cartOffcanvas');
+      if (cartEl && window.bootstrap) {
+        const cartOffcanvas = new bootstrap.Offcanvas(cartEl);
+        cartOffcanvas.show();
+      }
     };
 
     // Helper function to escape HTML
@@ -607,13 +626,7 @@
       div.textContent = text;
       return div.innerHTML;
     }
-
-    // Initialize cart display
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof updateCartDisplay === 'function') {
-        updateCartDisplay();
-      }
-    });
   </script>
 </body>
+
 </html>
