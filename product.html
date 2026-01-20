@@ -673,6 +673,31 @@
           imageContainer.innerHTML = `<span class="text-grey">No image available</span>`;
         }
       }
+      // Stock Check
+      const btn = document.getElementById('add-to-cart-btn');
+      if (product.stock !== undefined && product.stock <= 0) {
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'OUT OF STOCK';
+          btn.style.backgroundColor = '#9CA3AF';
+          btn.style.borderColor = '#9CA3AF';
+          btn.style.cursor = 'not-allowed';
+        }
+      } else if (product.stock && product.stock < 10) {
+        // Low stock warning
+        const priceEl = document.getElementById('product-price');
+        if (priceEl && !document.getElementById('low-stock-warning')) {
+          const warning = document.createElement('div');
+          warning.id = 'low-stock-warning';
+          warning.style.color = '#DC2626';
+          warning.style.fontSize = '0.8rem';
+          warning.style.fontWeight = '600';
+          warning.style.marginTop = '0.5rem';
+          warning.textContent = `Only ${product.stock} left in stock!`;
+          priceEl.after(warning);
+        }
+      }
+
     }
 
     // Show error state

@@ -5,17 +5,15 @@
   <title>Checkout - Creative Merch UK</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
   <!-- Stripe.js -->
   <script src="https://js.stripe.com/v3/"></script>
 </head>
 
 <body>
-  <!-- SVG Icons -->
+  <!-- Icons (copied from other pages) -->
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="11" cy="11" r="8" />
@@ -30,303 +28,122 @@
       <line x1="3" y1="6" x2="21" y2="6" />
       <path d="M16 10a4 4 0 0 1-8 0" />
     </symbol>
-    <symbol id="icon-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path
-        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </symbol>
-    <symbol id="icon-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="2" y1="12" x2="22" y2="12" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </symbol>
   </svg>
 
-  <!-- Announcement Banner -->
-  <div class="announcement-banner">
-    <div class="announcement-content">
-      <span class="announcement-item">FREE DELIVERY OVER £100</span>
-      <span class="announcement-item">CONTACT US</span>
-      <span class="announcement-item">INFO@CUSTOMISEMEUK.COM</span>
-      <span class="announcement-item">07588770901</span>
-      <span class="announcement-item">FREE DELIVERY OVER £100</span>
-      <span class="announcement-item">CONTACT US</span>
-      <span class="announcement-item">INFO@CUSTOMISEMEUK.COM</span>
-      <span class="announcement-item">07588770901</span>
-    </div>
-  </div>
-
-  <!-- Top Bar -->
-  <div class="top-bar">
+  <!-- Navbar (Simplified for checkout) -->
+  <div class="top-bar" style="position: sticky;">
     <div class="container">
-      <div class="top-bar-content">
+      <div class="d-flex justify-content-between align-items-center">
         <a class="navbar-brand" href="index.html">
           <img src="icon.png" alt="Creative Merch UK" class="logo-image">
         </a>
-
-        <form class="search-bar-form-compact">
-          <svg class="search-icon">
-            <use xlink:href="#icon-search" />
-          </svg>
-          <input type="search" class="search-input" placeholder="Search products...">
-        </form>
-
         <div class="d-flex align-items-center gap-3">
-          <div class="dropdown">
-            <a href="#" class="nav-icon" data-bs-toggle="dropdown" aria-expanded="false">
-              <svg class="icon">
-                <use xlink:href="#icon-globe" />
-              </svg>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end region-dropdown">
-              <li><a class="dropdown-item" href="#"><span class="flag">🇬🇧</span> UNITED KINGDOM</a></li>
-              <li><a class="dropdown-item" href="#"><span class="flag">🇪🇺</span> EUROPE</a></li>
-              <li><a class="dropdown-item" href="#"><span class="flag">🇺🇸</span> AMERICA</a></li>
-            </ul>
-          </div>
-          <a href="#wishlist" class="nav-icon"><svg class="icon">
-              <use xlink:href="#icon-heart" />
-            </svg></a>
-          <a href="#cart" class="nav-icon" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
-            <svg class="icon">
-              <use xlink:href="#icon-shopping-bag" />
-            </svg>
-            <span class="badge-cart" id="cart-count"></span>
-          </a>
-          <a href="account.html" class="nav-icon nav-icon-text">
-            <svg class="icon">
-              <use xlink:href="#icon-user" />
-            </svg>
-            <span class="nav-text">SIGN IN / SIGN UP</span>
-          </a>
+          <span style="font-size: 0.8rem; color: var(--color-grey-dark);"><i class="fas fa-lock"></i> SECURE
+            CHECKOUT</span>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Shopping Cart Offcanvas -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title">YOUR CART</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-      <div id="cart-items"></div>
-      <div id="cart-empty" class="text-center">
-        <p class="text-grey">Your cart is empty</p>
-      </div>
-      <div id="cart-summary" style="display: none;">
-        <div class="d-flex justify-content-between mb-3 pt-3" style="border-top: 1px solid var(--color-grey-light);">
-          <strong>SUBTOTAL:</strong>
-          <strong id="cart-subtotal">£0.00</strong>
-        </div>
-        <button class="btn btn-primary w-100" onclick="window.location.href='checkout.html'">CHECKOUT</button>
-        <button class="btn btn-secondary w-100 mt-2" data-bs-dismiss="offcanvas">CONTINUE SHOPPING</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Navigation -->
-  <nav class="navbar navbar-expand-lg main-nav">
-    <div class="container">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item dropdown mega-menu">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">SHOP</a>
-            <div class="dropdown-menu mega-dropdown">
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-3">
-                    <h6 class="mega-title">CATEGORIES</h6>
-                    <a class="dropdown-item" href="shop.html">ALL PRODUCTS</a>
-                    <a class="dropdown-item" href="shop.html?category=apparel">APPAREL</a>
-                    <a class="dropdown-item" href="shop.html?category=stickers">STICKERS & LABELS</a>
-                    <a class="dropdown-item" href="shop.html?category=party-decor">PARTY DECOR</a>
-                    <a class="dropdown-item" href="shop.html?category=accessories">ACCESSORIES</a>
-                  </div>
-                  <div class="col-md-3">
-                    <h6 class="mega-title">APPAREL</h6>
-                    <a class="dropdown-item" href="#">T-Shirts</a>
-                    <a class="dropdown-item" href="#">Hoodies</a>
-                    <a class="dropdown-item" href="#">Hats</a>
-                    <a class="dropdown-item" href="#">Bags</a>
-                  </div>
-                  <div class="col-md-3">
-                    <h6 class="mega-title">PARTY ESSENTIALS</h6>
-                    <a class="dropdown-item" href="#">Banners</a>
-                    <a class="dropdown-item" href="#">Balloons</a>
-                    <a class="dropdown-item" href="#">Table Decor</a>
-                    <a class="dropdown-item" href="#">Party Packs</a>
-                  </div>
-                  <div class="col-md-3">
-                    <h6 class="mega-title">STICKERS & LABELS</h6>
-                    <a class="dropdown-item" href="#">Vinyl Stickers</a>
-                    <a class="dropdown-item" href="#">Custom Labels</a>
-                    <a class="dropdown-item" href="#">Wall Decals</a>
-                    <a class="dropdown-item" href="#">Sticker Packs</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="nav-item dropdown mega-menu">
-            <a class="nav-link dropdown-toggle" href="designstudio.html" role="button" data-bs-toggle="dropdown">DESIGN
-              STUDIO</a>
-            <div class="dropdown-menu mega-dropdown">
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-6">
-                    <h6 class="mega-title">SERVICES</h6>
-                    <a class="dropdown-item" href="designservice.html">Custom Design</a>
-                  </div>
-                  <div class="col-md-6">
-                    <h6 class="mega-title">RESOURCES</h6>
-                    <a class="dropdown-item" href="designstudio.html#resources">Design Templates</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="nav-item dropdown mega-menu">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">PREMIUM SERVICES</a>
-            <div class="dropdown-menu mega-dropdown">
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-4">
-                    <h6 class="mega-title">SERVICES</h6>
-                    <a class="dropdown-item" href="senditems.html">Send Items In</a>
-                    <a class="dropdown-item" href="subscriptions.html">Subscriptions</a>
-                  </div>
-                  <div class="col-md-4">
-                    <h6 class="mega-title">INSTALLATION</h6>
-                    <a class="dropdown-item" href="installation.html">Vinyl Installation</a>
-                  </div>
-                  <div class="col-md-4">
-                    <h6 class="mega-title">WORKSHOPS</h6>
-                    <a class="dropdown-item" href="contact.html?service=workshop">Group Iron on Workshop</a>
-                    <a class="dropdown-item" href="contact.html?service=workshop">Individual Iron on Experience</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
 
   <!-- Checkout Section -->
-  <section class="section">
+  <section class="section py-5">
     <div class="container">
-      <h1 class="text-center mb-5">SECURE CHECKOUT</h1>
-
       <div class="row g-5">
         <!-- Checkout Form -->
         <div class="col-lg-7">
           <form id="checkout-form">
-            <!-- Contact Information -->
-            <div class="mb-4">
-              <h3 class="mb-3">Contact Information</h3>
+            <!-- Contact -->
+            <div class="mb-5">
+              <h3 class="mb-3">1. Contact Information</h3>
               <div class="mb-3">
-                <label for="email" class="form-label">Email *</label>
-                <input type="email" class="form-control" id="email" required>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="newsletter">
-                <label class="form-check-label" for="newsletter">
-                  Email me with news and offers
-                </label>
+                <label for="email" class="form-label">Email Address *</label>
+                <input type="email" class="form-control rounded-0" id="email" required>
               </div>
             </div>
 
-            <!-- Shipping Address -->
-            <div class="mb-4">
-              <h3 class="mb-3">Shipping Address</h3>
+            <!-- Shipping -->
+            <div class="mb-5">
+              <h3 class="mb-3">2. Shipping Address</h3>
               <div class="row g-3">
                 <div class="col-12">
-                  <label for="name" class="form-label">Full Name *</label>
-                  <input type="text" class="form-control" id="name" required>
+                  <label class="form-label">Full Name *</label>
+                  <input type="text" class="form-control rounded-0" id="name" required>
                 </div>
                 <div class="col-12">
-                  <label for="address" class="form-label">Address *</label>
-                  <input type="text" class="form-control" id="address" required>
+                  <label class="form-label">Address *</label>
+                  <input type="text" class="form-control rounded-0" id="address" placeholder="Street address" required>
                 </div>
                 <div class="col-12">
-                  <label for="apartment" class="form-label">Apartment, suite, etc. (optional)</label>
-                  <input type="text" class="form-control" id="apartment">
+                  <input type="text" class="form-control rounded-0" id="apartment"
+                    placeholder="Apartment, suite, etc. (optional)">
                 </div>
                 <div class="col-md-6">
-                  <label for="city" class="form-label">City *</label>
-                  <input type="text" class="form-control" id="city" required>
+                  <label class="form-label">City *</label>
+                  <input type="text" class="form-control rounded-0" id="city" required>
                 </div>
                 <div class="col-md-6">
-                  <label for="postcode" class="form-label">Postcode *</label>
-                  <input type="text" class="form-control" id="postcode" required>
+                  <label class="form-label">Postcode *</label>
+                  <input type="text" class="form-control rounded-0" id="postcode" required>
                 </div>
                 <div class="col-12">
-                  <label for="phone" class="form-label">Phone *</label>
-                  <input type="tel" class="form-control" id="phone" required>
+                  <label class="form-label">Phone (for delivery updates) *</label>
+                  <input type="tel" class="form-control rounded-0" id="phone" required>
                 </div>
               </div>
             </div>
 
             <!-- Payment -->
             <div class="mb-4">
-              <h3 class="mb-3">Payment</h3>
-              <div class="p-3 mb-3" style="background: var(--color-grey-light);">
-                <p class="mb-0"><strong>Secure Payment</strong></p>
-                <p class="text-grey-dark mb-0" style="font-size: 0.875rem;">All transactions are secure and encrypted
-                  with Stripe.</p>
+              <h3 class="mb-3">3. Payment</h3>
+              <div class="p-3 mb-3 border rounded-0 bg-light">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                      d="M8 1a2 2 0 0 1 2 2v2H6V3a2 2 0 0 1 2-2zm3 4V3a3 3 0 1 0-6 0v2H3.36a1.5 1.5 0 0 0-1.483 1.277L.85 13.13A2.5 2.5 0 0 0 3.322 16h9.355a2.5 2.5 0 0 0 2.473-2.87l-1.028-6.853A1.5 1.5 0 0 0 12.64 5H11zm-1 1v1.5a.5.5 0 0 0 1 0V6h1.639a.5.5 0 0 1 .494.426l1.028 6.851A1.5 1.5 0 0 1 12.678 15H3.322a1.5 1.5 0 0 1-1.483-1.723l1.028-6.851A.5.5 0 0 1 3.36 6H5v1.5a.5.5 0 1 0 1 0V6h4z" />
+                  </svg>
+                  <strong>All transactions are secure and encrypted.</strong>
+                </div>
               </div>
 
-              <!-- Stripe Payment Element -->
-              <div id="payment-element" class="mb-3"></div>
+              <!-- Stripe Element -->
+              <div id="payment-element" class="mb-4" style="min-height: 200px;">
+                <!-- Stripe mounts here -->
+              </div>
 
-              <!-- Error messages -->
-              <div id="payment-message" class="alert alert-danger" style="display: none;"></div>
+              <div id="payment-message" class="alert alert-danger rounded-0" style="display: none;"></div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg w-100" id="submit-button">
-              <span id="button-text">Complete Order</span>
-              <div id="spinner" class="spinner-border spinner-border-sm" style="display: none;" role="status">
-                <span class="visually-hidden">Processing...</span>
+            <button type="submit" class="btn btn-primary btn-lg w-100 py-3" id="submit-button">
+              <span id="button-text">PAY NOW</span>
+              <div id="spinner" class="spinner-border spinner-border-sm ms-2" style="display: none;" role="status">
               </div>
             </button>
+
+            <p class="text-center mt-3 text-muted small">
+              By placing this order, you agree to our Terms of Service and Privacy Policy.
+            </p>
           </form>
         </div>
 
         <!-- Order Summary -->
         <div class="col-lg-5">
-          <div class="p-4" style="background: var(--color-grey-light); position: sticky; top: 120px;">
-            <h3 class="mb-4">Order Summary</h3>
-
-            <div id="checkout-items" class="mb-4"></div>
-
-            <div class="mb-3 pb-3" style="border-bottom: 1px solid var(--color-grey);">
-              <div class="d-flex justify-content-between mb-2">
-                <span>Subtotal</span>
-                <span id="checkout-subtotal">£0.00</span>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span>Shipping</span>
-                <span id="checkout-shipping">£4.99</span>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span>Tax (VAT 20%)</span>
-                <span id="checkout-tax">£0.00</span>
-              </div>
+          <div class="checkout-summary-sticky">
+            <h4 class="mb-4">Order Summary</h4>
+            <div id="checkout-items" class="mb-4">
+              <!-- Items injected here -->
             </div>
 
-            <div class="d-flex justify-content-between mb-4">
-              <strong style="font-size: 1.25rem;">Total</strong>
-              <strong style="font-size: 1.25rem;" id="checkout-total">£0.00</strong>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Subtotal</span>
+              <strong id="summary-subtotal">£0.00</strong>
             </div>
-
-            <div class="p-3" style="background: var(--color-white);">
-              <p class="mb-2" style="font-size: 0.875rem;"><strong>✓</strong> Free shipping on orders over £50</p>
-              <p class="mb-0" style="font-size: 0.875rem;"><strong>✓</strong> Secure checkout with Stripe</p>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Shipping</span>
+              <strong id="summary-shipping">Calculated at next step</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-4 pt-2 border-top">
+              <span class="h5 mb-0">Total</span>
+              <span class="h5 mb-0" id="summary-total">£0.00</span>
             </div>
           </div>
         </div>
@@ -334,251 +151,190 @@
     </div>
   </section>
 
-  <footer>
-    <div class="container">
-      <div class="text-center">
-        <p class="text-grey-dark">© 2026 Customise Me UK. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/cart.js"></script>
+  <!-- Load API Logic (Module) -->
   <script type="module" src="js/api-integration.js"></script>
+  <script src="js/cart.js"></script>
 
-  <script>
-    const API_URL = 'http://localhost:5000/api';
-    const STRIPE_PUBLIC_KEY = 'pk_test_your_stripe_key'; // Replace with your Stripe public key
+  <script type="module">
+    // Main Checkout Logic
 
     let stripe;
     let elements;
-    let clientSecret;
+    let paymentIntentId;
+    let currentOrderId;
 
-    async function initializeCheckout() {
+    async function init() {
+      // 1. Check Cart
       const cart = getCart();
-
-      if (cart.length === 0) {
+      if (!cart || cart.length === 0) {
         window.location.href = 'shop.html';
         return;
       }
 
-      // Display order summary
-      displayCheckoutSummary();
+      renderOrderSummary(cart);
 
-      // Get authentication token
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        alert('Please sign in to complete your purchase');
-        localStorage.setItem('redirectAfterLogin', 'checkout.html');
-        window.location.href = 'account.html';
-        return;
-      }
-
-      // Prepare order data
-      const shippingAddress = {
-        name: '',
-        email: document.getElementById('email').value || '',
-        phone: '',
-        street: '',
-        apartment: '',
-        city: '',
-        postcode: ''
-      };
-
-      const items = cart.map(item => ({
-        productId: item.id,
-        quantity: item.quantity,
-        customization: item.customization || {}
-      }));
-
-      try {
-        // Create payment intent
-        const response = await fetch(`${API_URL}/payments/create-payment-intent`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ items, shippingAddress })
-        });
-
-        const data = await response.json();
-
-        if (!data.success) {
-          throw new Error(data.message || 'Failed to initialize payment');
+      // 2. Auth Check (optional, can be guest)
+      // We will proceed as Guest or User. 
+      // If user is logged in, prefill data.
+      setTimeout(() => {
+        const user = window.AuthService?.getCurrentUser_Sync();
+        if (user) {
+          document.getElementById('email').value = user.email || '';
+          // If we had a profile doc, we'd prefill address too
         }
+      }, 1000); // Give api-integration time to init auth listener if needed
 
-        clientSecret = data.data.clientSecret;
-        const orderId = data.data.orderId;
+      // 3. Initialize Stripe
+      // We need to fetch the PaymentIntent client secret FIRST.
+      // However, Stripe recommends creating PI when the user is ready to pay or on page load if amount is known.
+      // We know the amount from the cart. server will validate.
 
-        // Store order ID for confirmation
-        sessionStorage.setItem('pendingOrderId', orderId);
-
-        // Initialize Stripe
-        stripe = Stripe(STRIPE_PUBLIC_KEY);
-        elements = stripe.elements({ clientSecret });
-
-        // Create and mount payment element
-        const paymentElement = elements.create('payment');
-        paymentElement.mount('#payment-element');
-
-      } catch (error) {
-        console.error('Checkout initialization error:', error);
-        showMessage('Failed to initialize checkout. Please try again.');
-      }
+      // We will Create Payment Intent immediately to mount the Element
+      await createPaymentSession(cart);
     }
 
-    function displayCheckoutSummary() {
-      const cart = getCart();
-      const itemsContainer = document.getElementById('checkout-items');
-      const subtotalEl = document.getElementById('checkout-subtotal');
-      const shippingEl = document.getElementById('checkout-shipping');
-      const taxEl = document.getElementById('checkout-tax');
-      const totalEl = document.getElementById('checkout-total');
-
-      // Display items
-      itemsContainer.innerHTML = cart.map(item => `
-        <div class="d-flex justify-content-between mb-3">
-          <div>
-            <p class="mb-0"><strong>${item.name}</strong></p>
-            <p class="text-grey-dark mb-0" style="font-size: 0.875rem;">
-              Qty: ${item.quantity} × £${item.price.toFixed(2)}
-              ${item.customization?.size ? `<br>Size: ${item.customization.size}` : ''}
-              ${item.customization?.color ? `<br>Color: ${item.customization.color}` : ''}
-            </p>
-          </div>
-          <p class="mb-0">£${(item.price * item.quantity).toFixed(2)}</p>
-        </div>
-      `).join('');
-
-      // Calculate totals
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const shipping = subtotal >= 50 ? 0 : 4.99;
-      const tax = (subtotal + shipping) * 0.20; // 20% VAT
-      const total = subtotal + shipping + tax;
-
-      subtotalEl.textContent = '£' + subtotal.toFixed(2);
-      shippingEl.textContent = shipping === 0 ? 'FREE' : '£' + shipping.toFixed(2);
-      taxEl.textContent = '£' + tax.toFixed(2);
-      totalEl.textContent = '£' + total.toFixed(2);
-    }
-
-    // Handle form submission
-    document.getElementById('checkout-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      if (!stripe || !elements) {
+    async function createPaymentSession(cart) {
+      if (!window.CheckoutService) {
+        console.warn("CheckoutService not ready yet, retrying...");
+        setTimeout(() => createPaymentSession(cart), 500);
         return;
       }
 
       setLoading(true);
 
-      // Get form data
-      const shippingAddress = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        street: document.getElementById('address').value,
-        apartment: document.getElementById('apartment').value,
-        city: document.getElementById('city').value,
-        postcode: document.getElementById('postcode').value
-      };
+      const items = cart.map(item => ({
+        productId: item.productId, // Ensure this matches what we stored in addToCart
+        quantity: item.quantity,
+        customization: item.customization || {}
+      }));
+
+      // Initial intent creation - we might update it later if address changes tax/shipping?
+      // For MVP, we assume standard shipping until final confirm, 
+      // OR we just send a placeholder address or 'GB' 
 
       try {
-        // Confirm payment with Stripe
-        const { error, paymentIntent } = await stripe.confirmPayment({
-          elements,
-          confirmParams: {
-            return_url: `${window.location.origin}/order-confirmation.html`,
-            payment_method_data: {
-              billing_details: {
-                name: shippingAddress.name,
-                email: shippingAddress.email,
-                phone: shippingAddress.phone,
-                address: {
-                  line1: shippingAddress.street,
-                  line2: shippingAddress.apartment,
-                  city: shippingAddress.city,
-                  postal_code: shippingAddress.postcode,
-                  country: 'GB'
-                }
-              }
-            }
-          },
-          redirect: 'if_required'
+        const result = await window.CheckoutService.createPaymentIntent({
+          items: items,
+          email: document.getElementById('email').value || 'guest@example.com', // Placeholder if empty
+          shippingAddress: { name: 'Guest', city: 'London', street: 'TBD', postcode: 'TBD', apartment: '' } // Placeholder for initial calc
         });
 
-        if (error) {
-          showMessage(error.message);
-          setLoading(false);
-        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-          // Payment successful, confirm with backend
-          const orderId = sessionStorage.getItem('pendingOrderId');
-          const token = localStorage.getItem('authToken');
+        if (!result) throw new Error("Failed to create payment session");
 
-          const response = await fetch(`${API_URL}/payments/confirm-payment`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              orderId: orderId,
-              paymentIntentId: paymentIntent.id
-            })
-          });
+        const { clientSecret, orderId, amounts } = result;
+        currentOrderId = orderId;
 
-          const data = await response.json();
+        // Update Summary with server-side calcs
+        document.getElementById('summary-subtotal').textContent = `£${amounts.subtotal.toFixed(2)}`;
+        document.getElementById('summary-shipping').textContent = amounts.shipping === 0 ? 'FREE' : `£${amounts.shipping.toFixed(2)}`;
+        document.getElementById('summary-total').textContent = `£${amounts.total.toFixed(2)}`;
 
-          if (data.success) {
-            // Clear cart
-            clearCart();
+        // Init Stripe
+        stripe = await window.initializeStripe();
+        elements = stripe.elements({
+          clientSecret,
+          appearance: { theme: 'stripe', variables: { colorPrimary: '#000000' } }
+        });
 
-            // Redirect to confirmation page
-            window.location.href = `order-confirmation.html?order=${data.data.orderNumber}`;
-          } else {
-            showMessage('Payment processed but order confirmation failed. Please contact support.');
-            setLoading(false);
-          }
-        }
+        const paymentElement = elements.create('payment', { layout: 'tabs' });
+        paymentElement.mount('#payment-element');
+
+        setLoading(false);
+
       } catch (error) {
-        console.error('Payment error:', error);
-        showMessage('An error occurred. Please try again.');
+        console.error(error);
+        showMessage(error.message || "Could not initialize checkout.");
         setLoading(false);
       }
+    }
+
+    function renderOrderSummary(cart) {
+      const container = document.getElementById('checkout-items');
+      let subtotal = 0;
+
+      container.innerHTML = cart.map(item => {
+        subtotal += item.price * item.quantity;
+        return `
+            <div class="d-flex gap-3 mb-3">
+               <div style="width: 60px; height: 60px; background: #f5f5f5; flex-shrink: 0;">
+                  ${item.imageUrl ? `<img src="${item.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : ''}
+               </div>
+               <div class="flex-grow-1">
+                  <div class="small fw-bold">${item.name}</div>
+                  <div class="text-muted" style="font-size: 0.75rem;">Qty: ${item.quantity}</div>
+               </div>
+               <div class="fw-bold">£${(item.price * item.quantity).toFixed(2)}</div>
+            </div>
+            `;
+      }).join('');
+
+      document.getElementById('summary-subtotal').textContent = `£${subtotal.toFixed(2)}`;
+      // Total not final until server response
+    }
+
+    // Form Submit
+    document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!stripe || !elements) return;
+
+      setLoading(true);
+
+      const shippingData = {
+        name: document.getElementById('name').value,
+        address: {
+          line1: document.getElementById('address').value,
+          line2: document.getElementById('apartment').value,
+          city: document.getElementById('city').value,
+          postal_code: document.getElementById('postcode').value,
+          country: 'GB'
+        }
+      };
+
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/order-confirmation.html?order=${currentOrderId}`, // We'll verify this ID on the page
+          payment_method_data: {
+            billing_details: {
+              name: shippingData.name,
+              email: document.getElementById('email').value,
+              phone: document.getElementById('phone').value,
+              address: shippingData.address
+            }
+          }
+        }
+      });
+
+      if (error) {
+        showMessage(error.message);
+        setLoading(false);
+      }
+      // If success, stripe redirects automatically
     });
 
-    function showMessage(message) {
-      const messageDiv = document.getElementById('payment-message');
-      messageDiv.textContent = message;
-      messageDiv.style.display = 'block';
-
-      setTimeout(() => {
-        messageDiv.style.display = 'none';
-      }, 5000);
+    function showMessage(msg) {
+      const el = document.getElementById('payment-message');
+      el.textContent = msg;
+      el.style.display = 'block';
     }
 
     function setLoading(isLoading) {
-      const submitButton = document.getElementById('submit-button');
-      const buttonText = document.getElementById('button-text');
+      const btn = document.getElementById('submit-button');
+      const text = document.getElementById('button-text');
       const spinner = document.getElementById('spinner');
 
-      if (isLoading) {
-        submitButton.disabled = true;
-        buttonText.style.display = 'none';
-        spinner.style.display = 'inline-block';
-      } else {
-        submitButton.disabled = false;
-        buttonText.style.display = 'inline';
-        spinner.style.display = 'none';
-      }
+      btn.disabled = isLoading;
+      text.style.display = isLoading ? 'none' : 'inline';
+      spinner.style.display = isLoading ? 'inline-block' : 'none';
     }
 
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      initializeCheckout();
-      updateCartDisplay();
-    });
+    // Start
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
   </script>
 </body>
 

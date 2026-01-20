@@ -13,12 +13,13 @@ function getCart() {
 function saveCart(cart) {
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartDisplay();
+  // Dispatch event for other listeners
+  window.dispatchEvent(new Event('cartUpdated'));
 }
 
 // Generate simple hash for customization object
 function getCustomizationHash(customization) {
   if (!customization || Object.keys(customization).length === 0) return '';
-  // simple stable stringify sort of
   return JSON.stringify(customization).split('').reduce((a, b) => {
     a = ((a << 5) - a) + b.charCodeAt(0);
     return a & a;
@@ -51,6 +52,13 @@ function addToCart(productId, name, price, imageUrl = '', quantity = 1, customiz
   }
 
   saveCart(cart);
+
+  // Show Offcanvas (optional interaction polish)
+  const offcanvasEl = document.getElementById('cartOffcanvas');
+  if (offcanvasEl && window.bootstrap) {
+    const bsOffcanvas = window.bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
+    bsOffcanvas.show();
+  }
 }
 
 // Remove item from cart
@@ -69,6 +77,9 @@ function updateQuantity(cartItemId, newQuantity) {
     if (newQuantity <= 0) {
       removeFromCart(cartItemId);
     } else {
+      // Basic client-side max stock limit (could be improved with real stock check)
+      if (newQuantity > 99) return;
+
       item.quantity = newQuantity;
       saveCart(cart);
     }
@@ -131,19 +142,26 @@ function updateCartDisplay() {
       <div class="cart-item" data-id="${item.id}">
         <div class="cart-item-image">
           ${item.imageUrl ?
-        `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" style="width: 100%; height: 100%; object-fit: cover;">` :
-        `<div style="width: 100%; height: 100%; background: var(--color-grey-light); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--color-grey);">No Image</div>`
+        `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}">` :
+        `<div class="placeholder-img">No Image</div>`
       }
         </div>
         <div class="cart-item-details">
           <div class="cart-item-title">${escapeHtml(item.name)}</div>
-          <div class="cart-item-price">£${item.price.toFixed(2)} × ${item.quantity}</div>
-          <div class="cart-item-total" style="font-weight: 600; margin-top: 0.25rem;">£${(item.price * item.quantity).toFixed(2)}</div>
-          ${item.customization && item.customization.size ? `<div style="font-size: 0.7rem; color: #666;">Size: ${item.customization.size}, Color: ${item.customization.color}</div>` : ''}
+          <div class="cart-item-customization">
+             ${item.customization && item.customization.size ? `Size: ${item.customization.size}` : ''}
+             ${item.customization && item.customization.color ? ` | Color: ${item.customization.color}` : ''}
+          </div>
+          <div class="cart-item-controls">
+             <div class="quantity-selector-sm">
+                <button type="button" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">−</button>
+                <span>${item.quantity}</span>
+                <button type="button" onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+             </div>
+             <div class="cart-item-price">£${(item.price * item.quantity).toFixed(2)}</div>
+          </div>
         </div>
-        <button class="cart-item-remove" onclick="removeFromCart('${item.id}')" aria-label="Remove ${escapeHtml(item.name)} from cart">
-          ×
-        </button>
+        <button class="cart-item-remove" onclick="removeFromCart('${item.id}')" aria-label="Remove item">×</button>
       </div>
     `).join('');
   }
@@ -153,6 +171,12 @@ function updateCartDisplay() {
   if (cartSubtotalElement) {
     cartSubtotalElement.textContent = `£${total.toFixed(2)}`;
   }
+}
+
+// Helper quantity wrapper calling global function
+window.changeCartItemQuantity = function (id, delta) {
+  // Determine current qty? 
+  // Easier to just use updateQuantity with absolute value above.
 }
 
 // Helper function to escape HTML
