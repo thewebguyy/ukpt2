@@ -385,17 +385,28 @@
       const guestView = document.getElementById('guest-view');
       const dashboardView = document.getElementById('dashboard-view');
 
-      setTimeout(() => { // Simulate auth check delay or wait for Firebase
-        const user = window.AuthService.getUser();
-        loading.style.display = 'none';
+      const checkAuth = setInterval(() => {
+        if (window.AuthService) {
+          clearInterval(checkAuth);
+          const user = window.AuthService.getCurrentUser_Sync(); // Use sync version for fast check
 
-        if (user) {
-          dashboardView.style.display = 'block';
-          updateDashboard(user);
-        } else {
-          guestView.style.display = 'block';
+          // Also listen for async state changes
+          window.AuthService.initAuthListener((user) => {
+            loading.style.display = 'none';
+            if (user) {
+              guestView.style.display = 'none';
+              dashboardView.style.display = 'block';
+              updateDashboard(user);
+            } else {
+              dashboardView.style.display = 'none';
+              guestView.style.display = 'block';
+            }
+          });
         }
-      }, 500);
+      }, 100);
+
+      // Fallback timeout
+      setTimeout(() => clearInterval(checkAuth), 5000);
     });
 
     function updateDashboard(user) {

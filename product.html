@@ -244,14 +244,16 @@
     </div>
   </div>
 
-  <!-- Top Bar -->
+  <!-- Top Bar: Logo, Search, Region, Icons -->
   <div class="top-bar">
     <div class="container">
       <div class="top-bar-content">
+        <!-- Logo -->
         <a class="navbar-brand" href="index.html">
           <img src="icon.png" alt="Creative Merch UK" class="logo-image">
         </a>
 
+        <!-- Search Bar -->
         <form class="search-bar-form-compact">
           <svg class="search-icon">
             <use xlink:href="#icon-search" />
@@ -259,7 +261,9 @@
           <input type="search" class="search-input" placeholder="Search products...">
         </form>
 
+        <!-- Right Icons -->
         <div class="d-flex align-items-center gap-3">
+          <!-- Region Selector -->
           <div class="dropdown">
             <a href="#" class="nav-icon" data-bs-toggle="dropdown" aria-expanded="false">
               <svg class="icon">
@@ -272,15 +276,20 @@
               <li><a class="dropdown-item" href="#"><span class="flag">🇺🇸</span> AMERICA</a></li>
             </ul>
           </div>
-          <a href="#wishlist" class="nav-icon"><svg class="icon">
+
+          <a href="#wishlist" class="nav-icon">
+            <svg class="icon">
               <use xlink:href="#icon-heart" />
-            </svg></a>
+            </svg>
+          </a>
           <a href="#cart" class="nav-icon" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
             <svg class="icon">
               <use xlink:href="#icon-shopping-bag" />
             </svg>
             <span class="badge-cart" id="cart-count"></span>
           </a>
+
+          <!-- Sign In / Sign Up -->
           <a href="account.html" class="nav-icon nav-icon-text">
             <svg class="icon">
               <use xlink:href="#icon-user" />
@@ -320,10 +329,15 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
         <ul class="navbar-nav">
+          <!-- Shop Mega Menu -->
           <li class="nav-item dropdown mega-menu">
-            <a class="nav-link dropdown-toggle" href="shop.html">SHOP</a>
+            <a class="nav-link dropdown-toggle" href="shop.html" id="shopDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              SHOP
+            </a>
             <div class="dropdown-menu mega-dropdown">
               <div class="container">
                 <div class="row">
@@ -335,29 +349,64 @@
                     <a class="dropdown-item" href="shop.html?category=party-decor">PARTY DECOR</a>
                     <a class="dropdown-item" href="shop.html?category=accessories">ACCESSORIES</a>
                   </div>
+                  <div class="col-md-3">
+                    <h6 class="mega-title">APPAREL</h6>
+                    <a class="dropdown-item" href="shop.html?category=apparel">T-Shirts</a>
+                    <a class="dropdown-item" href="shop.html?category=apparel">Hoodies</a>
+                    <a class="dropdown-item" href="shop.html?category=apparel">Hats</a>
+                    <a class="dropdown-item" href="shop.html?category=apparel">Bags</a>
+                  </div>
+                  <div class="col-md-3">
+                    <h6 class="mega-title">PARTY ESSENTIALS</h6>
+                    <a class="dropdown-item" href="shop.html?category=party-decor">Banners</a>
+                    <a class="dropdown-item" href="shop.html?category=party-decor">Balloons</a>
+                    <a class="dropdown-item" href="shop.html?category=party-decor">Table Decor</a>
+                    <a class="dropdown-item" href="shop.html?category=party-decor">Party Packs</a>
+                  </div>
+                  <div class="col-md-3">
+                    <h6 class="mega-title">STICKERS & LABELS</h6>
+                    <a class="dropdown-item" href="shop.html?category=stickers">Vinyl Stickers</a>
+                    <a class="dropdown-item" href="shop.html?category=stickers">Custom Labels</a>
+                    <a class="dropdown-item" href="shop.html?category=stickers">Wall Decals</a>
+                    <a class="dropdown-item" href="shop.html?category=stickers">Sticker Packs</a>
+                  </div>
                 </div>
               </div>
             </div>
           </li>
+
+          <!-- Design Studio Mega Menu -->
           <li class="nav-item dropdown mega-menu">
-            <a class="nav-link dropdown-toggle" href="designstudio.html">DESIGN STUDIO</a>
+            <a class="nav-link dropdown-toggle" href="designstudio.html" id="studioDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              DESIGN STUDIO
+            </a>
             <div class="dropdown-menu mega-dropdown">
               <div class="container">
                 <div class="row">
                   <div class="col-md-6">
                     <h6 class="mega-title">SERVICES</h6>
                     <a class="dropdown-item" href="designservice.html">Custom Design</a>
+                    <a class="dropdown-item" href="designstudio.html#logo-design">Logo Design</a>
+                    <a class="dropdown-item" href="designstudio.html#mockup">Mockup Generation</a>
                   </div>
                   <div class="col-md-6">
                     <h6 class="mega-title">RESOURCES</h6>
                     <a class="dropdown-item" href="designstudio.html#resources">Design Templates</a>
+                    <a class="dropdown-item" href="designstudio.html#resources">Style Guide</a>
+                    <a class="dropdown-item" href="designstudio.html#resources">FAQs</a>
                   </div>
                 </div>
               </div>
             </div>
           </li>
+
+          <!-- Premium Services Mega Menu -->
           <li class="nav-item dropdown mega-menu">
-            <a class="nav-link dropdown-toggle" href="premiumservices.html">PREMIUM SERVICES</a>
+            <a class="nav-link dropdown-toggle" href="premiumservices.html" id="servicesDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              PREMIUM SERVICES
+            </a>
             <div class="dropdown-menu mega-dropdown">
               <div class="container">
                 <div class="row">
@@ -369,11 +418,12 @@
                   <div class="col-md-4">
                     <h6 class="mega-title">INSTALLATION</h6>
                     <a class="dropdown-item" href="installation.html">Vinyl Installation</a>
+                    <a class="dropdown-item" href="premiumservices.html#event-setup">Event Setup</a>
                   </div>
                   <div class="col-md-4">
                     <h6 class="mega-title">WORKSHOPS</h6>
-                    <a class="dropdown-item" href="contact.html?service=workshop">Group Iron on Workshop</a>
-                    <a class="dropdown-item" href="contact.html?service=workshop">Individual Iron on Experience</a>
+                    <a class="dropdown-item" href="contact.html?service=workshop">Group Iron On Workshop</a>
+                    <a class="dropdown-item" href="contact.html?service=workshop">Individual Iron On Experience</a>
                   </div>
                 </div>
               </div>
@@ -600,16 +650,36 @@
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       // Initialize cart display
       if (typeof updateCartDisplay === 'function') {
         updateCartDisplay();
       }
 
-      if (!productId) {
-        showError();
+      // Wait for ProductService to be available (it's in a module)
+      if (!window.ProductService) {
+        console.log('Waiting for ProductService...');
+        let checkCount = 0;
+        const checkService = setInterval(() => {
+          checkCount++;
+          if (window.ProductService) {
+            clearInterval(checkService);
+            proceed();
+          } else if (checkCount > 50) { // 5 seconds timeout
+            clearInterval(checkService);
+            showError();
+          }
+        }, 100);
       } else {
-        loadProduct(productId);
+        proceed();
+      }
+
+      function proceed() {
+        if (!productId) {
+          showError();
+        } else {
+          loadProduct(productId);
+        }
       }
     });
 

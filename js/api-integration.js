@@ -271,5 +271,6 @@ window.AuthService = AuthService;
 window.ProductService = ProductService;
 window.CheckoutService = CheckoutService;
 window.initializeStripe = initializeStripe;
+window.db = db; // Export db for index.html hero loading
 
 console.log('API Integration (Firebase + Functions) Loaded');

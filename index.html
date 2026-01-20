@@ -353,11 +353,23 @@
             Work with our design team to create something truly unique. From concept to execution, we bring your vision
             to life with professional-grade results.
           </p>
-          <ul class="design-features">
-            <li>Bespoke design consultation</li>
-            <li>Professional mockups & proofs</li>
-            <li>Unlimited revisions</li>
-            <li>Fast turnaround times</li>
+          <ul class="design-features" style="list-style: none; padding: 0; margin-bottom: 2rem;">
+            <li style="padding: 0.75rem 0; padding-left: 1.5rem; position: relative; color: white;">
+              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
+              Bespoke design consultation
+            </li>
+            <li style="padding: 0.75rem 0; padding-left: 1.5rem; position: relative; color: white;">
+              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
+              Professional mockups & proofs
+            </li>
+            <li style="padding: 0.75rem 0; padding-left: 1.5rem; position: relative; color: white;">
+              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
+              Unlimited revisions
+            </li>
+            <li style="padding: 0.75rem 0; padding-left: 1.5rem; position: relative; color: white;">
+              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
+              Fast turnaround times
+            </li>
           </ul>
           <div class="d-flex gap-3">
             <a href="designstudio.html" class="btn btn-outline"
@@ -367,8 +379,9 @@
           </div>
         </div>
         <div class="col-lg-6">
-          <div class="studio-visual">
-            <span class="studio-label">DESIGN STUDIO</span>
+          <div class="studio-visual-image">
+            <img src="design_studio_hero_1768940675194.png" alt="Design Studio" class="img-fluid"
+              style="width: 100%; height: auto; border-radius: 0px;">
           </div>
         </div>
       </div>
@@ -381,10 +394,10 @@
       <h2 class="section-title">PREMIUM SERVICES</h2>
       <p class="section-subtitle">Professional services tailored to your needs</p>
 
-      <div class="row g-4">
+      <div class="row g-4 flex-nowrap overflow-auto pb-4" style="scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Send Items In -->
-        <div class="col-md-4">
-          <div class="service-card">
+        <div class="col-10 col-md-4">
+          <div class="service-card h-100">
             <div class="service-icon">
               <svg>
                 <use xlink:href="#icon-scissors" />
@@ -393,13 +406,13 @@
             <h3 class="service-title">SEND ITEMS IN</h3>
             <p class="service-description">Transform your personal items with professional customization. Send us your
               pieces and we'll create something unique.</p>
-            <ul class="text-start mb-3">
+            <ul class="text-start mb-3" style="font-size: 0.85rem;">
               <li>Expert customization</li>
               <li>Full insurance coverage</li>
               <li>10-14 day turnaround</li>
               <li>Quality guarantee</li>
             </ul>
-            <a href="senditems.html" class="btn btn-outline">
+            <a href="senditems.html" class="btn btn-outline mt-auto">
               <span>LEARN MORE</span>
               <svg class="icon-sm">
                 <use xlink:href="#icon-scissors" />
@@ -409,8 +422,8 @@
         </div>
 
         <!-- Installation Services -->
-        <div class="col-md-4" id="installation">
-          <div class="service-card">
+        <div class="col-10 col-md-4" id="installation">
+          <div class="service-card h-100">
             <div class="service-icon">
               <svg>
                 <use xlink:href="#icon-tool" />
@@ -419,13 +432,13 @@
             <h3 class="service-title">INSTALLATION SERVICES</h3>
             <p class="service-description">Professional installation for wall vinyls, party setups, and large-scale
               projects across the UK.</p>
-            <ul class="text-start mb-3">
-              <li>Vinyl installation for windows, walls and backdrops</li>
+            <ul class="text-start mb-3" style="font-size: 0.85rem;">
+              <li>Vinyl installation for windows & walls</li>
               <li>Expert installation team</li>
               <li>Perfect results guaranteed</li>
               <li>Event setup available</li>
             </ul>
-            <a href="installation.html" class="btn btn-outline">
+            <a href="installation.html" class="btn btn-outline mt-auto">
               <span>REQUEST QUOTE</span>
               <svg class="icon-sm">
                 <use xlink:href="#icon-tool" />
@@ -435,8 +448,8 @@
         </div>
 
         <!-- Creative Workshops -->
-        <div class="col-md-4" id="workshops">
-          <div class="service-card">
+        <div class="col-10 col-md-4" id="workshops">
+          <div class="service-card h-100">
             <div class="service-icon">
               <svg>
                 <use xlink:href="#icon-users" />
@@ -445,13 +458,13 @@
             <h3 class="service-title">CREATIVE WORKSHOPS</h3>
             <p class="service-description">Join our hands-on workshops to learn design techniques, DIY party decor, and
               custom printing skills.</p>
-            <ul class="text-start mb-3">
+            <ul class="text-start mb-3" style="font-size: 0.85rem;">
               <li>Group Iron on Workshop</li>
               <li>Individual Iron on Experience</li>
               <li>All materials included</li>
               <li>Take home your creations</li>
             </ul>
-            <a href="contact.html?service=workshop" class="btn btn-outline">
+            <a href="contact.html?service=workshop" class="btn btn-outline mt-auto">
               <span>BOOK WORKSHOP</span>
               <svg class="icon-sm">
                 <use xlink:href="#icon-users" />
@@ -511,17 +524,15 @@
     </div>
   </section>
 
-  <!-- Clients Banner Removed (Placeholder) -->
-
   <!-- Reviews Section -->
   <section class="reviews-section">
     <div class="container">
       <h2 class="section-title">WHAT OUR CLIENTS SAY</h2>
       <p class="section-subtitle">Real feedback from satisfied customers</p>
 
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="review-card">
+      <div class="row g-4 flex-nowrap overflow-auto pb-4" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <div class="col-10 col-md-4">
+          <div class="review-card h-100">
             <div class="review-stars">★★★★★</div>
             <p class="review-text">"Absolutely brilliant service! The custom designs exceeded our expectations and the
               quality is outstanding. Will definitely be ordering again."</p>
@@ -529,8 +540,8 @@
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="review-card">
+        <div class="col-10 col-md-4">
+          <div class="review-card h-100">
             <div class="review-stars">★★★★★</div>
             <p class="review-text">"Perfect for our company event! The team was professional, responsive, and delivered
               exactly what we needed on time. Highly recommend!"</p>
@@ -538,8 +549,8 @@
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="review-card">
+        <div class="col-10 col-md-4">
+          <div class="review-card h-100">
             <div class="review-stars">★★★★★</div>
             <p class="review-text">"The quality of the prints and materials is exceptional. Creative Merch UK has become
               our go-to for all custom merchandise needs."</p>
@@ -721,8 +732,48 @@
       }
     }
 
+    // Dynamic Hero Loading
+    async function loadHeroSection() {
+      if (!window.db) return; // Wait for Firebase
+
+      try {
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const docRef = doc(window.db, 'settings', 'homepage');
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.images && data.images.length > 0) {
+            const carousel = document.querySelector('.hero-carousel');
+            carousel.innerHTML = data.images.map((url, i) => `
+              <div class="hero-slide ${i === 0 ? 'active' : ''}">
+                <img src="${url}" alt="Hero Image ${i + 1}">
+              </div>
+            `).join('');
+
+            // Re-initialize carousel variables
+            const slides = document.querySelectorAll('.hero-slide');
+            if (slides.length > 0) {
+              // Reset index
+              currentSlideIndex = 0;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading hero settings:', error);
+      }
+    }
+
     // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Wait for Firebase to be ready (it's in api-integration.js module)
+      const checkFirebase = setInterval(() => {
+        if (window.db) {
+          clearInterval(checkFirebase);
+          loadHeroSection();
+        }
+      }, 100);
+
       showSlide(currentSlideIndex);
       startAutoSlide();
       loadFeaturedProducts();
