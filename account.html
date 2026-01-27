@@ -339,54 +339,50 @@
   <!-- GUEST VIEW -->
   <section id="guest-view" class="section" style="display: none;">
     <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-10">
-          <div class="row g-4">
-            <!-- Sign In -->
-            <div class="col-lg-6">
-              <div class="p-4" style="background: var(--color-grey-light); border-radius: 0px; height: 100%;">
-                <h3 class="mb-4">Sign In</h3>
-                <form id="signin-form" onsubmit="handleSignIn(event)">
-                  <div class="mb-3">
-                    <label for="signin-email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="signin-email" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="signin-password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="signin-password" required>
-                  </div>
-                  <button type="submit" class="btn btn-primary w-100 mb-3" id="signin-btn">Sign In</button>
-                </form>
-                <div class="text-center">OR</div>
-                <button type="button" class="btn btn-outline w-100 mt-3" onclick="handleGoogleSignIn()">Sign in with
-                  Google</button>
+      <div class="row g-5">
+        <!-- Sign In (Left) -->
+        <div class="col-lg-6">
+          <div class="p-5" style="background: var(--color-grey-light); height: 100%;">
+            <h3 class="mb-4">Sign In</h3>
+            <form id="signin-form" onsubmit="handleSignIn(event)">
+              <div class="mb-3">
+                <label for="signin-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="signin-email" required>
               </div>
-            </div>
-            <!-- Create Account -->
-            <div class="col-lg-6">
-              <div class="p-4"
-                style="background: var(--color-white); border: 1px solid var(--color-grey-light); height: 100%;">
-                <h3 class="mb-4">Create Account</h3>
-                <form id="signup-form" onsubmit="handleCreateAccount(event)">
-                  <div class="mb-3">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="signup-name" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control" id="signup-email" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-control" id="signup-password" required minlength="8">
-                  </div>
-                  <button type="submit" class="btn btn-primary w-100 mb-3">Create Account</button>
-                </form>
-                <div class="text-center">OR</div>
-                <button type="button" class="btn btn-outline w-100 mt-3" onclick="handleGoogleSignIn()">Sign up with
-                  Google</button>
+              <div class="mb-3">
+                <label for="signin-password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="signin-password" required>
               </div>
-            </div>
+              <button type="submit" class="btn btn-primary w-100 mb-3" id="signin-btn">Sign In</button>
+            </form>
+            <div class="text-center">OR</div>
+            <button type="button" class="btn btn-outline w-100 mt-3" onclick="handleGoogleSignIn()">Sign in with
+              Google</button>
+          </div>
+        </div>
+        <!-- Create Account (Right) -->
+        <div class="col-lg-6">
+          <div class="p-5"
+            style="background: var(--color-white); border: 1px solid var(--color-grey-light); height: 100%;">
+            <h3 class="mb-4">Create Account</h3>
+            <form id="signup-form" onsubmit="handleCreateAccount(event)">
+              <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="signup-name" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="signup-email" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="signup-password" required minlength="8">
+              </div>
+              <button type="submit" class="btn btn-primary w-100 mb-3">Create Account</button>
+            </form>
+            <div class="text-center">OR</div>
+            <button type="button" class="btn btn-outline w-100 mt-3" onclick="handleGoogleSignIn()">Sign up with
+              Google</button>
           </div>
         </div>
       </div>
