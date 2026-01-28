@@ -5,8 +5,12 @@
     </div>
     <div class="offcanvas-body">
         <div id="cart-items"></div>
-        <div id="cart-empty" class="text-center">
-            <p class="text-grey">Your cart is empty</p>
+        <div id="cart-empty" class="text-center py-5">
+            <svg class="icon-lg text-grey mb-3" style="width: 64px; height: 64px;">
+                <use xlink:href="#icon-shopping-bag" />
+            </svg>
+            <p class="text-grey-dark mb-4">Your cart is currently empty.</p>
+            <a href="shop.html" class="btn btn-primary">START SHOPPING</a>
         </div>
         <div id="cart-summary" style="display: none;">
             <div class="d-flex justify-content-between mb-3 pt-3"
