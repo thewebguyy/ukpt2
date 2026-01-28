@@ -90,9 +90,10 @@
   <!-- GUEST VIEW -->
   <section id="guest-view" class="section" style="display: none;">
     <div class="container">
-      <div class="row g-4">
+      <!-- ROW 1: Sign In & Create Account -->
+      <div class="row g-4 mb-4">
         <!-- TOP LEFT: Sign In -->
-        <div class="col-lg-6">
+        <div class="col-md-6">
           <div class="p-4" style="background: var(--color-grey-light); height: 100%;">
             <h3 class="mb-4">SIGN IN</h3>
             <form id="signin-form" onsubmit="handleSignIn(event)">
@@ -114,7 +115,7 @@
         </div>
 
         <!-- TOP RIGHT: Create Account -->
-        <div class="col-lg-6">
+        <div class="col-md-6">
           <div class="p-4"
             style="background: var(--color-white); border: 1px solid var(--color-grey-light); height: 100%;">
             <h3 class="mb-4">CREATE ACCOUNT</h3>
@@ -139,9 +140,12 @@
             </form>
           </div>
         </div>
+      </div>
 
+      <!-- ROW 2: Benefits & Help -->
+      <div class="row g-4">
         <!-- BOTTOM LEFT: Benefits -->
-        <div class="col-lg-6">
+        <div class="col-md-6">
           <div class="p-4"
             style="background: var(--color-white); border: 1px solid var(--color-grey-light); height: 100%;">
             <h3 class="mb-4">WHY CREATE AN ACCOUNT?</h3>
@@ -171,7 +175,7 @@
         </div>
 
         <!-- BOTTOM RIGHT: Need Help? -->
-        <div class="col-lg-6">
+        <div class="col-md-6">
           <div class="p-4" style="background: var(--color-grey-light); height: 100%;">
             <h3 class="mb-4">NEED HELP?</h3>
             <p class="mb-3">Having trouble signing in or creating an account?</p>
