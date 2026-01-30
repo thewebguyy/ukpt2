@@ -15,6 +15,100 @@
     .dashboard-container {
       padding: 3rem 0;
       min-height: 60vh;
+      background-color: #f8f9fa;
+    }
+
+    /* DASHBOARD LAYOUT FIX */
+    /* Ensure proper grid layout */
+    .dashboard-container .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -1rem;
+    }
+
+    .dashboard-container .col-lg-3,
+    .dashboard-container .col-lg-9 {
+      padding: 0 1rem;
+    }
+
+    /* Sidebar styling */
+    .dashboard-container .col-lg-3 {
+      flex: 0 0 25%;
+      max-width: 25%;
+    }
+
+    /* Content area styling */
+    .dashboard-container .col-lg-9 {
+      flex: 0 0 75%;
+      max-width: 75%;
+    }
+
+    /* Sidebar card */
+    .dashboard-container .col-lg-3 .card {
+      position: sticky;
+      top: 180px;
+      /* Accounts for fixed header */
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    /* List group items */
+    .list-group-item {
+      border: none !important;
+      border-bottom: 1px solid #f0f0f0 !important;
+      transition: all 0.2s ease;
+    }
+
+    .list-group-item:last-child {
+      border-bottom: none !important;
+    }
+
+    .list-group-item.active {
+      background-color: #000 !important;
+      color: white !important;
+    }
+
+    .list-group-item:hover:not(.active) {
+      background-color: #f8f9fa;
+      padding-left: 1.5rem;
+    }
+
+    /* Content area cards */
+    .dashboard-content-area {
+      background: white;
+      border-radius: 8px;
+      min-height: 400px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 991px) {
+
+      .dashboard-container .col-lg-3,
+      .dashboard-container .col-lg-9 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+
+      .dashboard-container .col-lg-3 {
+        margin-bottom: 2rem;
+      }
+
+      .dashboard-container .col-lg-3 .card {
+        position: relative;
+        top: auto;
+      }
+    }
+
+    /* Adjust body padding when on account page */
+    body.account-page {
+      padding-top: 154px;
+      /* Match your header height */
+    }
+
+    /* Or target the dashboard section specifically */
+    #dashboard-view {
+      margin-top: 2rem;
     }
 
     .dashboard-sidebar {
@@ -47,11 +141,6 @@
       height: 20px;
     }
 
-    .dashboard-content-area {
-      background: var(--color-white);
-      min-height: 400px;
-    }
-
     .stat-card {
       background: var(--color-grey-light);
       padding: 1.5rem;
@@ -73,7 +162,7 @@
   </style>
 </head>
 
-<body>
+<body class="account-page">
   <!-- Navigation Component -->
   <div id="navigation" data-component="components/nav.html"></div>
 
@@ -237,12 +326,14 @@
   </section>
 
   <!-- DASHBOARD VIEW -->
-  <section id="dashboard-view" class="dashboard-container" style="display: none; background-color: #f8f9fa;">
+  <section id="dashboard-view" class="dashboard-container" style="display: none;">
     <div class="container">
       <div class="row g-4">
-        <!-- Sidebar -->
-        <div class="col-lg-3">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="col-12 col-lg-3">
           <div class="card border-0 shadow-sm">
+            <!-- User Profile -->
             <div class="card-body text-center p-4">
               <div
                 style="width: 80px; height: 80px; background: var(--color-black); color: white; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 600;">
@@ -251,53 +342,45 @@
               <h5 class="mb-1 fw-bold" id="user-name">User Name</h5>
               <p class="text-muted small mb-0" id="user-email">email@example.com</p>
             </div>
+
+            <!-- Navigation Menu -->
             <div class="list-group list-group-flush">
-              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4 active" id="link-overview"
+              <a href="#" class="list-group-item list-group-item-action py-3 px-4 active" id="link-overview"
                 onclick="showTab('overview'); return false;">
                 <span class="d-flex align-items-center gap-3">
-                  <svg class="icon-sm">
-                    <use xlink:href="#icon-star" />
-                  </svg> Overview
+                  Overview
                 </span>
               </a>
-              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4" id="link-orders"
+              <a href="#" class="list-group-item list-group-item-action py-3 px-4" id="link-orders"
                 onclick="showTab('orders'); return false;">
                 <span class="d-flex align-items-center gap-3">
-                  <svg class="icon-sm">
-                    <use xlink:href="#icon-shopping-bag" />
-                  </svg> Order History
+                  Order History
                 </span>
               </a>
-              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4" id="link-profile"
+              <a href="#" class="list-group-item list-group-item-action py-3 px-4" id="link-profile"
                 onclick="showTab('profile'); return false;">
                 <span class="d-flex align-items-center gap-3">
-                  <svg class="icon-sm">
-                    <use xlink:href="#icon-user" />
-                  </svg> Profile & Address
+                  Profile & Address
                 </span>
               </a>
-              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4" id="link-settings"
+              <a href="#" class="list-group-item list-group-item-action py-3 px-4" id="link-settings"
                 onclick="showTab('settings'); return false;">
                 <span class="d-flex align-items-center gap-3">
-                  <svg class="icon-sm">
-                    <use xlink:href="#icon-tool" />
-                  </svg> Settings
+                  Settings
                 </span>
               </a>
-              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4 text-danger"
+              <a href="#" class="list-group-item list-group-item-action py-3 px-4 text-danger"
                 onclick="window.AuthService.logout(); return false;">
                 <span class="d-flex align-items-center gap-3">
-                  <svg class="icon-sm">
-                    <use xlink:href="#icon-log-out" />
-                  </svg> Sign Out
+                  Sign Out
                 </span>
               </a>
             </div>
           </div>
         </div>
 
-        <!-- Content Area -->
-        <div class="col-lg-9">
+        <!-- RIGHT CONTENT AREA -->
+        <div class="col-12 col-lg-9">
           <!-- Overview Tab -->
           <div class="dashboard-content-area card border-0 shadow-sm p-4 p-md-5" id="tab-overview">
             <h2 class="h4 mb-4 fw-bold">ACCOUNT OVERVIEW</h2>
