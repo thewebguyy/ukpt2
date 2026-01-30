@@ -88,194 +88,394 @@
   </div>
 
   <!-- GUEST VIEW -->
-  <section id="guest-view" class="section" style="display: none;">
+  <!-- GUEST VIEW -->
+  <section id="guest-view" class="section d-flex align-items-center"
+    style="min-height: 80vh; background-color: #f7f7f7;">
     <div class="container">
-      <div class="account-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
-        <!-- ROW 1, COL 1: Sign In -->
-        <div class="p-4" style="background: var(--color-grey-light);">
-          <h3 class="mb-4">SIGN IN</h3>
-          <form id="signin-form" onsubmit="handleSignIn(event)">
-            <div class="mb-3">
-              <label for="signin-email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="signin-email" required>
-            </div>
-            <div class="mb-3">
-              <label for="signin-password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="signin-password" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-3" id="signin-btn">Sign In</button>
-            <div class="text-center">OR</div>
-            <button type="button" class="btn btn-outline w-100 mt-3" onclick="handleGoogleSignIn()">
-              Sign in with Google
-            </button>
-          </form>
-        </div>
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5 col-xl-4">
 
-        <!-- ROW 1, COL 2: Create Account -->
-        <div class="p-4" style="background: var(--color-white); border: 1px solid var(--color-grey-light);">
-          <h3 class="mb-4">CREATE ACCOUNT</h3>
-          <form id="signup-form" onsubmit="handleCreateAccount(event)">
-            <div class="mb-3">
-              <label class="form-label">Full Name</label>
-              <input type="text" class="form-control" id="signup-name" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input type="email" class="form-control" id="signup-email" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Password</label>
-              <input type="password" class="form-control" id="signup-password" required minlength="8">
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-3">Create Account</button>
-            <div class="text-center">OR</div>
-            <button type="button" class="btn btn-outline w-100 mt-3" onclick="handleGoogleSignIn()">
-              Sign up with Google
-            </button>
-          </form>
-        </div>
+          <!-- Card -->
+          <div class="bg-white p-5 rounded-3 shadow-sm"
+            style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
 
-        <!-- ROW 2, COL 1: Benefits -->
-        <div class="p-4" style="background: var(--color-white); border: 1px solid var(--color-grey-light);">
-          <h3 class="mb-4">WHY CREATE AN ACCOUNT?</h3>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
-              Track your orders in real-time
-            </li>
-            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
-              Save your designs & favorites
-            </li>
-            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
-              Faster checkout process
-            </li>
-            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
-              Exclusive member discounts
-            </li>
-            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
-              <span style="position: absolute; left: 0; font-weight: 700;">✓</span>
-              Early access to new products
-            </li>
-          </ul>
-        </div>
+            <!-- Branding -->
+            <div class="text-center mb-4">
+              <h1 class="h5 fw-bold mb-0" style="letter-spacing: 0.5px;">CustomiseMe.uk</h1>
+            </div>
 
-        <!-- ROW 2, COL 2: Need Help? -->
-        <div class="p-4" style="background: var(--color-grey-light);">
-          <h3 class="mb-4">NEED HELP?</h3>
-          <p class="mb-3">Having trouble signing in or creating an account?</p>
-          <div class="d-flex flex-column gap-2">
-            <a href="contact.html" class="btn btn-outline w-100">
-              <span>CONTACT SUPPORT</span>
-            </a>
-            <a href="faq.html" class="btn btn-outline w-100">
-              <span>VIEW FAQs</span>
-            </a>
-            <button onclick="alert('Password reset email sent!')" class="btn btn-outline w-100">
-              <span>RESET PASSWORD</span>
-            </button>
+            <!-- SIGN IN VIEW -->
+            <div id="signin-view">
+              <div class="text-center mb-4">
+                <h2 class="h3 fw-bold mb-1">Sign in</h2>
+                <p class="text-muted small">Sign in or create an account</p>
+              </div>
+
+              <form id="signin-form" onsubmit="handleSignIn(event)">
+
+                <!-- Google Button -->
+                <button type="button"
+                  class="btn btn-outline-secondary w-100 mb-4 d-flex align-items-center justify-content-center gap-2"
+                  onclick="handleGoogleSignIn()"
+                  style="border-color: #ddd; padding: 10px; color: #333; font-weight: 500;">
+                  <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
+                      fill="#4285F4"></path>
+                    <path
+                      d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.715H.957v2.332A8.997 8.997 0 0 0 9 18z"
+                      fill="#34A853"></path>
+                    <path
+                      d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
+                      fill="#FBBC05"></path>
+                    <path
+                      d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.162 6.656 3.58 9 3.58z"
+                      fill="#EA4335"></path>
+                  </svg>
+                  Sign in with Google
+                </button>
+
+                <div class="d-flex align-items-center mb-4">
+                  <div class="flex-grow-1 border-bottom" style="border-color: #eee;"></div>
+                  <span class="px-3 text-muted small">or</span>
+                  <div class="flex-grow-1 border-bottom" style="border-color: #eee;"></div>
+                </div>
+
+                <div class="mb-4">
+                  <input type="email" class="form-control form-control-lg bg-light border-0" id="signin-email"
+                    placeholder="Email" required style="font-size: 0.95rem; padding: 12px 15px;">
+                </div>
+
+                <div class="mb-4">
+                  <input type="password" class="form-control form-control-lg bg-light border-0" id="signin-password"
+                    placeholder="Password" required style="font-size: 0.95rem; padding: 12px 15px;">
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100 btn-lg mb-4" id="signin-btn"
+                  style="padding: 12px; font-size: 1rem; font-weight: 600; background: black; border: none;">
+                  Continue
+                </button>
+
+                <!-- Create Account Link -->
+                <div class="text-center">
+                  <button type="button"
+                    class="btn p-0 text-decoration-underline border-0 bg-transparent text-dark small"
+                    style="font-weight: 500;" onclick="toggleAuthMode('signup')">
+                    Don't have an account? Create One
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- CREATE ACCOUNT VIEW (Hidden) -->
+            <div id="signup-view" style="display: none;">
+              <div class="text-center mb-4">
+                <h2 class="h3 fw-bold mb-1">Create Account</h2>
+                <p class="text-muted small">Join CustomiseMe UK today</p>
+              </div>
+
+              <form id="signup-form" onsubmit="handleCreateAccount(event)">
+                <!-- Google Button -->
+                <button type="button"
+                  class="btn btn-outline-secondary w-100 mb-4 d-flex align-items-center justify-content-center gap-2"
+                  onclick="handleGoogleSignIn()"
+                  style="border-color: #ddd; padding: 10px; color: #333; font-weight: 500;">
+                  <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
+                      fill="#4285F4"></path>
+                    <path
+                      d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.715H.957v2.332A8.997 8.997 0 0 0 9 18z"
+                      fill="#34A853"></path>
+                    <path
+                      d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
+                      fill="#FBBC05"></path>
+                    <path
+                      d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.162 6.656 3.58 9 3.58z"
+                      fill="#EA4335"></path>
+                  </svg>
+                  Sign up with Google
+                </button>
+
+                <div class="d-flex align-items-center mb-4">
+                  <div class="flex-grow-1 border-bottom" style="border-color: #eee;"></div>
+                  <span class="px-3 text-muted small">or</span>
+                  <div class="flex-grow-1 border-bottom" style="border-color: #eee;"></div>
+                </div>
+
+                <div class="mb-3">
+                  <input type="text" class="form-control form-control-lg bg-light border-0" id="signup-name"
+                    placeholder="Full Name" required style="font-size: 0.95rem;">
+                </div>
+                <div class="mb-3">
+                  <input type="email" class="form-control form-control-lg bg-light border-0" id="signup-email"
+                    placeholder="Email" required style="font-size: 0.95rem;">
+                </div>
+                <div class="mb-4">
+                  <input type="password" class="form-control form-control-lg bg-light border-0" id="signup-password"
+                    placeholder="Password (Min 8 chars)" required minlength="8" style="font-size: 0.95rem;">
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100 btn-lg mb-4"
+                  style="padding: 12px; font-size: 1rem; font-weight: 600; background: black; border: none;">Continue</button>
+
+                <!-- Back to Sign In -->
+                <div class="text-center">
+                  <button type="button"
+                    class="btn p-0 text-decoration-underline border-0 bg-transparent text-dark small"
+                    style="font-weight: 500;" onclick="toggleAuthMode('signin')">
+                    Already have an account? Sign In
+                  </button>
+                </div>
+              </form>
+            </div>
+
           </div>
-          <p class="text-grey-dark mt-4 mb-0" style="font-size: 0.875rem;">
-            <strong>Customer Service:</strong><br>
-            Email: info@customisemeuk.com<br>
-            Phone: 07588770901
-          </p>
         </div>
       </div>
-
-      <style>
-        @media (max-width: 767px) {
-          .account-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      </style>
     </div>
   </section>
 
   <!-- DASHBOARD VIEW -->
-  <section id="dashboard-view" class="dashboard-container" style="display: none;">
+  <section id="dashboard-view" class="dashboard-container" style="display: none; background-color: #f8f9fa;">
     <div class="container">
       <div class="row g-4">
         <!-- Sidebar -->
         <div class="col-lg-3">
-          <div class="dashboard-sidebar">
-            <div class="p-4 text-center border-bottom">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body text-center p-4">
               <div
-                style="width: 80px; height: 80px; background: var(--color-grey-light); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 2rem;" id="user-initial">U</span>
+                style="width: 80px; height: 80px; background: var(--color-black); color: white; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 600;">
+                <span id="user-initial">U</span>
               </div>
-              <h5 class="mb-0" id="user-name">User Name</h5>
-              <small class="text-grey-dark" id="user-email">email@example.com</small>
+              <h5 class="mb-1 fw-bold" id="user-name">User Name</h5>
+              <p class="text-muted small mb-0" id="user-email">email@example.com</p>
             </div>
-            <nav class="d-flex flex-column">
-              <a href="#" class="dashboard-menu-item active" onclick="showTab('overview')"><svg>
-                  <use xlink:href="#icon-home" />
-                </svg> Overview</a>
-              <a href="#" class="dashboard-menu-item" onclick="showTab('orders')"><svg>
-                  <use xlink:href="#icon-box" />
-                </svg> Order History</a>
-              <a href="#" class="dashboard-menu-item" onclick="showTab('profile')"><svg>
-                  <use xlink:href="#icon-user" />
-                </svg> Profile & Address</a>
-              <a href="#" class="dashboard-menu-item" onclick="showTab('settings')"><svg>
-                  <use xlink:href="#icon-settings" />
-                </svg> Settings</a>
-              <a href="#" class="dashboard-menu-item text-danger" onclick="window.AuthService.logout()"><svg>
-                  <use xlink:href="#icon-log-out" />
-                </svg> Sign Out</a>
-            </nav>
+            <div class="list-group list-group-flush">
+              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4 active" id="link-overview"
+                onclick="showTab('overview'); return false;">
+                <span class="d-flex align-items-center gap-3">
+                  <svg class="icon-sm">
+                    <use xlink:href="#icon-star" />
+                  </svg> Overview
+                </span>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4" id="link-orders"
+                onclick="showTab('orders'); return false;">
+                <span class="d-flex align-items-center gap-3">
+                  <svg class="icon-sm">
+                    <use xlink:href="#icon-shopping-bag" />
+                  </svg> Order History
+                </span>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4" id="link-profile"
+                onclick="showTab('profile'); return false;">
+                <span class="d-flex align-items-center gap-3">
+                  <svg class="icon-sm">
+                    <use xlink:href="#icon-user" />
+                  </svg> Profile & Address
+                </span>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4" id="link-settings"
+                onclick="showTab('settings'); return false;">
+                <span class="d-flex align-items-center gap-3">
+                  <svg class="icon-sm">
+                    <use xlink:href="#icon-tool" />
+                  </svg> Settings
+                </span>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action border-0 py-3 px-4 text-danger"
+                onclick="window.AuthService.logout(); return false;">
+                <span class="d-flex align-items-center gap-3">
+                  <svg class="icon-sm">
+                    <use xlink:href="#icon-log-out" />
+                  </svg> Sign Out
+                </span>
+              </a>
+            </div>
           </div>
         </div>
-        <!-- Content -->
+
+        <!-- Content Area -->
         <div class="col-lg-9">
-          <div class="dashboard-content-area p-4" id="tab-overview">
-            <h3>Overview</h3>
-            <div class="row g-3 mt-2">
+          <!-- Overview Tab -->
+          <div class="dashboard-content-area card border-0 shadow-sm p-4 p-md-5" id="tab-overview">
+            <h2 class="h4 mb-4 fw-bold">ACCOUNT OVERVIEW</h2>
+
+            <div class="row g-4 mb-5">
               <div class="col-md-4">
-                <div class="stat-card">
-                  <div class="stat-number">0</div>
-                  <div class="stat-label">Total Orders</div>
+                <div class="p-4 rounded-3 text-center" style="background: white; border: 1px solid #eee;">
+                  <h3 class="display-6 fw-bold mb-1">0</h3>
+                  <p class="text-muted small mb-0 text-uppercase tracking-wider">Total Orders</p>
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="stat-card">
-                  <div class="stat-number">0</div>
-                  <div class="stat-label">Active Subs</div>
+                <div class="p-4 rounded-3 text-center" style="background: white; border: 1px solid #eee;">
+                  <h3 class="display-6 fw-bold mb-1">PRO</h3>
+                  <p class="text-muted small mb-0 text-uppercase tracking-wider">Member Status</p>
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="stat-card">
-                  <div class="stat-number">0</div>
-                  <div class="stat-label">Reward Points</div>
+                <div class="p-4 rounded-3 text-center" style="background: white; border: 1px solid #eee;">
+                  <h3 class="display-6 fw-bold mb-1">0</h3>
+                  <p class="text-muted small mb-0 text-uppercase tracking-wider">Points Balance</p>
                 </div>
               </div>
             </div>
-            <h4 class="mt-5">Recent Activity</h4>
-            <p class="text-grey">No recent activity.</p>
+
+            <h3 class="h5 mb-3 fw-bold">RECENT ORDERS</h3>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th class="text-end">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#CMUK-10234</td>
+                    <td>Jan 28, 2026</td>
+                    <td><span class="badge bg-warning text-dark">Processing</span></td>
+                    <td>£45.99</td>
+                    <td class="text-end"><button class="btn btn-sm btn-outline-dark">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>#CMUK-10189</td>
+                    <td>Dec 15, 2025</td>
+                    <td><span class="badge bg-success">Delivered</span></td>
+                    <td>£129.50</td>
+                    <td class="text-end"><button class="btn btn-sm btn-outline-dark">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>#CMUK-09982</td>
+                    <td>Nov 02, 2025</td>
+                    <td><span class="badge bg-success">Delivered</span></td>
+                    <td>£32.00</td>
+                    <td class="text-end"><button class="btn btn-sm btn-outline-dark">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="dashboard-content-area p-4" id="tab-orders" style="display: none;">
-            <h3>My Orders</h3>
-            <p>No orders found.</p>
+          <!-- Orders Tab -->
+          <div class="dashboard-content-area card border-0 shadow-sm p-4 p-md-5" id="tab-orders" style="display: none;">
+            <h2 class="h4 mb-4 fw-bold">ORDER HISTORY</h2>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date placed</th>
+                    <th>Status</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th class="text-end"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Content populated by JS or static mock -->
+                  <tr>
+                    <td class="fw-medium">#CMUK-10234</td>
+                    <td>Jan 28, 2026</td>
+                    <td><span class="badge bg-warning text-dark">Processing</span></td>
+                    <td>3 items</td>
+                    <td class="fw-bold">£45.99</td>
+                    <td class="text-end"><a href="#" class="btn btn-sm btn-outline">Track Order</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="dashboard-content-area p-4" id="tab-profile" style="display: none;">
-            <h3>My Profile</h3>
-            <form class="mt-4" style="max-width: 500px;">
-              <div class="mb-3">
-                <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="profile-name">
+          <!-- Profile Tab -->
+          <div class="dashboard-content-area card border-0 shadow-sm p-4 p-md-5" id="tab-profile"
+            style="display: none;">
+            <h2 class="h4 mb-4 fw-bold">PROFILE & ADDRESS</h2>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <h5 class="mb-3">Personal Information</h5>
+                <form>
+                  <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="profile-name" value="User Name">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="profile-email" value="email@example.com" disabled
+                      readonly>
+                    <div class="form-text">Contact support to change email</div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" placeholder="+44 7123 456789">
+                  </div>
+                  <button type="submit" class="btn btn-primary">UPDATE PROFILE</button>
+                </form>
               </div>
-              <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" id="profile-email" readonly disabled>
+
+              <div class="col-md-6">
+                <h5 class="mb-3">Shipping Address</h5>
+                <div class="p-3 bg-light rounded mb-3">
+                  <strong>Default Address</strong><br>
+                  123 High Street<br>
+                  London, UK<br>
+                  SW1A 1AA
+                </div>
+                <button class="btn btn-outline-dark btn-sm">EDIT ADDRESS</button>
+                <button class="btn btn-outline-dark btn-sm">ADD NEW ADDRESS</button>
               </div>
-              <button class="btn btn-primary">Save Changes</button>
-            </form>
+            </div>
+
+            <hr class="my-5">
+
+            <div class="row">
+              <div class="col-12">
+                <h5 class="mb-3">Change Password</h5>
+                <form class="row g-3">
+                  <div class="col-md-4">
+                    <input type="password" class="form-control" placeholder="Current Password">
+                  </div>
+                  <div class="col-md-4">
+                    <input type="password" class="form-control" placeholder="New Password">
+                  </div>
+                  <div class="col-md-4">
+                    <button class="btn btn-outline-dark w-100">UPDATE PASSWORD</button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
+
+          <!-- Settings Tab -->
+          <div class="dashboard-content-area card border-0 shadow-sm p-4 p-md-5" id="tab-settings"
+            style="display: none;">
+            <h2 class="h4 mb-4 fw-bold">ACCOUNT SETTINGS</h2>
+
+            <h5 class="mb-3">Email Preferences</h5>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="check-promos" checked>
+              <label class="form-check-label" for="check-promos">
+                Receive details about new products, discounts and special offers
+              </label>
+            </div>
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="checkbox" id="check-orders" checked disabled>
+              <label class="form-check-label" for="check-orders">
+                Receive order updates and tracking information (Required)
+              </label>
+            </div>
+
+            <h5 class="mb-3 text-danger">Danger Zone</h5>
+            <p class="text-muted">Once you delete your account, there is no going back. Please be certain.</p>
+            <button class="btn btn-danger">DELETE ACCOUNT</button>
+          </div>
+
         </div>
       </div>
     </div>
@@ -321,11 +521,24 @@
     });
 
     function updateDashboard(user) {
+      // Update Dashboard Info
       document.getElementById('user-name').textContent = user.name || 'User';
       document.getElementById('user-email').textContent = user.email || '';
       document.getElementById('user-initial').textContent = (user.name || 'U').charAt(0).toUpperCase();
       document.getElementById('profile-name').value = user.name || '';
       document.getElementById('profile-email').value = user.email || '';
+
+      // Update Header Navigation Text (Sign In / Sign Up -> User Name)
+      const navTextEl = document.querySelector('.nav-text');
+      if (navTextEl) {
+        navTextEl.textContent = 'HI, ' + (user.name ? user.name.split(' ')[0].toUpperCase() : 'USER');
+
+        // Optional: Change the icon or link functionality if needed
+        const navLink = navTextEl.closest('a');
+        if (navLink) {
+          navLink.href = 'account.html'; // Ensure it points to account dashboard
+        }
+      }
     }
 
     window.showTab = function (tabName) {
@@ -334,6 +547,11 @@
       // Show selected
       const selected = document.getElementById('tab-' + tabName);
       if (selected) selected.style.display = 'block';
+
+      // Update sidebar active state
+      document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+      const activeLink = document.getElementById('link-' + tabName);
+      if (activeLink) activeLink.classList.add('active');
     };
 
     // Login/Register handlers
@@ -359,6 +577,16 @@
       const res = await window.AuthService.register({ name, email, password: pass });
       if (res.success) location.reload();
       else alert(res.message);
+    };
+
+    window.toggleAuthMode = function (mode) {
+      if (mode === 'signup') {
+        document.getElementById('signin-view').style.display = 'none';
+        document.getElementById('signup-view').style.display = 'block';
+      } else {
+        document.getElementById('signin-view').style.display = 'block';
+        document.getElementById('signup-view').style.display = 'none';
+      }
     };
   </script>
 </body>
