@@ -144,6 +144,9 @@
     const serviceParam = urlParams.get('service');
 
     if (serviceParam) {
+      if (serviceParam === 'workshop') {
+        window.location.href = 'workshop.html';
+      }
       document.getElementById('service').value = serviceParam;
       const titles = {
         'design': 'Start Your Design Project',
