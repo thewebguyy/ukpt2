@@ -949,7 +949,7 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-height: 450px;
+  min-height: auto;
   height: 100%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: none;
