@@ -280,7 +280,7 @@
             <!-- Customization Options -->
             <div class="product-customization">
               <!-- Color Selection -->
-              <div class="customization-group">
+              <div class="customization-group" id="group-color">
                 <label class="customization-label">Select Color</label>
                 <div class="color-swatches" id="color-options">
                   <!-- Colors dynamically generated -->
@@ -288,7 +288,7 @@
               </div>
 
               <!-- Size Selection -->
-              <div class="customization-group">
+              <div class="customization-group" id="group-size">
                 <label class="customization-label">Select Size <a href="#"
                     style="font-size: 0.75rem; text-decoration: underline; margin-left: 5px;">Size Guide</a></label>
                 <div class="size-options">
@@ -300,10 +300,13 @@
                   <button class="size-btn" onclick="updateCustomization('size', '2XL', this)">2XL</button>
                   <button class="size-btn" onclick="updateCustomization('size', '3XL', this)">3XL</button>
                 </div>
+                <div id="static-size-label"
+                  style="display: none; padding: 10px; background: var(--color-grey-light); font-weight: 600;">One Size
+                </div>
               </div>
 
               <!-- Print Location -->
-              <div class="customization-group">
+              <div class="customization-group" id="group-print-location">
                 <label class="customization-label">Print Location</label>
                 <div class="print-options">
                   <button class="print-btn active"
@@ -316,7 +319,7 @@
               </div>
 
               <!-- Design Position -->
-              <div class="customization-group">
+              <div class="customization-group" id="group-design-position">
                 <label class="customization-label">Design Position</label>
                 <div class="position-options">
                   <button class="position-btn active"
@@ -327,9 +330,9 @@
               </div>
 
               <!-- Artwork Upload -->
-              <div class="customization-group">
+              <div class="customization-group" id="group-artwork">
                 <label class="customization-label">Upload Artwork</label>
-                <div class="artwork-options">
+                <div class="artwork-options" id="standard-artwork-options">
                   <button class="artwork-btn" onclick="document.getElementById('artwork-upload').click()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -340,7 +343,8 @@
                   </button>
                   <input type="file" id="artwork-upload" style="display: none;" onchange="handleFileUpload(this)">
 
-                  <button class="artwork-btn" onclick="window.location.href='designservice.html'">
+                  <button class="artwork-btn" id="design-studio-btn"
+                    onclick="window.location.href='designservice.html'">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
@@ -350,6 +354,17 @@
                     <div style="font-size: 0.7rem; color: #666; margin-top: 5px;">Need help designing?</div>
                   </button>
                 </div>
+
+                <div class="sticker-options" id="sticker-artwork-options" style="display: none;">
+                  <button class="artwork-btn w-100" onclick="document.getElementById('artwork-upload').click()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                    </svg>
+                    <span>Upload Artwork</span>
+                  </button>
+                </div>
+
                 <div id="file-preview" style="margin-top: 10px; font-size: 0.875rem; font-weight: 500; color: #059669;">
                 </div>
               </div>
@@ -359,12 +374,23 @@
             <div class="product-price-main mb-3" id="product-price">£0.00</div>
 
             <!-- Quantity Selector -->
-            <div class="quantity-selector">
+            <div class="quantity-selector" id="standard-quantity-selector">
               <span class="quantity-label">Quantity:</span>
               <div class="quantity-controls">
                 <button class="quantity-btn" onclick="changeQuantity(-1)">−</button>
                 <input type="number" class="quantity-input" id="quantity" value="1" min="1" readonly>
                 <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+              </div>
+            </div>
+
+            <!-- Sticker Quantity Selector -->
+            <div class="customization-group" id="sticker-quantity-selector" style="display: none;">
+              <label class="customization-label">Select Quantity</label>
+              <div class="sticker-quantity-options d-flex gap-2">
+                <button class="btn btn-outline flex-grow-1" onclick="updateStickerQuantity(10, this)">10</button>
+                <button class="btn btn-outline flex-grow-1" onclick="updateStickerQuantity(20, this)">20</button>
+                <button class="btn btn-outline flex-grow-1" onclick="updateStickerQuantity(50, this)">50</button>
+                <button class="btn btn-outline flex-grow-1" onclick="updateStickerQuantity(100, this)">100</button>
               </div>
             </div>
 
@@ -697,7 +723,37 @@
           document.getElementById('product-price').after(warn);
         }
       }
+
+      // Handle Category Specific Options
+      const category = (product.category || '').toLowerCase();
+      if (category === 'tote-bags' || category === 'accessories' && product.name.toLowerCase().includes('bag')) {
+        document.querySelector('#group-size .size-options').style.display = 'none';
+        document.querySelector('#group-size a[style*="text-decoration: underline"]').style.display = 'none';
+        document.getElementById('static-size-label').style.display = 'block';
+        customization.size = 'One Size';
+      } else if (category === 'stickers') {
+        // Hide standard options
+        document.getElementById('group-color').style.display = 'none';
+        document.getElementById('group-size').style.display = 'none';
+        document.getElementById('group-print-location').style.display = 'none';
+        document.getElementById('group-design-position').style.display = 'none';
+        document.getElementById('standard-quantity-selector').style.display = 'none';
+        document.getElementById('standard-artwork-options').style.display = 'none';
+
+        // Show sticker specific options
+        document.getElementById('sticker-quantity-selector').style.display = 'block';
+        document.getElementById('sticker-artwork-options').style.display = 'block';
+      }
     }
+
+    window.updateStickerQuantity = (val, el) => {
+      currentQuantity = val;
+      document.getElementById('quantity').value = val;
+      if (el) {
+        Array.from(el.parentElement.children).forEach(c => c.classList.remove('active', 'btn-primary'));
+        el.classList.add('active', 'btn-primary');
+      }
+    };
 
     async function loadReviews(id) {
       const list = document.getElementById('reviews-list');

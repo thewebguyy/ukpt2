@@ -336,4 +336,27 @@ window.saveCartToFirestore = async function (cart) {
   }
 };
 
+// ============================================
+// GLOBAL AUTH STATE LISTENER
+// ============================================
+AuthService.initAuthListener((user) => {
+  const updateNavText = () => {
+    const navTextElements = document.querySelectorAll('.nav-text');
+    navTextElements.forEach(el => {
+      if (user) {
+        const firstName = user.name.split(' ')[0].toUpperCase();
+        el.textContent = `HI, ${firstName}`;
+      } else {
+        el.textContent = 'SIGN IN / SIGN UP';
+      }
+    });
+  };
+
+  // Update immediately
+  updateNavText();
+
+  // Also update when components are loaded (for dynamic nav)
+  document.addEventListener('allComponentsLoaded', updateNavText);
+});
+
 console.log('API Integration (Firebase + Functions) Loaded');
