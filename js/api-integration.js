@@ -28,7 +28,7 @@ const db = getFirestore(app);
 const functions = getFunctions(app); // Defaults to us-central1
 
 const CONFIG = {
-  STRIPE_PUBLIC_KEY: 'pk_live_PLACEHOLDER' // REPLACE THIS with your actual Publishable Key (starts with pk_)
+  STRIPE_PUBLIC_KEY: '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'
 };
 
 // ============================================
