@@ -2187,42 +2187,133 @@ footer {
   }
 
   body {
-    padding-top: 140px;
+    padding-top: 240px;
+    /* Adjusted for multiple stacked bars */
   }
 
-  .hero-carousel,
-  .hero-section {
-    min-height: 500px;
-    height: 500px;
+  .announcement-banner {
+    position: fixed;
+    top: 0;
+    z-index: 10001;
   }
 
+  .top-bar {
+    top: 40px;
+    height: auto;
+    padding: 0;
+    display: block;
+  }
+
+  /* Mobile Utility Bar (Currency/VAT) */
+  .mobile-utility-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: #fff;
+  }
+
+  .utility-left .nav-icon {
+    padding: 0;
+    min-width: auto;
+    min-height: auto;
+    font-weight: 600;
+  }
+
+  /* Main Header Content on Mobile */
   .top-bar-content {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    padding: 0.5rem var(--spacing-sm);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    gap: 0;
   }
 
-  .navbar-brand {
-    grid-row: 1;
+  .top-bar-content .navbar-toggler {
+    padding: 0;
+    border: none;
+    order: 1;
+    flex: 0 0 44px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background: transparent;
   }
 
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+    width: 24px;
+    height: 24px;
+  }
+
+  .top-bar-content .navbar-brand {
+    order: 2;
+    flex: 1;
+    text-align: center;
+    margin-right: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .logo-image {
+    height: 35px !important;
+    max-width: 180px;
+  }
+
+  .nav-header-icons {
+    order: 3;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    gap: 8px !important;
+  }
+
+  .nav-header-icons .nav-icon {
+    padding: 8px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  /* Full Width Search Bar */
   .search-bar-form-compact {
-    grid-row: 2;
+    order: 4;
+    width: 100%;
     max-width: 100%;
+    margin: 12px 0 0 0;
+    background: #f5f5f5;
+    border-radius: 4px;
   }
 
-  .top-bar-right {
-    grid-row: 1;
-    justify-self: end;
+  /* Navigation Icons Row (Mobile Only) */
+  .mobile-icons-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: #fff;
   }
 
-  .nav-icon-text .nav-text {
+  .mobile-icons-row .nav-icon {
+    flex: 1;
+    padding: 10px;
+  }
+
+  /* Floating Contact Bar Preservation - Image 3 has this fixed at bottom or just above main content */
+  /* Based on specification, it should be below floating announcement or similar */
+
+  .main-nav {
     display: none;
+    /* Hide desktop nav bar on mobile - use hamburger instead */
   }
 
-  .nav-icon {
-    min-width: 48px;
-    min-height: 48px;
+  /* Ensure the announcement banner stays above everything */
+  .announcement-banner {
+    background: #fff;
+    border-bottom: 2px solid #000;
+    font-weight: 700;
   }
 
   .section {
@@ -2240,23 +2331,6 @@ footer {
     flex-direction: column;
   }
 
-  .logo-image {
-    height: 40px !important;
-  }
-
-  .mega-dropdown {
-    padding: 1rem 0;
-  }
-
-  .design-studio-section .row {
-    flex-direction: column-reverse;
-  }
-
-  .studio-visual {
-    min-height: 200px;
-    margin-bottom: 2rem;
-  }
-
   h1 {
     font-size: 1.75rem;
   }
@@ -2272,21 +2346,6 @@ footer {
   .btn {
     padding: 0.875rem 1.25rem;
     min-height: 48px;
-  }
-
-  .btn-lg {
-    padding: 1rem 1.5rem;
-    min-height: 52px;
-  }
-
-  .form-control {
-    padding: 0.875rem 1rem;
-    font-size: 1rem;
-    min-height: 48px;
-  }
-
-  .footer-section {
-    margin-bottom: var(--spacing-sm);
   }
 }
 

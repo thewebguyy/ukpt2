@@ -2,10 +2,12 @@
 <html lang="en">
 
 <head>
+  <link rel="icon" type="image/png" href="icon.png">
   <title>My Account - CustomiseMe UK</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Manage your CustomiseMe UK account, track orders, and update your profile.">
+  <link rel="icon" type="image/png" href="icon.png">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -14,7 +16,7 @@
     /* ========================================
        DASHBOARD COMPLETE FIX
        ======================================== */
-    
+
     /* Force account page specific padding */
     body.account-page {
       padding-top: 154px !important;
@@ -138,12 +140,13 @@
       margin: 0;
     }
 
-    .dashboard-content-area .row.g-4 > [class*="col-"] {
+    .dashboard-content-area .row.g-4>[class*="col-"] {
       padding: 0;
     }
 
     /* Responsive: Mobile stacks sidebar on top */
     @media (max-width: 991px) {
+
       .dashboard-container .col-lg-3,
       .dashboard-container .col-lg-9 {
         width: 100%;
@@ -289,6 +292,12 @@
                 <div class="mb-4">
                   <input type="password" class="form-control form-control-lg bg-light border-0" id="signin-password"
                     placeholder="Password" required style="font-size: 0.95rem; padding: 12px 15px;">
+                  <div class="text-end mt-1">
+                    <button type="button" class="btn p-0 border-0 bg-transparent text-muted small"
+                      style="font-size: 0.75rem;" onclick="handleForgotPassword()">
+                      Forgot Password?
+                    </button>
+                  </div>
                 </div>
 
                 <button type="submit" class="btn btn-dark w-100 btn-lg mb-4" id="signin-btn"
@@ -684,6 +693,16 @@
       const res = await window.AuthService.register({ name, email, password: pass });
       if (res.success) location.reload();
       else alert(res.message);
+    };
+
+    window.handleForgotPassword = async function () {
+      const email = document.getElementById('signin-email').value;
+      if (!email) {
+        alert('Please enter your email address first.');
+        return;
+      }
+      const res = await window.AuthService.sendPasswordReset(email);
+      alert(res.message);
     };
 
     window.toggleAuthMode = function (mode) {

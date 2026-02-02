@@ -146,6 +146,16 @@ class AuthService {
     });
   }
 
+  static async sendPasswordReset(email) {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { success: true, message: 'Password reset email sent! Please check your inbox.' };
+    } catch (error) {
+      console.error('Password reset error:', error);
+      return { success: false, message: this.getErrorMessage(error) };
+    }
+  }
+
   static getErrorMessage(error) {
     switch (error.code) {
       case 'auth/user-not-found': return 'No account found with this email.';
