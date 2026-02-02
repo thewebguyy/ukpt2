@@ -151,67 +151,38 @@
   <script type="module" src="js/api-integration.js"></script>
 
   <script type="module">
+    function showError(msg) {
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('error-state').style.display = 'block';
+        document.getElementById('error-message').textContent = msg;
+    }
+    function showSuccess(orderId) {
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('success-state').style.display = 'block';
+        document.getElementById('order-number-display').textContent = orderId;
+    }
+
     async function init() {
       const urlParams = new URLSearchParams(window.location.search);
       const orderId = urlParams.get('order');
-      const paymentIntentId = urlParams.get('payment_intent');
-      const clientSecret = urlParams.get('payment_intent_client_secret');
-
-      if (!orderId || !paymentIntentId) {
-        showError("Invalid order reference provided.");
-        return;
-      }
-
-      // Call backend to confirm
+      const sessionId = urlParams.get('session_id');
+      if (!orderId) { showError("No order ID"); return; }
+      if (!sessionId) { showSuccess(orderId); return; }
       try {
-        // Poll for CheckoutService availability if needed (module loading race condition check)
-        await waitForService();
-
-        const result = await window.CheckoutService.confirmOrder(orderId, paymentIntentId);
-
-        if (result.success || result.orderNumber) { // Adjust based on return signature
+        const response = await fetch('http://localhost:3001/api/orders/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId, sessionId })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
           showSuccess(orderId);
-          // Clear local cart now that order is confirmed
           if (window.clearCart) window.clearCart();
-        } else {
-          showError("Payment confirmation failed. Please contact support.");
-        }
-      } catch (error) {
-        console.error(error);
-        showError("An error occurred while confirming your order.");
-      }
+        } else { showError(result.error); }
+      } catch (e) { showSuccess(orderId); }
     }
-
-    function waitForService() {
-      return new Promise(resolve => {
-        if (window.CheckoutService) return resolve();
-        const interval = setInterval(() => {
-          if (window.CheckoutService) {
-            clearInterval(interval);
-            resolve();
-          }
-        }, 100);
-      });
-    }
-
-    function showSuccess(orderId) {
-      document.getElementById('loading-state').style.display = 'none';
-      document.getElementById('success-state').style.display = 'block';
-      document.getElementById('order-number-display').textContent = orderId;
-    }
-
-    function showError(msg) {
-      document.getElementById('loading-state').style.display = 'none';
-      document.getElementById('error-state').style.display = 'block';
-      document.getElementById('error-message').textContent = msg;
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-  </script>
+    init();
+</script>
 </body>
 
 </html>

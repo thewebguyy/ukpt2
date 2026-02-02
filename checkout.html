@@ -635,14 +635,10 @@
   <script src="js/cart.js"></script>
 
   <script type="module">
-    let stripe;
-    let elements;
-    let currentOrderId;
-
     async function waitForServices() {
       return new Promise((resolve) => {
         const check = () => {
-          if (window.CheckoutService && window.getCart && typeof Stripe !== 'undefined') {
+          if (window.getCart && typeof Stripe !== 'undefined') {
             resolve();
           } else {
             setTimeout(check, 100);
@@ -655,17 +651,13 @@
     async function init() {
       try {
         await waitForServices();
-
         const cart = window.getCart();
         if (!cart || cart.length === 0) {
           window.location.href = 'shop.html';
           return;
         }
-
         renderBasket(cart);
         updateProgress(cart);
-
-        // Auth prefill if available
         if (window.AuthService) {
           const user = window.AuthService.getCurrentUser_Sync();
           if (user) {
@@ -673,14 +665,11 @@
             document.getElementById('name').value = user.name || '';
           }
         }
-
-        // Hide overlay
         const overlay = document.getElementById('checkout-loading-overlay');
         if (overlay) {
           overlay.style.opacity = '0';
           setTimeout(() => overlay.style.display = 'none', 500);
         }
-
       } catch (error) {
         console.error("Init Error:", error);
       }
@@ -689,57 +678,46 @@
     function renderBasket(cart) {
       const list = document.getElementById('checkout-items-list');
       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-
       document.getElementById('header-item-count').textContent = `${totalItems} items`;
       document.getElementById('summary-item-count').textContent = `${totalItems} items`;
-
       list.innerHTML = cart.map(item => {
         const itemTotal = item.price * item.quantity;
-        const originalPrice = (item.price * 1.2).toFixed(2); // Fake discount for UI demo matching image
-
+        const originalPrice = (item.price * 1.2).toFixed(2);
         return `
-                    <div class="basket-item">
-                        <div class="product-meta">
-                            <img src="${item.imageUrl}" class="product-thumb" alt="${item.name}">
-                            <div class="product-info">
-                                <h3><a href="product.html?id=${item.productId}">${item.name}</a></h3>
-                                ${item.customization && item.customization.size ? `<span class="badge-pill">${item.customization.size}</span>` : ''}
-                                <span class="variant-text">${item.customization && item.customization.color ? item.customization.color : 'Standard'}</span>
-                            </div>
-                        </div>
-                        <div class="quantity-col">
-                            <div class="quantity-controls">
-                                <button type="button" onclick="window.updateQuantity('${item.id}', ${item.quantity - 1})">−</button>
-                                <input type="text" value="${item.quantity}" readonly>
-                                <button type="button" onclick="window.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
-                            </div>
-                            <div class="price-note">
-                                × <span class="discount">£${item.price.toFixed(2)}</span>
-                                <span class="original">£${originalPrice}</span>
-                            </div>
-                        </div>
-                        <div class="total-col">
-                            <button class="remove-btn" onclick="window.removeFromCart('${item.id}')">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                </svg>
-                            </button>
-                            <div class="item-total-price">£${itemTotal.toFixed(2)}</div>
-                            <div class="total-original">£${(itemTotal * 1.2).toFixed(2)}</div>
-                        </div>
+            <div class="basket-item">
+                <div class="product-meta">
+                    <img src="${item.imageUrl}" class="product-thumb" alt="${item.name}">
+                    <div class="product-info">
+                        <h3><a href="product.html?id=${item.productId}">${item.name}</a></h3>
+                        ${item.customization && item.customization.size ? `<span class="badge-pill">${item.customization.size}</span>` : ''}
+                        <span class="variant-text">${item.customization && item.customization.color ? item.customization.color : 'Standard'}</span>
                     </div>
-                `;
+                </div>
+                <div class="quantity-col">
+                    <div class="quantity-controls">
+                        <button type="button" onclick="window.updateQuantity('${item.id}', ${item.quantity - 1})">−</button>
+                        <input type="text" value="${item.quantity}" readonly>
+                        <button type="button" onclick="window.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                    </div>
+                    <div class="price-note">× <span class="discount">£${item.price.toFixed(2)}</span> <span class="original">£${originalPrice}</span></div>
+                </div>
+                <div class="total-col">
+                    <button class="remove-btn" onclick="window.removeFromCart('${item.id}')">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                    </button>
+                    <div class="item-total-price">£${itemTotal.toFixed(2)}</div>
+                    <div class="total-original">£${(itemTotal * 1.2).toFixed(2)}</div>
+                </div>
+            </div>`;
       }).join('');
-
       updateSummary(cart);
     }
 
     function updateSummary(cart) {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const tax = subtotal * 0.20;
-      const shipping = subtotal >= 100 ? 0 : 4.99; // Basic rule
+      const shipping = subtotal >= 100 ? 0 : 4.99;
       const total = subtotal + tax + shipping;
-
       document.getElementById('summary-subtotal').textContent = `£${subtotal.toFixed(2)}`;
       document.getElementById('summary-tax').textContent = `£${tax.toFixed(2)}`;
       document.getElementById('summary-total').textContent = `£${total.toFixed(2)}`;
@@ -747,130 +725,75 @@
 
     function updateProgress(cart) {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const freeShippingThreshold = 50; // Per standard UK shipping
-      const barMax = 600; // Based on image markers
-
-      // Note: The image shows markers at 120, 300, 600.
-      // I'll calculate progress against 600 for the fill.
+      const freeShippingThreshold = 100;
+      const barMax = 600;
       const percentage = Math.min((subtotal / barMax) * 100, 100);
       document.getElementById('shipping-fill').style.width = `${percentage}%`;
-
       if (subtotal < freeShippingThreshold) {
         const diff = (freeShippingThreshold - subtotal).toFixed(2);
         document.getElementById('shipping-progress-msg').textContent = `Spend £${diff} more for Free Shipping!`;
-        document.getElementById('shipping-progress-msg').classList.remove('text-success');
       } else {
         document.getElementById('shipping-progress-msg').textContent = `You've unlocked FREE Shipping!`;
         document.getElementById('shipping-progress-msg').classList.add('text-success');
       }
     }
 
-    // Handle Cart Updates
-    window.addEventListener('cartUpdated', () => {
-      const cart = window.getCart();
-      if (cart.length === 0) {
-        window.location.href = 'shop.html';
-        return;
-      }
-      renderBasket(cart);
-      updateProgress(cart);
-    });
+    window.addEventListener('cartUpdated', init);
 
-    // Checkout Button Flow
-    document.getElementById('proceed-to-checkout').addEventListener('click', async () => {
-      const cart = window.getCart();
-
-      // Scroll to form and show it
+    document.getElementById('proceed-to-checkout').addEventListener('click', () => {
       document.getElementById('shipping-form-container').style.display = 'block';
       document.getElementById('payment-element-container').style.display = 'block';
-
       document.getElementById('shipping-form-container').scrollIntoView({ behavior: 'smooth' });
-
-      // Initialize Payment Intent if not already done
-      if (!stripe) {
-        await initializeStripeFlow();
-      }
+      document.getElementById('payment-element').style.display = 'none';
+      document.querySelector('#payment-element-container h2').textContent = 'Confirm Details';
     });
 
-    async function initializeStripeFlow() {
+    async function startSecureCheckout() {
+      setLoading(true);
       try {
         const cart = window.getCart();
-        const items = cart.map(item => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          customization: item.customization || {}
-        }));
-
-        const result = await window.CheckoutService.createPaymentIntent({
-          items: items,
-          email: document.getElementById('email').value || 'guest@example.com',
-          shippingAddress: { name: 'Guest', city: 'London', street: 'TBD', postcode: 'TBD', apartment: '' },
-          cartId: window.getCartId ? window.getCartId() : 'guest_' + Date.now()
+        const items = cart.map(item => ({ productId: item.productId, quantity: item.quantity }));
+        const response = await fetch('http://localhost:3001/api/checkout/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cartItems: items,
+            customerInfo: {
+              email: document.getElementById('email').value,
+              name: document.getElementById('name').value,
+              address: document.getElementById('address').value,
+              city: document.getElementById('city').value,
+              postcode: document.getElementById('postcode').value
+            },
+            userId: window.AuthService && window.AuthService.getCurrentUser_Sync() ? window.AuthService.getCurrentUser_Sync().uid : 'guest'
+          })
         });
-
-        if (result) {
-          const { clientSecret, orderId } = result;
-          currentOrderId = orderId;
-
-          stripe = await window.initializeStripe();
-          elements = stripe.elements({
-            clientSecret,
-            appearance: { theme: 'stripe', variables: { colorPrimary: '#000000', borderRadius: '4px' } }
-          });
-
-          const paymentElement = elements.create('payment');
-          paymentElement.mount('#payment-element');
-        }
+        const { sessionId } = await response.json();
+        const stripeObj = await window.initializeStripe();
+        await stripeObj.redirectToCheckout({ sessionId });
       } catch (error) {
-        console.error("Stripe Init Failed:", error);
+        console.error("Checkout Failed:", error);
+        alert('Checkout error: ' + error.message);
+        setLoading(false);
       }
     }
 
-    // Final Submit
     document.getElementById('submit-payment').addEventListener('click', async () => {
-      if (!stripe || !elements) return;
-
-      setLoading(true);
-
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/order-confirmation.html?order=${currentOrderId}`,
-          payment_method_data: {
-            billing_details: {
-              name: document.getElementById('name').value,
-              email: document.getElementById('email').value,
-              address: {
-                line1: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                postal_code: document.getElementById('postcode').value,
-                country: 'GB'
-              }
-            }
-          }
-        }
-      });
-
-      if (error) {
-        const msgEl = document.getElementById('payment-message');
-        msgEl.textContent = error.message;
-        msgEl.style.display = 'block';
-        setLoading(false);
-      }
+      if (!document.getElementById('email').value) return alert('Email required');
+      await startSecureCheckout();
     });
 
     function setLoading(isLoading) {
       const btn = document.getElementById('submit-payment');
+      if (btn) btn.disabled = isLoading;
       const spinner = document.getElementById('spinner');
+      if (spinner) spinner.style.display = isLoading ? 'inline-block' : 'none';
       const txt = document.getElementById('button-text');
-
-      btn.disabled = isLoading;
-      spinner.style.display = isLoading ? 'inline-block' : 'none';
-      txt.style.display = isLoading ? 'none' : 'inline';
+      if (txt) txt.style.display = isLoading ? 'none' : 'inline';
     }
 
     init();
-  </script>
+</script>
 </body>
 
 </html>
