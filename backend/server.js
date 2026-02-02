@@ -24,7 +24,7 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',')
+  origin: (process.env.ALLOWED_ORIGINS || 'https://customisemeuk.com,https://www.customisemeuk.com').split(',')
 }));
 
 // IMPORTANT: Raw body for webhooks BEFORE json parser
@@ -98,8 +98,8 @@ app.post('/api/checkout/create-session', async (req, res) => {
         quantity: item.quantity
       })),
       customer_email: customerInfo.email,
-      success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/order-confirmation.html?order=${orderRef.id}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout.html`,
+      success_url: `${process.env.FRONTEND_URL || 'https://customisemeuk.com'}/order-confirmation.html?order=${orderRef.id}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL || 'https://customisemeuk.com'}/checkout.html`,
       metadata: {
         orderId: orderRef.id
       }

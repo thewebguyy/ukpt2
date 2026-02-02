@@ -169,7 +169,7 @@
       if (!orderId) { showError("No order ID"); return; }
       if (!sessionId) { showSuccess(orderId); return; }
       try {
-        const response = await fetch('http://localhost:3001/api/orders/verify-payment', {
+        const response = await fetch('https://customisemeuk.com/api/orders/verify-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderId, sessionId })
