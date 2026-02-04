@@ -604,6 +604,7 @@
             2. Review & Calculate
             <div id="review-spinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></div>
           </button>
+          <div id="review-error" class="alert alert-danger mt-3" style="display: none;"></div>
 
           <!-- Step 3: Complete (This is a mirror/jump to the bottom button for UX) -->
           <button class="btn-stripe-checkout" id="goto-payment-btn" style="display: none; background: #000;">
@@ -768,7 +769,13 @@
     });
 
     // STEP 2: REVIEW ORDER & INITIALIZE STRIPE
+    let isReviewing = false;
     document.getElementById('review-order-btn').addEventListener('click', async () => {
+      if (isReviewing) return;
+
+      const errorEl = document.getElementById('review-error');
+      errorEl.style.display = 'none';
+
       // Validate form
       const email = document.getElementById('email').value;
       const name = document.getElementById('name').value;
@@ -777,10 +784,12 @@
       const postcode = document.getElementById('postcode').value;
 
       if (!email || !name || !address || !city || !postcode) {
-        alert('Please fill in all shipping details.');
+        errorEl.textContent = 'Please fill in all shipping details.';
+        errorEl.style.display = 'block';
         return;
       }
 
+      isReviewing = true;
       setReviewLoading(true);
 
       try {
@@ -825,14 +834,19 @@
 
       } catch (error) {
         console.error("Step 2 Error:", error);
-        alert("Failed to initialize payment: " + error.message);
+        errorEl.textContent = "Error: " + error.message;
+        errorEl.style.display = 'block';
       } finally {
+        isReviewing = false;
         setReviewLoading(false);
       }
     });
 
     // STEP 3: SUBMIT PAYMENT
+    let isSubmitting = false;
     document.getElementById('submit-payment').addEventListener('click', async () => {
+      if (isSubmitting) return;
+      isSubmitting = true;
       setPaymentLoading(true);
 
       try {
@@ -851,6 +865,7 @@
       } catch (error) {
         console.error("Payment Error:", error);
       } finally {
+        isSubmitting = false;
         setPaymentLoading(false);
       }
     });
