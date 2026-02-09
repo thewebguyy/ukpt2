@@ -28,7 +28,10 @@ const db = getFirestore(app);
 const functions = getFunctions(app); // Defaults to us-central1
 
 const CONFIG = {
-  STRIPE_PUBLIC_KEY: 'pk_live_51Qr2StKg0noSfYuQGP6qNLoemAXaMiwaZZfcDfuAtcrq4h5RUlpuzkBE7HbdNa5XnqXaS44C6tiEvVtht9eBiLH500uVeNF7Je'
+  // ⚠️ IMPORTANT: Replace with your actual Stripe PUBLISHABLE key
+  // It should start with 'pk_test_' (test mode) or 'pk_live_' (live mode)
+  // NOT a secret key (sk_) or restricted key (rk_/tgrk_)
+  STRIPE_PUBLIC_KEY: 'YOUR_STRIPE_PUBLISHABLE_KEY_HERE'
 };
 
 // ============================================
