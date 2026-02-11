@@ -3,12 +3,58 @@ const { defineSecret } = require("firebase-functions/params");
 const stripe = require("stripe");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
+const nodemailer = require("nodemailer");
+const { getOrderConfirmationHTML } = require("./email-templates");
 
 admin.initializeApp();
 
 // Define secrets
 const stripeSecret = defineSecret("STRIPE_SECRET_KEY");
 const webhookSecret = defineSecret("STRIPE_WEBHOOK_SECRET");
+const emailUser = defineSecret("EMAIL_USER");
+const emailPass = defineSecret("EMAIL_PASSWORD");
+const emailFrom = defineSecret("EMAIL_FROM");
+const adminEmail = defineSecret("ADMIN_EMAIL");
+
+/**
+ * Helper: Send Order Confirmation Email
+ */
+async function sendOrderEmail(order, orderId, secrets) {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: secrets.user,
+                pass: secrets.pass
+            }
+        });
+
+        const html = getOrderConfirmationHTML(order, orderId);
+
+        const mailOptions = {
+            from: secrets.from,
+            to: order.email,
+            subject: `Order Confirmed: ${orderId}`,
+            html: html
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        logger.info(`Email sent to ${order.email}: ${info.messageId}`);
+
+        // Also notify admin
+        await transporter.sendMail({
+            from: secrets.from,
+            to: secrets.admin,
+            subject: `New Order Received - ${orderId}`,
+            html: `<h3>New Order from ${order.shippingAddress.name}</h3><p>Total: £${order.total.toFixed(2)}</p><a href="https://customisemeuk.com/order-tracking.html?order=${orderId}">View Order</a>`
+        });
+
+        return true;
+    } catch (error) {
+        logger.error("Email sending failed:", error);
+        return false;
+    }
+}
 
 /**
  * Create Stripe Checkout Session
@@ -35,9 +81,6 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
 
         const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-        // Map items to Stripe format
-        // We add tax and shipping as separate line items for transparency if needed,
-        // or we can use Stripe's native tax/shipping. For this prompt, we'll use line items.
         const line_items = items.map(item => ({
             price_data: {
                 currency: 'gbp',
@@ -50,7 +93,6 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
             quantity: item.quantity,
         }));
 
-        // Add Tax as a line item
         if (tax > 0) {
             line_items.push({
                 price_data: {
@@ -62,7 +104,6 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
             });
         }
 
-        // Add Shipping as a line item
         if (shippingCost > 0) {
             line_items.push({
                 price_data: {
@@ -110,13 +151,14 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
  * Stripe Webhook Handler
  * Processes checkout.session.completed to update order status
  */
-exports.stripeWebhook = onRequest({ secrets: [stripeSecret, webhookSecret] }, async (req, res) => {
+exports.stripeWebhook = onRequest({
+    secrets: [stripeSecret, webhookSecret, emailUser, emailPass, emailFrom, adminEmail]
+}, async (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
 
     try {
         const stripeClient = stripe(stripeSecret.value());
-        // Use req.rawBody for signature verification
         event = stripeClient.webhooks.constructEvent(req.rawBody, sig, webhookSecret.value());
     } catch (err) {
         logger.error("Webhook signature verification failed:", err.message);
@@ -129,15 +171,32 @@ exports.stripeWebhook = onRequest({ secrets: [stripeSecret, webhookSecret] }, as
 
         if (orderId) {
             try {
-                await admin.firestore().collection('orders').doc(orderId).update({
-                    status: 'paid',
-                    paidAt: admin.firestore.FieldValue.serverTimestamp(),
-                    stripeSessionId: session.id
-                });
-                logger.info(`Order ${orderId} successfully completed.`);
+                const orderRef = admin.firestore().collection('orders').doc(orderId);
+                const orderDoc = await orderRef.get();
+
+                if (orderDoc.exists) {
+                    const orderData = orderDoc.data();
+
+                    // Update to 'paid'
+                    await orderRef.update({
+                        status: 'paid',
+                        paidAt: admin.firestore.FieldValue.serverTimestamp(),
+                        stripeSessionId: session.id
+                    });
+
+                    // Send Confirmation Email
+                    await sendOrderEmail(orderData, orderId, {
+                        user: emailUser.value(),
+                        pass: emailPass.value(),
+                        from: emailFrom.value(),
+                        admin: adminEmail.value()
+                    });
+
+                    logger.info(`Order ${orderId} successfully completed and email sent.`);
+                }
             } catch (dbError) {
-                logger.error(`Database update failed for order ${orderId}:`, dbError);
-                return res.status(500).send("Database Update Failed");
+                logger.error(`Webhook processing failed for order ${orderId}:`, dbError);
+                return res.status(500).send("Processing Failed");
             }
         }
     }

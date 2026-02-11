@@ -103,25 +103,34 @@
             </svg>
           </div>
 
-          <h1>Order Confirmed!</h1>
+          <h1 class="mb-3">Order Confirmed!</h1>
           <p class="text-grey-dark" style="font-size: 1.125rem; margin-bottom: 2rem;">
-            Thank you for your purchase. Your order has been secured.
+            Thank you for your purchase. We've received your order and are getting it ready for you.
           </p>
 
           <div class="order-number">
-            <div style="margin-bottom: 0.5rem;">Order Reference:</div>
-            <strong id="order-number-display"></strong>
+            <div style="margin-bottom: 0.5rem; font-weight: 500; color: #6b7280; letter-spacing: 0.05em;">ORDER NUMBER
+            </div>
+            <strong id="order-number-display" style="font-size: 1.5rem; color: #000;"></strong>
           </div>
 
-          <p class="text-grey-dark" style="font-size: 0.875rem;">
-            A confirmation email has been sent to your email address.
+          <p class="mt-4" style="font-size: 0.95rem; color: #4b5563;">
+            You can track your order status anytime in your <a href="account.html"
+              style="color: #000; font-weight: 600;">Account Panel</a> or via the link below:
           </p>
 
           <div class="mt-4 d-grid gap-2">
-            <button class="btn btn-primary btn-lg" onclick="window.location.href='shop.html'">
+            <a id="track-order-link" href="#" class="btn btn-dark btn-lg rounded-0 py-3 shadow-sm">
+              TRACK ORDER STATUS
+            </a>
+            <button class="btn btn-outline-dark btn-md rounded-0 mt-2" onclick="window.location.href='shop.html'">
               Continue Shopping
             </button>
           </div>
+
+          <p class="mt-4 text-grey-dark" style="font-size: 0.825rem; opacity: 0.7;">
+            A confirmation email and receipt have been sent to your registered email address.
+          </p>
         </div>
 
         <div id="error-state" style="display: none;">
@@ -160,6 +169,7 @@
       document.getElementById('loading-state').style.display = 'none';
       document.getElementById('success-state').style.display = 'block';
       document.getElementById('order-number-display').textContent = orderId;
+      document.getElementById('track-order-link').href = `order-tracking.html?order=${orderId}`;
     }
 
     async function init() {
