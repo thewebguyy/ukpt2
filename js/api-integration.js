@@ -56,11 +56,11 @@ class AuthService {
 
       // Create user doc in Firestore (optional but good for extra data)
       try {
-        await updateDoc(doc(db, 'users', user.uid), {
+        await setDoc(doc(db, 'users', user.uid), {
           name,
           email,
           createdAt: serverTimestamp()
-        });
+        }, { merge: true });
       } catch (e) {
         // Doc might not exist, but we proceed
       }
