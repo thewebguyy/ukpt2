@@ -47,7 +47,7 @@ class AuthService {
 
       // Send verification email
       await sendEmailVerification(user, {
-        url: window.location.origin + '/login.html',
+        url: window.location.origin + '/account.html',
         handleCodeInApp: false
       });
 

@@ -492,9 +492,23 @@
     window.auth = auth;
     window.functions = functions;
 
+    // Admin Whitelist
+    const ADMIN_WHITELIST = [
+      'info@customisemeuk.com',
+      'pstman2003@gmail.com'
+    ];
+
     // Auth State Observer
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        // Check authorization
+        if (!ADMIN_WHITELIST.includes(user.email)) {
+          alert('Access Denied: You do not have administrator privileges.');
+          await signOut(auth);
+          window.location.href = 'admin-portal.html';
+          return;
+        }
+
         document.getElementById('userEmail').textContent = user.email;
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
@@ -509,7 +523,7 @@
         await loadHomepageImages();
         populateEditProductSelect();
       } else {
-        window.location.href = 'login.html';
+        window.location.href = 'admin-portal.html';
       }
     });
 
@@ -519,7 +533,7 @@
         try {
           await signOut(auth);
           localStorage.removeItem('authToken'); // Clear backend token
-          window.location.href = 'login.html';
+          window.location.href = 'admin-portal.html';
         } catch (error) {
           console.error('Logout error:', error);
           alert('Failed to sign out. Please try again.');
