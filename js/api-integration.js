@@ -332,6 +332,29 @@ class ContactService {
   }
 }
 
+class OrderService {
+  static async getUserOrders(email) {
+    if (!email) return [];
+    try {
+      const ordersRef = collection(db, 'orders');
+      const q = query(
+        ordersRef,
+        where('email', '==', email),
+        orderBy('createdAt', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+      const orders = [];
+      querySnapshot.forEach((doc) => {
+        orders.push({ id: doc.id, ...doc.data() });
+      });
+      return orders;
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      return [];
+    }
+  }
+}
+
 // ============================================
 // UTILS
 // ============================================
@@ -352,6 +375,7 @@ window.ProductService = ProductService;
 window.CheckoutService = CheckoutService;
 window.NewsletterService = NewsletterService;
 window.ContactService = ContactService;
+window.OrderService = OrderService;
 window.initializeStripe = initializeStripe;
 window.db = db; // Export db for index.html hero loading
 

@@ -467,27 +467,13 @@
                     <th class="text-end">Action</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="overview-orders-body">
+                  <!-- Dynamic content will be injected here -->
                   <tr>
-                    <td>#CMUK-10234</td>
-                    <td>Jan 28, 2026</td>
-                    <td><span class="badge bg-warning text-dark">Processing</span></td>
-                    <td>£45.99</td>
-                    <td class="text-end"><button class="btn btn-sm btn-outline-dark">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>#CMUK-10189</td>
-                    <td>Dec 15, 2025</td>
-                    <td><span class="badge bg-success">Delivered</span></td>
-                    <td>£129.50</td>
-                    <td class="text-end"><button class="btn btn-sm btn-outline-dark">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>#CMUK-09982</td>
-                    <td>Nov 02, 2025</td>
-                    <td><span class="badge bg-success">Delivered</span></td>
-                    <td>£32.00</td>
-                    <td class="text-end"><button class="btn btn-sm btn-outline-dark">View</button></td>
+                    <td colspan="5" class="text-center py-4">
+                      <div class="spinner-border spinner-border-sm text-muted" role="status"></div>
+                      <span class="ms-2 text-muted">Loading orders...</span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -509,14 +495,13 @@
                     <th class="text-end"></th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="history-orders-body">
+                  <!-- Dynamic content will be injected here -->
                   <tr>
-                    <td class="fw-medium">#CMUK-10234</td>
-                    <td>Jan 28, 2026</td>
-                    <td><span class="badge bg-warning text-dark">Processing</span></td>
-                    <td>3 items</td>
-                    <td class="fw-bold">£45.99</td>
-                    <td class="text-end"><a href="#" class="btn btn-sm btn-outline-dark">Track Order</a></td>
+                    <td colspan="6" class="text-center py-4">
+                      <div class="spinner-border spinner-border-sm text-muted" role="status"></div>
+                      <span class="ms-2 text-muted">Loading history...</span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -646,7 +631,7 @@
       setTimeout(() => clearInterval(checkAuth), 5000);
     });
 
-    function updateDashboard(user) {
+    async function updateDashboard(user) {
       document.getElementById('user-name').textContent = user.name || 'User';
       document.getElementById('user-email').textContent = user.email || '';
       document.getElementById('user-initial').textContent = (user.name || 'U').charAt(0).toUpperCase();
@@ -658,6 +643,75 @@
         navTextEl.textContent = 'HI, ' + (user.name ? user.name.split(' ')[0].toUpperCase() : 'USER');
         const navLink = navTextEl.closest('a');
         if (navLink) navLink.href = 'account.html';
+      }
+
+      // Fetch and display real orders
+      await loadUserOrders(user.email);
+    }
+
+    async function loadUserOrders(email) {
+      if (!window.OrderService) return;
+
+      const orders = await window.OrderService.getUserOrders(email);
+      const overviewBody = document.getElementById('overview-orders-body');
+      const historyBody = document.getElementById('history-orders-body');
+
+      const noOrdersHTML = `
+        <tr>
+          <td colspan="6" class="text-center py-5">
+            <p class="text-muted mb-3">No orders found yet.</p>
+            <a href="shop.html" class="btn btn-sm btn-dark">Start Shopping</a>
+          </td>
+        </tr>
+      `;
+
+      if (!orders || orders.length === 0) {
+        overviewBody.innerHTML = noOrdersHTML;
+        historyBody.innerHTML = noOrdersHTML;
+        return;
+      }
+
+      // Update total orders count in overview
+      const orderCountEl = document.querySelector('.display-6.fw-bold');
+      if (orderCountEl) orderCountEl.textContent = orders.length;
+
+      // Render Overview (Max 3)
+      overviewBody.innerHTML = orders.slice(0, 3).map(order => `
+        <tr>
+          <td>${order.id}</td>
+          <td>${order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+          <td><span class="badge ${getStatusBadgeClass(order.status)}">${(order.status || 'pending').toUpperCase()}</span></td>
+          <td>£${(order.total || 0).toFixed(2)}</td>
+          <td class="text-end">
+            <a href="order-tracking.html?order=${order.id}" class="btn btn-sm btn-outline-dark">View</a>
+          </td>
+        </tr>
+      `).join('');
+
+      // Render History (All)
+      historyBody.innerHTML = orders.map(order => `
+        <tr>
+          <td class="fw-medium">${order.id}</td>
+          <td>${order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+          <td><span class="badge ${getStatusBadgeClass(order.status)}">${(order.status || 'pending').toUpperCase()}</span></td>
+          <td>${order.items?.length || 0} items</td>
+          <td class="fw-bold">£${(order.total || 0).toFixed(2)}</td>
+          <td class="text-end">
+            <a href="order-tracking.html?order=${order.id}" class="btn btn-sm btn-outline-dark">Track Order</a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function getStatusBadgeClass(status) {
+      switch (status?.toLowerCase()) {
+        case 'paid':
+        case 'confirmed':
+        case 'delivered': return 'bg-success';
+        case 'processing':
+        case 'shipped': return 'bg-warning text-dark';
+        case 'pending': return 'bg-secondary';
+        default: return 'bg-secondary';
       }
     }
 
