@@ -434,26 +434,7 @@
           <div class="dashboard-content-area" id="tab-overview">
             <h2 class="h4 mb-4 fw-bold">ACCOUNT OVERVIEW</h2>
 
-            <div class="row g-4 mb-5">
-              <div class="col-md-4">
-                <div class="p-4 rounded-3 text-center" style="background: white; border: 1px solid #eee;">
-                  <h3 class="display-6 fw-bold mb-1">0</h3>
-                  <p class="text-muted small mb-0 text-uppercase" style="letter-spacing: 0.05em;">Total Orders</p>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="p-4 rounded-3 text-center" style="background: white; border: 1px solid #eee;">
-                  <h3 class="display-6 fw-bold mb-1">PRO</h3>
-                  <p class="text-muted small mb-0 text-uppercase" style="letter-spacing: 0.05em;">Member Status</p>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="p-4 rounded-3 text-center" style="background: white; border: 1px solid #eee;">
-                  <h3 class="display-6 fw-bold mb-1">0</h3>
-                  <p class="text-muted small mb-0 text-uppercase" style="letter-spacing: 0.05em;">Points Balance</p>
-                </div>
-              </div>
-            </div>
+
 
             <h3 class="h5 mb-3 fw-bold">RECENT ORDERS</h3>
             <div class="table-responsive">
@@ -670,10 +651,6 @@
         historyBody.innerHTML = noOrdersHTML;
         return;
       }
-
-      // Update total orders count in overview
-      const orderCountEl = document.querySelector('.display-6.fw-bold');
-      if (orderCountEl) orderCountEl.textContent = orders.length;
 
       // Render Overview (Max 3)
       overviewBody.innerHTML = orders.slice(0, 3).map(order => `
