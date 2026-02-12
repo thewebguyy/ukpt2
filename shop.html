@@ -335,21 +335,38 @@
       try {
         const productCountEl = document.getElementById('product-count');
         const productsContainer = document.getElementById('products-container');
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds (50 * 100ms)
 
         const checkService = setInterval(async () => {
+          attempts++;
           if (window.ProductService) {
             clearInterval(checkService);
-            allProducts = await window.ProductService.getProducts({ limit: 100 });
+            try {
+              allProducts = await window.ProductService.getProducts({ limit: 100 });
+              isLoading = false;
+              displayedProducts = [...allProducts];
+              initFilters();
+            } catch (err) {
+              console.error("Data fetch error:", err);
+              isLoading = false;
+              productsContainer.innerHTML = `<div class="empty-products"><p>Error fetching products. Please try again.</p></div>`;
+            }
+          } else if (attempts >= maxAttempts) {
+            clearInterval(checkService);
             isLoading = false;
-            displayedProducts = [...allProducts];
-            initFilters();
+            console.error("ProductService not found (Timeout)");
+            productsContainer.innerHTML = `<div class="empty-products">
+                <p>Unable to load products. API Connection Failed.</p>
+                <small class="text-danger">If you are opening this file directly, please use a local server (e.g., Live Server) because modules are blocked on file:// protocol.</small>
+            </div>`;
           }
         }, 100);
 
       } catch (error) {
         console.error('Error loading products:', error);
         isLoading = false;
-        document.getElementById('products-container').innerHTML = `<div class="empty-products"><p>Failed to load products.</p></div>`;
+        document.getElementById('products-container').innerHTML = `<div class="empty-products"><p>Critical error loading products.</p></div>`;
       }
     }
 
