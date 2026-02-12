@@ -188,6 +188,16 @@
       text-align: center;
       padding: 3rem;
     }
+
+    @media (max-width: 768px) {
+      .product-price-main {
+        font-size: 1.75rem;
+      }
+
+      .product-title-main {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 
@@ -677,10 +687,13 @@
       }, 100);
 
       // Initialize Size Guide Modal Link
-      document.querySelector('a[href="#"][style*="text-decoration: underline"]').addEventListener('click', (e) => {
-        e.preventDefault();
-        new bootstrap.Modal(document.getElementById('sizeGuideModal')).show();
-      });
+      const sizeGuideLink = document.querySelector('a[href="#"][style*="text-decoration: underline"]');
+      if (sizeGuideLink) {
+        sizeGuideLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          new bootstrap.Modal(document.getElementById('sizeGuideModal')).show();
+        });
+      }
     });
 
     async function loadProduct(id) {
@@ -700,7 +713,7 @@
       document.getElementById('product-category').textContent = (product.category || 'Product').toUpperCase();
       document.getElementById('product-name').textContent = product.name;
       document.getElementById('product-description').textContent = product.description;
-      updatePrice();
+      updatePrice(); // Initial Price
 
       // GA4 Event - View Item
       if (typeof gtag === 'function') {
@@ -752,17 +765,14 @@
 
       // Wishlist Button State
       const wishlistBtn = document.getElementById('product-wishlist-btn');
-      if (wishlistBtn) {
-        if (window.isInWishlist && window.isInWishlist(product.id)) {
-          wishlistBtn.classList.add('active');
-        } else {
-          wishlistBtn.classList.remove('active');
-        }
+      if (wishlistBtn && window.isInWishlist && window.isInWishlist(product.id)) {
+        wishlistBtn.classList.add('active');
       }
 
       if (category === 'tote-bags' || category === 'accessories' && product.name.toLowerCase().includes('bag')) {
         document.querySelector('#group-size .size-options').style.display = 'none';
-        document.querySelector('#group-size a[style*="text-decoration: underline"]').style.display = 'none';
+        const sizeLink = document.querySelector('#group-size a[style*="text-decoration: underline"]');
+        if (sizeLink) sizeLink.style.display = 'none';
         document.getElementById('static-size-label').style.display = 'block';
         customization.size = 'One Size';
       } else if (category === 'stickers') {
@@ -780,6 +790,7 @@
       }
     }
 
+    // UPDATED: Quantity logic involved
     window.updateStickerQuantity = (val, el) => {
       currentQuantity = val;
       document.getElementById('quantity').value = val;
@@ -787,6 +798,7 @@
         Array.from(el.parentElement.children).forEach(c => c.classList.remove('active', 'btn-primary'));
         el.classList.add('active', 'btn-primary');
       }
+      updatePrice();
     };
 
     async function loadReviews(id) {
@@ -821,20 +833,28 @@
 
     async function loadRelatedProducts() {
       const container = document.getElementById('related-products');
-      const products = await window.ProductService.getProducts({ limit: 4 }); // Simple logic for now
-      container.innerHTML = products.map(p => `
-        <div class="product-card">
-          <a href="product.html?id=${p.id}" class="product-card-link">
-            <div class="product-image">
-               ${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}">` : '<div class="h-100 d-flex align-items-center justify-content-center bg-light">No Image</div>'}
+      const products = await window.ProductService.getProducts({ limit: 4 });
+      // Simple logic for now
+      if (container && products) {
+        container.innerHTML = products.map(p => `
+            <div class="product-card">
+              <a href="product.html?id=${p.id}" class="product-card-link">
+                <div class="product-image">
+                   ${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}">` : '<div class="h-100 d-flex align-items-center justify-content-center bg-light">No Image</div>'}
+                </div>
+                <div class="product-info p-3">
+                  <h3 class="product-title" style="font-size: 1rem;">${escapeHtml(p.name)}</h3>
+                  <div class="fw-bold">£${p.price.toFixed(2)}</div>
+                </div>
+              </a>
             </div>
-            <div class="product-info p-3">
-              <h3 class="product-title" style="font-size: 1rem;">${escapeHtml(p.name)}</h3>
-              <div class="fw-bold">£${p.price.toFixed(2)}</div>
-            </div>
-          </a>
-        </div>
-      `).join('');
+          `).join('');
+      }
+    }
+
+    function showError() {
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('error-state').style.display = 'block';
     }
 
     window.updateCustomization = (type, val, el) => {
@@ -848,22 +868,27 @@
 
     function updatePrice() {
       if (!currentProduct) return;
-      let p = currentProduct.price;
-      if (customization.printLocation === 'Front & Back') p += 5;
-      document.getElementById('product-price').textContent = `£${p.toFixed(2)}`;
+      let unitPrice = currentProduct.price;
+      if (customization.printLocation === 'Front & Back') unitPrice += 5;
+
+      const totalPrice = unitPrice * currentQuantity;
+      document.getElementById('product-price').textContent = `£${totalPrice.toFixed(2)}`;
     }
 
     window.changeQuantity = (d) => {
       const el = document.getElementById('quantity');
       currentQuantity = Math.max(1, currentQuantity + d);
       el.value = currentQuantity;
+      updatePrice();
     };
 
     window.addProductToCart = () => {
       if (!currentProduct) return;
-      const price = customization.printLocation === 'Front & Back' ? currentProduct.price + 5 : currentProduct.price;
+      let unitPrice = currentProduct.price;
+      if (customization.printLocation === 'Front & Back') unitPrice += 5;
+
       const name = `${currentProduct.name} (${customization.size}, ${customization.color})`;
-      addToCart(currentProduct.id, name, price, currentProduct.imageUrl, currentQuantity, customization);
+      addToCart(currentProduct.id, name, unitPrice, currentProduct.imageUrl, currentQuantity, customization);
 
       const btn = document.getElementById('add-to-cart-btn');
       const txt = btn.textContent;
@@ -884,19 +909,30 @@
       document.getElementById('char-count').style.color = count >= 50 ? 'green' : 'red';
     };
 
-    // Form handlers
-    window.handleFileUpload = (input) => {
+    // UPDATED: Firebase Storage Upload
+    window.handleFileUpload = async (input) => {
       const preview = document.getElementById('file-preview');
       if (input.files && input.files[0]) {
         const file = input.files[0];
-        const reader = new FileReader();
 
-        // Show loading state
-        preview.innerHTML = `<span class="text-muted">Uploading ${file.name}...</span>`;
-        preview.style.color = '#666';
+        // Show uploading state
+        preview.innerHTML = `<div class="d-flex align-items-center gap-2"><div class="spinner-border spinner-border-sm text-secondary" role="status"></div><span class="text-muted">Uploading ${file.name}...</span></div>`;
 
-        reader.onload = (e) => {
-          customization.artwork = e.target.result;
+        try {
+          // Import Storage functions dynamically
+          const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js');
+
+          // Ensure storage is initialized (window.storage from api-integration)
+          if (!window.storage) throw new Error("Storage not initialized in app");
+
+          const storageRef = ref(window.storage, `uploads/${Date.now()}_${file.name}`);
+
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+
+          customization.artwork = downloadURL; // Store URL
+          customization.artworkFilename = file.name;
+
           preview.innerHTML = `
             <div class="d-flex align-items-center gap-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="color: #059669;">
@@ -905,14 +941,15 @@
               <span>File uploaded: <strong>${file.name}</strong></span>
               <button class="btn btn-sm p-0 ms-auto text-danger" onclick="removeArtwork(event)" style="font-size: 0.75rem; text-decoration: underline;">Remove</button>
             </div>
-          `;
+           `;
           preview.style.color = '#059669';
+          console.log('Artwork uploaded:', downloadURL);
 
-          // Show a toast or simple alert for extra confirmation
-          console.log('Artwork uploaded:', file.name);
-        };
-
-        reader.readAsDataURL(file);
+        } catch (error) {
+          console.error("Upload failed", error);
+          preview.innerHTML = `<span class="text-danger">Upload failed. ${error.message}</span>`;
+          input.value = ''; // Reset
+        }
       }
     };
 
@@ -934,11 +971,9 @@
       submitBtn.textContent = 'Submitting...';
 
       try {
-        // Implementation calling Cloud Function
         const { httpsCallable } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js');
         const submitReviewFn = httpsCallable(window.functions, 'submitReview');
 
-        // Note: For images, you'd upload to Firebase Storage first here. Skipping for brevity.
         await submitReviewFn({
           productId: productId,
           rating: parseInt(document.getElementById('review-rating-input').value),

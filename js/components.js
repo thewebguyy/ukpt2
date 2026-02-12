@@ -184,22 +184,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 let lastScrollTop = 0;
 const scrollThreshold = 100;
 
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+// window.addEventListener('scroll', () => {
+//     const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
-    // Don't do anything if near top
-    if (currentScroll < scrollThreshold) {
-        document.body.classList.remove('header-hidden');
-        return;
-    }
+//     // Don't do anything if near top
+//     if (currentScroll < scrollThreshold) {
+//         document.body.classList.remove('header-hidden');
+//         return;
+//     }
 
-    if (currentScroll > lastScrollTop) {
-        // Scrolling DOWN
-        document.body.classList.add('header-hidden');
-    } else {
-        // Scrolling UP
-        document.body.classList.remove('header-hidden');
-    }
+//     if (currentScroll > lastScrollTop) {
+//         // Scrolling DOWN
+//         document.body.classList.add('header-hidden');
+//     } else {
+//         // Scrolling UP
+//         document.body.classList.remove('header-hidden');
+//     }
 
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-}, { passive: true });
+//     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+// }, { passive: true });

@@ -138,6 +138,7 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
             total: subtotal + tax + shippingCost,
             email,
             shippingAddress: shippingAddress || {},
+            userId: request.data.userId || null, // Link to user if logged in
             status: 'pending',
             createdAt: admin.firestore.FieldValue.serverTimestamp()
         });

@@ -203,7 +203,8 @@
 
     @media (max-width: 576px) {
       .product-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
       }
     }
   </style>
@@ -317,6 +318,7 @@
     let allProducts = [];
     let displayedProducts = [];
     let isLoading = true;
+    let currentSearchTerm = "";
 
     document.addEventListener('DOMContentLoaded', () => {
       loadProducts();
@@ -355,6 +357,16 @@
           document.getElementById('cat-all').checked = false;
         }
       }
+
+      // Handle Search param
+      const search = urlParams.get('search');
+      if (search) {
+        window.currentSearchTerm = search.toLowerCase();
+        // Update header if search term present
+        const titleEl = document.querySelector('.text-center h1');
+        if (titleEl) titleEl.textContent = `SEARCH RESULTS: "${search.toUpperCase()}"`;
+      }
+
       filterProducts();
     }
 
@@ -412,6 +424,12 @@
         if (document.getElementById('cat-accessories').checked) categories.push('accessories');
         if (categories.length > 0) filtered = filtered.filter(p => categories.includes(p.category));
       }
+
+      // Search Filter
+      if (window.currentSearchTerm) {
+        filtered = filtered.filter(p => p.name.toLowerCase().includes(window.currentSearchTerm) || (p.category && p.category.toLowerCase().includes(window.currentSearchTerm)));
+      }
+
       const minPrice = parseFloat(document.getElementById('price-min').value) || 0;
       const maxPrice = parseFloat(document.getElementById('price-max').value) || Infinity;
       filtered = filtered.filter(p => p.price >= minPrice && p.price <= maxPrice);
@@ -435,6 +453,7 @@
       document.getElementById('price-min').value = '';
       document.getElementById('price-max').value = '';
       document.getElementById('sort-select').value = 'featured';
+      window.currentSearchTerm = ""; // Clear search
       displayedProducts = [...allProducts];
       displayProducts(displayedProducts);
     };
@@ -454,7 +473,7 @@
     }
 
     window.toggleMobileFilters = function () {
-      document.getElementById('filter-sidebar').classList.toggle('show');
+      document.querySelector('.filter-sidebar').classList.toggle('show');
     };
   </script>
 </body>

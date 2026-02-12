@@ -7,6 +7,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, collection, getDocs, doc, getDoc, query, where, limit, orderBy, startAfter, addDoc, updateDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
 // ============================================
 // CONFIGURATION
@@ -26,6 +27,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const functions = getFunctions(app); // Defaults to us-central1
+const storage = getStorage(app);
 
 const CONFIG = {
   // Stripe Live Publishable Key
@@ -308,8 +310,10 @@ class CheckoutService {
   static async createCheckoutSession(orderData) {
     try {
       const createCheckoutSessionFn = httpsCallable(functions, 'createCheckoutSession');
+      const user = auth.currentUser;
       const result = await createCheckoutSessionFn({
         ...orderData,
+        userId: user ? user.uid : null,
         successUrl: window.location.origin + '/order-confirmation.html',
         cancelUrl: window.location.origin + '/checkout.html'
       });
@@ -361,16 +365,35 @@ class ContactService {
 
 class OrderService {
   static async getUserOrders(email) {
-    if (!email) return [];
+    // We try to get the current user to see if we can query by ID
+    const user = auth.currentUser;
+    if (!email && !user) return [];
+
     try {
       const ordersRef = collection(db, 'orders');
-      const q = query(
-        ordersRef,
-        where('email', '==', email)
-      );
-      const querySnapshot = await getDocs(q);
+      let q;
+
+      if (user) {
+        // If logged in, query by userId OR email (composite query difficult without index, so we prefer userId)
+        // Since OR queries require specific indexes, we'll try userId first.
+        // Actually, let's just use two queries and merge client-side or just use email if no userId on old orders.
+        // Simplest strategy: If we have userId, query that.
+        q = query(ordersRef, where('userId', '==', user.uid));
+      } else {
+        q = query(ordersRef, where('email', '==', email));
+      }
+
+      let querySnapshot = await getDocs(q);
+
+      // Fallback: If userId query returned nothing, try email (for old orders or if userId wasn't saved)
+      if (user && querySnapshot.empty && email) {
+        const q2 = query(ordersRef, where('email', '==', email));
+        querySnapshot = await getDocs(q2);
+      }
+
       const orders = [];
       querySnapshot.forEach((doc) => {
+        // Avoid duplicates if we did complex merging, but here we just re-assigned querySnapshot
         orders.push({ id: doc.id, ...doc.data() });
       });
 
@@ -411,6 +434,7 @@ window.OrderService = OrderService;
 window.UserService = UserService;
 window.initializeStripe = initializeStripe;
 window.db = db; // Export db for index.html hero loading
+window.storage = storage; // Export storage
 
 // ============================================
 // CART SYNC (ABANDONED CART)
@@ -441,7 +465,7 @@ window.saveCartToFirestore = async function (cart) {
 };
 
 // ============================================
-// GLOBAL AUTH STATE LISTENER
+// GLOBAL AUTH STATE & SEARCH LISTENER
 // ============================================
 AuthService.initAuthListener((user) => {
   const updateNavText = () => {
@@ -463,7 +487,21 @@ AuthService.initAuthListener((user) => {
   document.dispatchEvent(new CustomEvent('authStateChanged', { detail: { user } }));
 
   // Also update when components are loaded (for dynamic nav)
-  document.addEventListener('allComponentsLoaded', updateNavText);
+  document.addEventListener('allComponentsLoaded', () => {
+    updateNavText();
+
+    // Init Search Bar
+    const searchForms = document.querySelectorAll('.search-bar-form-compact');
+    searchForms.forEach(form => {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = form.querySelector('input[type="search"]');
+        if (input && input.value.trim()) {
+          window.location.href = `shop.html?search=${encodeURIComponent(input.value.trim())}`;
+        }
+      });
+    });
+  });
 });
 
-console.log('API Integration (Firebase + Functions) Loaded');
+console.log('API Integration (Firebase + Functions + Storage) Loaded');

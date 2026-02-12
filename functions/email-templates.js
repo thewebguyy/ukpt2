@@ -3,15 +3,36 @@
  */
 
 const getOrderConfirmationHTML = (order, orderId) => {
-    const itemsHTML = order.items.map(item => `
+    const itemsHTML = order.items.map(item => {
+        let optionsHTML = '';
+        if (item.customization) {
+            const opts = [];
+            if (item.customization.size) opts.push(`Size: ${item.customization.size}`);
+            if (item.customization.color) opts.push(`Color: ${item.customization.color}`);
+            if (item.customization.printLocation) opts.push(`Print: ${item.customization.printLocation}`);
+            if (item.customization.designPosition) opts.push(`Position: ${item.customization.designPosition}`);
+
+            if (opts.length > 0) {
+                optionsHTML += `<div style="font-size: 0.85em; color: #666; margin-top: 4px;">${opts.join(' | ')}</div>`;
+            }
+
+            if (item.customization.artwork) {
+                optionsHTML += `<div style="font-size: 0.85em; margin-top: 4px;"><a href="${item.customization.artwork}" style="color: #059669; text-decoration: underline;">View Uploaded Artwork</a></div>`;
+            }
+        }
+
+        return `
         <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
             <div style="display: flex; justify-content: space-between;">
-                <strong>${item.name}</strong>
+                <div>
+                    <strong>${item.name}</strong>
+                    ${optionsHTML}
+                </div>
                 <span>x${item.quantity}</span>
             </div>
             <div style="color: #666; font-size: 0.9em;">£${item.price.toFixed(2)} each</div>
         </div>
-    `).join('');
+    `}).join('');
 
     return `
     <!DOCTYPE html>
