@@ -180,14 +180,30 @@
                     aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <ul class="navbar-nav justify-content-center flex-grow-1">
+                <!-- Persistent Search Bar -->
+                <div class="mobile-menu-search d-lg-none">
+                    <form class="search-bar-form-compact w-100" onsubmit="window.handleGlobalSearch(event)">
+                        <div class="d-flex align-items-center border px-2 py-1" style="border-radius: 0;">
+                            <svg class="search-icon me-2">
+                                <use xlink:href="#icon-search" />
+                            </svg>
+                            <input type="search" class="search-input" placeholder="Search products..."
+                                style="width: 100%;">
+                        </div>
+                    </form>
+                </div>
+
+                <ul class="navbar-nav justify-content-center flex-grow-1" id="mobile-nav-list">
+                    <!-- Shop Mega Menu -->
                     <!-- Shop Mega Menu -->
                     <li class="nav-item dropdown mega-menu">
-                        <a class="nav-link dropdown-toggle" href="shop.html" id="shopDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" onclick="openSubMenu(event, 'shop-menu')">
                             SHOP
                         </a>
-                        <div class="dropdown-menu mega-dropdown">
+                        <div class="dropdown-menu mega-dropdown" id="shop-menu">
+                            <div class="mobile-menu-back" onclick="closeSubMenu('shop-menu')">
+                                <span>‹ BACK TO MAIN</span>
+                            </div>
                             <div class="container">
                                 <div class="row">
                                     <div class="col-md-3">
@@ -227,17 +243,18 @@
 
                     <!-- Design Studio Mega Menu -->
                     <li class="nav-item dropdown mega-menu">
-                        <a class="nav-link dropdown-toggle" href="designstudio.html" id="studioDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" onclick="openSubMenu(event, 'design-menu')">
                             DESIGN STUDIO
                         </a>
-                        <div class="dropdown-menu mega-dropdown">
+                        <div class="dropdown-menu mega-dropdown" id="design-menu">
+                            <div class="mobile-menu-back" onclick="closeSubMenu('design-menu')">
+                                <span>‹ BACK TO MAIN</span>
+                            </div>
                             <div class="container">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h6 class="mega-title">SERVICES</h6>
                                         <a class="dropdown-item" href="designservice.html">DESIGN SERVICES</a>
-
                                     </div>
                                     <div class="col-md-6">
                                         <h6 class="mega-title">RESOURCES</h6>
@@ -252,11 +269,13 @@
 
                     <!-- Premium Services Mega Menu -->
                     <li class="nav-item dropdown mega-menu">
-                        <a class="nav-link dropdown-toggle" href="premiumservices.html" id="servicesDropdown"
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" onclick="openSubMenu(event, 'premium-menu')">
                             PREMIUM SERVICES
                         </a>
-                        <div class="dropdown-menu mega-dropdown">
+                        <div class="dropdown-menu mega-dropdown" id="premium-menu">
+                            <div class="mobile-menu-back" onclick="closeSubMenu('premium-menu')">
+                                <span>‹ BACK TO MAIN</span>
+                            </div>
                             <div class="container">
                                 <div class="row">
                                     <div class="col-md-4">
@@ -284,3 +303,50 @@
         </div>
     </div>
 </nav>
+
+<script>
+    // Sliding Menu Logic
+    function openSubMenu(e, menuId) {
+        if (window.innerWidth >= 992) return; // Desktop ignore
+        e.preventDefault();
+        e.stopPropagation(); // Stop immediate closing
+
+        const subMenu = document.getElementById(menuId);
+        const mainNav = document.getElementById('mobile-nav-list');
+
+        if (subMenu && mainNav) {
+            subMenu.classList.add('sub-menu-active');
+            mainNav.classList.add('menu-slid-left');
+            // Scroll sub-menu to top
+            subMenu.scrollTop = 0;
+        }
+    }
+
+    function closeSubMenu(menuId) {
+        const subMenu = document.getElementById(menuId);
+        const mainNav = document.getElementById('mobile-nav-list');
+
+        if (subMenu && mainNav) {
+            subMenu.classList.remove('sub-menu-active');
+            mainNav.classList.remove('menu-slid-left');
+        }
+    }
+
+    function initMobileMenuLogic() {
+        // Close sub-menus when offcanvas closes
+        const myOffcanvas = document.getElementById('mobileMenu')
+        if (myOffcanvas) {
+            myOffcanvas.addEventListener('hidden.bs.offcanvas', function () {
+                document.querySelectorAll('.mega-dropdown').forEach(el => el.classList.remove('sub-menu-active'));
+                document.querySelectorAll('.navbar-nav').forEach(el => el.classList.remove('menu-slid-left'));
+            })
+        }
+    }
+
+    // Call init if DOM is ready, or wait
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMobileMenuLogic);
+    } else {
+        initMobileMenuLogic();
+    }
+</script>
