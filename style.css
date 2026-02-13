@@ -268,9 +268,12 @@ p {
   }
 
   .top-bar {
-    position: fixed !important;
-    /* Ensure it stays fixed */
+    position: fixed;
+    /* Fixed position without !important */
     padding-bottom: 10px;
+    height: auto;
+    transition: none;
+    /* Remove transition to prevent scroll lag on mobile */
   }
 
   /* Ensure utility bar interacts correctly */
@@ -279,6 +282,10 @@ p {
     padding: 8px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     margin-bottom: 8px;
+  }
+
+  .announcement-banner {
+    transition: none;
   }
 }
 
