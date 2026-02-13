@@ -203,3 +203,51 @@ const scrollThreshold = 100;
 
 //     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
 // }, { passive: true });
+
+/* ============================================
+   MOBILE MENU LOGIC (Global)
+   ============================================ */
+window.openSubMenu = function (e, menuId) {
+    if (window.innerWidth >= 992) return; // Desktop ignore
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation(); // Stop immediate closing
+    }
+
+    const subMenu = document.getElementById(menuId);
+    const mainNav = document.getElementById('mobile-nav-list');
+
+    if (subMenu && mainNav) {
+        subMenu.classList.add('sub-menu-active');
+        mainNav.classList.add('menu-slid-left');
+        // Scroll sub-menu to top
+        subMenu.scrollTop = 0;
+    }
+};
+
+window.closeSubMenu = function (menuId) {
+    const subMenu = document.getElementById(menuId);
+    const mainNav = document.getElementById('mobile-nav-list');
+
+    if (subMenu && mainNav) {
+        subMenu.classList.remove('sub-menu-active');
+        mainNav.classList.remove('menu-slid-left');
+    }
+};
+
+function initMobileMenuLogic() {
+    // Close sub-menus when offcanvas closes
+    const myOffcanvas = document.getElementById('mobileMenu');
+    if (myOffcanvas) {
+        myOffcanvas.addEventListener('hidden.bs.offcanvas', function () {
+            document.querySelectorAll('.mega-dropdown').forEach(el => el.classList.remove('sub-menu-active'));
+            document.querySelectorAll('.navbar-nav').forEach(el => el.classList.remove('menu-slid-left'));
+        });
+    }
+}
+
+// Initialize logic when components are loaded
+document.addEventListener('allComponentsLoaded', initMobileMenuLogic);
+
+// Also try on DOMContentLoaded in case components are already there (static build)
+document.addEventListener('DOMContentLoaded', initMobileMenuLogic);
