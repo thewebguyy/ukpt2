@@ -551,8 +551,8 @@ p {
 
 .mega-dropdown {
   width: 100%;
-  left: 0 !important;
-  right: 0 !important;
+  left: 0;
+  right: 0;
   border: none;
   border-radius: 0px;
   margin-top: 0;
