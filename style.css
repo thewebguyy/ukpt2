@@ -2927,8 +2927,61 @@ footer {
     flex-shrink: 0;
   }
 
-  /* Ensure list fills remaining space */
+
+  /* Ensure list fills remaining space but aligns to TOP on mobile */
   #mobile-nav-list {
     flex-grow: 1;
+    justify-content: flex-start !important;
+    /* Override JS/HTML centering classes */
+    align-items: stretch !important;
+    /* Full width items */
+    text-align: left !important;
+  }
+
+  .nav-link {
+    text-align: left !important;
+    padding-left: 0 !important;
+    /* Remove excessive padding if needed, or keep for tap target */
+    justify-content: flex-start !important;
+  }
+}
+
+/* ============================================
+   DESKTOP MENU FIXES
+   ============================================ */
+@media (min-width: 992px) {
+
+  /* Reset offcanvas properties to ensure it behaves as a normal navbar */
+  .offcanvas-lg {
+    position: static !important;
+    z-index: auto !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    height: auto !important;
+    visibility: visible !important;
+    transform: none !important;
+
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Ensure body inside also takes full width */
+  .offcanvas-body {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Ensure nav list is centered */
+  .navbar-nav {
+    justify-content: center !important;
+    width: 100%;
+    flex-direction: row !important;
+    /* Ensure row on desktop */
   }
 }
