@@ -2929,20 +2929,33 @@ footer {
 
 
   /* Ensure list fills remaining space but aligns to TOP on mobile */
+  /* Ensure list fills remaining space but aligns to TOP on mobile */
   #mobile-nav-list {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
     justify-content: flex-start !important;
-    /* Override JS/HTML centering classes */
-    align-items: stretch !important;
-    /* Full width items */
+    /* Forces items to top */
+    align-items: flex-start !important;
+    /* Forces items to left */
     text-align: left !important;
+    width: 100%;
+    margin: 0 !important;
+    padding-top: 1rem;
   }
 
   .nav-link {
     text-align: left !important;
     padding-left: 0 !important;
-    /* Remove excessive padding if needed, or keep for tap target */
     justify-content: flex-start !important;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Force offcanvas background white on mobile */
+  .offcanvas {
+    background-color: var(--color-white) !important;
   }
 }
 
@@ -2964,24 +2977,35 @@ footer {
     transform: none !important;
 
     flex-grow: 1;
-    display: flex;
-    justify-content: center;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
 
   /* Ensure body inside also takes full width */
   .offcanvas-body {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
     padding: 0 !important;
     overflow: visible !important;
   }
 
   /* Ensure nav list is centered */
   .navbar-nav {
+    display: flex !important;
     justify-content: center !important;
-    width: 100%;
+    width: 100% !important;
     flex-direction: row !important;
-    /* Ensure row on desktop */
+    margin: 0 auto !important;
+  }
+
+  /* Override container constraints if necessary */
+  .main-nav .container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: var(--container-max);
   }
 }
