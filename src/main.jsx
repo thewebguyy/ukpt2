@@ -8,8 +8,11 @@ import router from './router'
 
 import './styles/normalize.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './styles/main.css'
 import './styles/mobile-menu.css'
+import './styles/admin.css'
+import './styles/tier3.css'
 
 const queryClient = new QueryClient({
     defaultOptions: {

@@ -9,6 +9,14 @@ import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import DesignStudio from './pages/DesignStudio';
+import Wishlist from './pages/Wishlist';
+import Contact from './pages/Contact';
+import FAQ from './pages/FAQ';
+import About from './pages/About';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Subscriptions from './pages/Subscriptions';
+import OrderTracking from './pages/OrderTracking';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -23,6 +31,14 @@ const router = createBrowserRouter([
             { path: 'checkout', element: <Checkout /> },
             { path: 'order-confirmation', element: <OrderConfirmation /> },
             { path: 'design-studio', element: <DesignStudio /> },
+            { path: 'wishlist', element: <Wishlist /> },
+            { path: 'contact', element: <Contact /> },
+            { path: 'faq', element: <FAQ /> },
+            { path: 'about', element: <About /> },
+            { path: 'privacy-policy', element: <Privacy /> },
+            { path: 'terms-conditions', element: <Terms /> },
+            { path: 'subscriptions', element: <Subscriptions /> },
+            { path: 'order-tracking', element: <OrderTracking /> },
             {
                 path: 'dashboard',
                 element: (
