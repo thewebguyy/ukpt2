@@ -472,10 +472,20 @@ AuthService.initAuthListener((user) => {
     const navTextElements = document.querySelectorAll('.nav-text');
     navTextElements.forEach(el => {
       if (user) {
-        const firstName = user.name.split(' ')[0].toUpperCase();
+        // Extract first name and uppercase it
+        const fullName = user.name || 'User';
+        const firstName = fullName.split(' ')[0].toUpperCase();
         el.textContent = `HI, ${firstName}`;
       } else {
-        el.textContent = 'SIGN IN / SIGN UP';
+        // Use the saved default text from data attribute (e.g., "LOG IN" or "SIGN IN / SIGN UP")
+        const defaultText = el.getAttribute('data-default-text');
+        if (defaultText) {
+          el.textContent = defaultText;
+        } else if (el.textContent.indexOf('HI,') !== 0) {
+          // Fallback if no data attribute, but don't overwrite if it's already "SIGN IN / SIGN UP"
+          // This is a safety check for elements that might not have the attribute yet
+          el.textContent = 'SIGN IN / SIGN UP';
+        }
       }
     });
   };
@@ -501,6 +511,11 @@ AuthService.initAuthListener((user) => {
         }
       });
     });
+  });
+
+  // Ensure update runs when mobile menu is opened
+  document.addEventListener('mobileMenuOpened', () => {
+    updateNavText();
   });
 });
 
