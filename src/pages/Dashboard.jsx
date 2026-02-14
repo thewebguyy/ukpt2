@@ -9,7 +9,6 @@ import { toast } from 'react-hot-toast';
 
 const Dashboard = () => {
     const { user, logout } = useAuthStore();
-    const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ name: '', email: '' });
     const [isSaving, setIsSaving] = useState(false);
