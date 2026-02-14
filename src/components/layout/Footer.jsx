@@ -1,32 +1,7 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { NewsletterService } from '../../services/newsletter.service';
-import { toast } from 'react-hot-toast';
+import NewsletterForm from '../NewsletterForm';
 
 const Footer = () => {
-    const [email, setEmail] = useState('');
-    const [isSubscribing, setIsSubscribing] = useState(false);
-
-    const handleSubscribe = async (e) => {
-        e.preventDefault();
-        if (!email.trim()) return;
-
-        setIsSubscribing(true);
-        try {
-            const result = await NewsletterService.subscribe(email.trim());
-            if (result.success) {
-                toast.success('Successfully subscribed to our newsletter!');
-                setEmail('');
-            } else {
-                toast.error(result.message);
-            }
-        } catch {
-            toast.error('Something went wrong. Please try again.');
-        } finally {
-            setIsSubscribing(false);
-        }
-    };
-
     return (
         <footer style={{ backgroundColor: '#f8f9fa', padding: '4rem 0' }}>
             <div className="container">
@@ -59,28 +34,7 @@ const Footer = () => {
                     <div className="col-md-3 footer-section mb-4 mb-md-0">
                         <h3 className="footer-title">NEWSLETTER</h3>
                         <p className="text-grey-dark small">Subscribe for exclusive offers, new arrivals, and 10% off your first order.</p>
-                        <form onSubmit={handleSubscribe}>
-                            <div className="d-flex gap-2">
-                                <input
-                                    type="email"
-                                    className="form-control form-control-sm"
-                                    placeholder="Your email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                                <button
-                                    type="submit"
-                                    className="btn btn-dark btn-sm flex-shrink-0"
-                                    disabled={isSubscribing}
-                                >
-                                    {isSubscribing ? '...' : 'JOIN'}
-                                </button>
-                            </div>
-                            <p className="text-muted mt-1 mb-0" style={{ fontSize: '0.7rem' }}>
-                                By subscribing you agree to our <Link to="/privacy-policy" className="text-decoration-underline text-muted">Privacy Policy</Link>. Unsubscribe anytime.
-                            </p>
-                        </form>
+                        <NewsletterForm />
                     </div>
 
                     {/* Contact */}

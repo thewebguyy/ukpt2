@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { db } from '../../../services/firebase';
 import { collection, getDocs, updateDoc, doc, orderBy, query } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
+import { EmailService } from '../../../services/email.service';
 
 const AdminOrders = () => {
     const queryClient = useQueryClient();
@@ -16,17 +17,32 @@ const AdminOrders = () => {
     });
 
     const updateStatusMutation = useMutation({
-        mutationFn: async ({ id, status }) => {
-            await updateDoc(doc(db, 'orders', id), { status });
+        mutationFn: async ({ order, status }) => {
+            await updateDoc(doc(db, 'orders', order.id), { status });
+            if (status === 'shipped' && order.email) {
+                const firstName = (order.shippingAddress?.name || '').trim().split(' ')[0] || 'Customer';
+                await EmailService.sendShippingNotification({
+                    email: order.email,
+                    firstName,
+                    orderId: order.id,
+                    trackingNumber: order.trackingNumber || 'Will be updated shortly',
+                    carrier: order.carrier || 'Royal Mail',
+                    estimatedDelivery: order.estimatedDelivery || '3-5 business days'
+                });
+            }
         },
-        onSuccess: () => {
+        onSuccess: (_, { status }) => {
             queryClient.invalidateQueries(['admin-orders']);
-            toast.success('Order status updated');
+            toast.success(status === 'shipped' ? 'Order marked shipped & notification sent' : 'Order status updated');
+        },
+        onError: (err, { order, status }) => {
+            queryClient.invalidateQueries(['admin-orders']);
+            toast.error(status === 'shipped' ? 'Status updated but shipping email failed' : err.message);
         }
     });
 
-    const handleStatusChange = (id, newStatus) => {
-        updateStatusMutation.mutate({ id, status: newStatus });
+    const handleStatusChange = (order, newStatus) => {
+        updateStatusMutation.mutate({ order, status: newStatus });
     };
 
     if (isLoading) return <div className="text-center py-5"><div className="spinner-border"></div></div>;
@@ -74,7 +90,7 @@ const AdminOrders = () => {
                                     <select
                                         className="form-select form-select-sm d-inline-block w-auto"
                                         value={order.status}
-                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                        onChange={(e) => handleStatusChange(order, e.target.value)}
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="paid">Paid</option>

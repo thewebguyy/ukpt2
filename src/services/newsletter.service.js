@@ -8,18 +8,23 @@ function emailToDocId(email) {
 }
 
 export const NewsletterService = {
-    async subscribe(email) {
+    async subscribe(emailOrData) {
+        const email = typeof emailOrData === 'string' ? emailOrData : emailOrData?.email;
+        const firstName = typeof emailOrData === 'object' ? emailOrData?.firstName : '';
+        if (!email) return { success: false, message: 'Email is required.' };
+
         try {
             const docRef = doc(db, 'newsletter', emailToDocId(email));
             await setDoc(docRef, {
                 email: email.toLowerCase(),
+                firstName: firstName || '',
                 createdAt: serverTimestamp(),
                 source: 'react_website_footer',
                 subscribed: true
             }, { merge: true });
 
-            // Send welcome email (fire and forget)
-            EmailService.sendWelcomeEmail(email.toLowerCase());
+            // Send welcome email (fire and forget) - Firebase function uses Brevo
+            EmailService.sendWelcomeEmail(email.toLowerCase(), firstName);
 
             return { success: true, message: 'Successfully subscribed!' };
         } catch (error) {
