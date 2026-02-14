@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../services/firebase';
 
 const Contact = () => {
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -11,11 +13,17 @@ const Contact = () => {
         setIsSubmitting(true);
 
         try {
-            // TODO: Integrate with Firebase Cloud Function 'submitContact'
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+            const submitContactFn = httpsCallable(functions, 'submitContact');
+            await submitContactFn({
+                name: formData.name,
+                email: formData.email,
+                service: formData.subject,
+                message: formData.message
+            });
             toast.success('Message sent! We\'ll get back to you soon.');
             setFormData({ name: '', email: '', subject: '', message: '' });
         } catch (error) {
+            console.error('Contact form error:', error);
             toast.error('Failed to send message. Please try again.');
         } finally {
             setIsSubmitting(false);

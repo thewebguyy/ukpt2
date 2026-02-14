@@ -1,9 +1,8 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 const DesignStudio = () => {
     const containerRef = useRef(null);
-    const [loading, setLoading] = useState(true);
 
     return (
         <div className="design-studio-page">

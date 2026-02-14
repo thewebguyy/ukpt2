@@ -28,7 +28,11 @@ const Account = () => {
                     toast.error(result.message);
                 }
             } else {
-                const result = await AuthService.register(formData.name, formData.email, formData.password);
+                const result = await AuthService.register({
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password
+                });
                 if (result.success) {
                     toast.success('Registration successful! Please check your email to verify.');
                     setIsLogin(true);
@@ -44,11 +48,15 @@ const Account = () => {
     };
 
     const handleGoogleSignIn = async () => {
-        const result = await AuthService.googleSignIn();
-        if (result.success) {
-            toast.success('Signed in with Google!');
-        } else {
-            toast.error(result.message);
+        try {
+            const result = await AuthService.loginWithGoogle();
+            if (result.success) {
+                toast.success('Signed in with Google!');
+            } else {
+                toast.error(result.message);
+            }
+        } catch (err) {
+            toast.error('Google sign-in failed. Please try again.');
         }
     };
 
@@ -98,7 +106,26 @@ const Account = () => {
                                 <div className="mb-4">
                                     <div className="d-flex justify-content-between">
                                         <label className="form-label small fw-bold">PASSWORD</label>
-                                        {isLogin && <button type="button" className="btn btn-link p-0 small text-decoration-none">Forgot Password?</button>}
+                                        {isLogin && (
+                            <button
+                                type="button"
+                                className="btn btn-link p-0 small text-decoration-none"
+                                onClick={async () => {
+                                    if (!formData.email) {
+                                        toast.error('Please enter your email address first.');
+                                        return;
+                                    }
+                                    const result = await AuthService.sendPasswordReset(formData.email);
+                                    if (result.success) {
+                                        toast.success(result.message);
+                                    } else {
+                                        toast.error(result.message);
+                                    }
+                                }}
+                            >
+                                Forgot Password?
+                            </button>
+                        )}
                                     </div>
                                     <input
                                         type="password"

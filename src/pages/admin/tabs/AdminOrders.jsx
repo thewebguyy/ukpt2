@@ -64,7 +64,11 @@ const AdminOrders = () => {
                                     </span>
                                 </td>
                                 <td className="small">
-                                    {order.createdAt?.toDate ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'N/A'}
+                                    {order.createdAt?.toDate
+                                        ? new Date(order.createdAt.toDate()).toLocaleDateString()
+                                        : order.createdAt
+                                            ? new Date(order.createdAt).toLocaleDateString()
+                                            : 'N/A'}
                                 </td>
                                 <td className="text-end">
                                     <select

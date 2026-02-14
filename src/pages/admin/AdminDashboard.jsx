@@ -7,17 +7,15 @@ import AdminUpload from './tabs/AdminUpload';
 import AdminReviews from './tabs/AdminReviews';
 import AdminCustomOrders from './tabs/AdminCustomOrders';
 import { Helmet } from 'react-helmet-async';
+import { ADMIN_EMAILS } from '../../config/admin';
 
 const AdminDashboard = () => {
     const { user, loading } = useAuthStore();
     const [activeTab, setActiveTab] = useState('products');
 
-    // Hardcoded Admin Whitelist as per original code
-    const ADMIN_WHITELIST = ['info@customisemeuk.com', 'pstman2003@gmail.com'];
-
     if (loading) return <div className="p-5 text-center"><div className="spinner-border"></div></div>;
 
-    if (!user || !ADMIN_WHITELIST.includes(user.email)) {
+    if (!user || !ADMIN_EMAILS.includes(user.email)) {
         return <Navigate to="/account" />;
     }
 

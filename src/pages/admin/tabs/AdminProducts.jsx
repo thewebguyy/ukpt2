@@ -60,8 +60,8 @@ const AdminProducts = () => {
                                 <td><span className="badge bg-light text-dark text-capitalize">{p.category}</span></td>
                                 <td className="fw-bold">£{p.price?.toFixed(2)}</td>
                                 <td className="text-end">
-                                    <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p.id)} disabled={deleteMutation.isLoading}>
-                                        {deleteMutation.isLoading && deleteMutation.variables === p.id ? '...' : 'Delete'}
+                                    <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p.id)} disabled={deleteMutation.isPending}>
+                                        {deleteMutation.isPending && deleteMutation.variables === p.id ? '...' : 'Delete'}
                                     </button>
                                 </td>
                             </tr>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
@@ -9,8 +9,8 @@ import { motion } from 'framer-motion';
 const OrderConfirmation = () => {
     const [searchParams] = useSearchParams();
     const orderId = searchParams.get('orderId');
-    const [status, setStatus] = useState('loading'); // loading, success, error
-    const clearCart = useCartStore(state => state.clearCart);
+    const [status, setStatus] = useState('loading');
+    const cartCleared = useRef(false);
 
     useEffect(() => {
         if (!orderId) {
@@ -18,8 +18,11 @@ const OrderConfirmation = () => {
             return;
         }
 
-        // Clear cart on entry
-        clearCart();
+        // Clear cart once on entry
+        if (!cartCleared.current) {
+            cartCleared.current = true;
+            useCartStore.getState().clearCart();
+        }
 
         // Listen for order status updates (wait for 'paid' via webhook)
         const orderRef = doc(db, 'orders', orderId);
@@ -51,7 +54,7 @@ const OrderConfirmation = () => {
             unsubscribe();
             clearTimeout(timer);
         };
-    }, [orderId, clearCart]);
+    }, [orderId]);
 
     return (
         <div className="order-confirmation-page py-5 bg-light min-vh-100 d-flex align-items-center">

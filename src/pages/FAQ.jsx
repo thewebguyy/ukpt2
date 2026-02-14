@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 const FAQ = () => {
@@ -73,7 +74,7 @@ const FAQ = () => {
                             <div className="text-center mt-5 p-4 bg-white rounded shadow-sm">
                                 <h3 className="h5 fw-bold mb-3">Still have questions?</h3>
                                 <p className="text-muted mb-3">Can't find what you're looking for? Get in touch with our team.</p>
-                                <a href="/contact" className="btn btn-dark px-5">CONTACT US</a>
+                                <Link to="/contact" className="btn btn-dark px-5">CONTACT US</Link>
                             </div>
                         </div>
                     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -7,6 +7,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
     const [activeView, setActiveView] = useState('main');
     const { user } = useAuthStore();
     const location = useLocation();
+    const navigate = useNavigate();
 
     // Reset view when menu opens or location changes
     useEffect(() => {
@@ -16,6 +17,9 @@ const MobileMenu = ({ isOpen, onClose }) => {
         } else {
             document.body.style.overflow = '';
         }
+        return () => {
+            document.body.style.overflow = '';
+        };
     }, [isOpen, location]);
 
     if (!isOpen) return null;
@@ -99,7 +103,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
                         e.preventDefault();
                         const query = e.target.search.value;
                         if (query) {
-                            window.location.href = `/shop?search=${encodeURIComponent(query)}`;
+                            navigate(`/shop?search=${encodeURIComponent(query)}`);
                             onClose();
                         }
                     }}>

@@ -2,15 +2,24 @@
  * EMAIL TEMPLATES for Cloud Functions
  */
 
+function escapeHtml(str) {
+    return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 const getOrderConfirmationHTML = (order, orderId) => {
     const itemsHTML = order.items.map(item => {
         let optionsHTML = '';
         if (item.customization) {
             const opts = [];
-            if (item.customization.size) opts.push(`Size: ${item.customization.size}`);
-            if (item.customization.color) opts.push(`Color: ${item.customization.color}`);
-            if (item.customization.printLocation) opts.push(`Print: ${item.customization.printLocation}`);
-            if (item.customization.designPosition) opts.push(`Position: ${item.customization.designPosition}`);
+            if (item.customization.size) opts.push(`Size: ${escapeHtml(item.customization.size)}`);
+            if (item.customization.color) opts.push(`Color: ${escapeHtml(item.customization.color)}`);
+            if (item.customization.printLocation) opts.push(`Print: ${escapeHtml(item.customization.printLocation)}`);
+            if (item.customization.designPosition) opts.push(`Position: ${escapeHtml(item.customization.designPosition)}`);
 
             if (opts.length > 0) {
                 optionsHTML += `<div style="font-size: 0.85em; color: #666; margin-top: 4px;">${opts.join(' | ')}</div>`;
@@ -25,7 +34,7 @@ const getOrderConfirmationHTML = (order, orderId) => {
         <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
             <div style="display: flex; justify-content: space-between;">
                 <div>
-                    <strong>${item.name}</strong>
+                    <strong>${escapeHtml(item.name)}</strong>
                     ${optionsHTML}
                 </div>
                 <span>x${item.quantity}</span>
@@ -60,7 +69,7 @@ const getOrderConfirmationHTML = (order, orderId) => {
             </div>
             <div class="content">
                 <h2>Thank you for your order!</h2>
-                <p>Hi ${order.shippingAddress.name || 'there'},</p>
+                <p>Hi ${escapeHtml(order.shippingAddress.name || 'there')},</p>
                 <p>We've received your payment and our team is now preparing your custom items. You'll receive another notification once your order has been shipped.</p>
                 
                 <div class="order-meta">
@@ -93,9 +102,9 @@ const getOrderConfirmationHTML = (order, orderId) => {
                 <div style="margin-top: 30px;">
                     <h3>Shipping To:</h3>
                     <p>
-                        ${order.shippingAddress.name}<br>
-                        ${order.shippingAddress.address}<br>
-                        ${order.shippingAddress.city}, ${order.shippingAddress.postcode}<br>
+                        ${escapeHtml(order.shippingAddress.name)}<br>
+                        ${escapeHtml(order.shippingAddress.address)}<br>
+                        ${escapeHtml(order.shippingAddress.city)}, ${escapeHtml(order.shippingAddress.postcode)}<br>
                         United Kingdom
                     </p>
                 </div>
@@ -119,13 +128,13 @@ const getContactEmailHTML = (data) => {
     return `
     <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee;">
         <h2>New Contact Inquiry</h2>
-        <p><strong>Name:</strong> ${data.name}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        <p><strong>Phone:</strong> ${data.phone || 'N/A'}</p>
-        <p><strong>Service:</strong> ${data.service}</p>
+        <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(data.phone || 'N/A')}</p>
+        <p><strong>Service:</strong> ${escapeHtml(data.service)}</p>
         <hr>
         <p><strong>Message:</strong></p>
-        <p style="white-space: pre-wrap;">${data.message}</p>
+        <p style="white-space: pre-wrap;">${escapeHtml(data.message)}</p>
     </div>
     `;
 };

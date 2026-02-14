@@ -28,9 +28,15 @@ export const OrderService = {
                 });
             }
 
+            // Convert Firestore Timestamps to ISO strings so they survive serialization
+            orders = orders.map(order => ({
+                ...order,
+                createdAt: order.createdAt?.toDate ? order.createdAt.toDate().toISOString() : order.createdAt || null
+            }));
+
             return orders.sort((a, b) => {
-                const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : 0;
-                const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : 0;
+                const dateA = a.createdAt ? new Date(a.createdAt) : 0;
+                const dateB = b.createdAt ? new Date(b.createdAt) : 0;
                 return dateB - dateA;
             });
         } catch (error) {

@@ -96,7 +96,7 @@ export const ProductService = {
             ...data,
             category: Array.isArray(data.categories) ? data.categories[0] : (data.category || 'Uncategorized'),
             imageUrl: Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : (data.imageUrl || ''),
-            stock: typeof data.stock === 'number' ? data.stock : 100
+            stock: typeof data.stock === 'number' ? data.stock : 0
         };
     }
 };

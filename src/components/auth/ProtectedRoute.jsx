@@ -1,11 +1,9 @@
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { ADMIN_EMAILS } from '../../config/admin';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
     const { user, loading } = useAuthStore();
-
-    // Whitelist for admins
-    const adminEmails = ['info@customisemeuk.com', 'pstman2003@gmail.com'];
 
     if (loading) {
         return (
@@ -21,7 +19,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
         return <Navigate to="/account" replace />;
     }
 
-    if (adminOnly && !adminEmails.includes(user.email)) {
+    if (adminOnly && !ADMIN_EMAILS.includes(user.email)) {
         return <Navigate to="/" replace />;
     }
 

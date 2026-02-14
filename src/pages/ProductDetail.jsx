@@ -61,6 +61,23 @@ const ProductDetail = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+        const ALLOWED_TYPES = ['image/png', 'application/pdf', 'application/postscript', 'image/vnd.adobe.photoshop'];
+        const ALLOWED_EXTENSIONS = ['.png', '.pdf', '.ai', '.psd'];
+
+        if (file.size > MAX_FILE_SIZE) {
+            toast.error('File too large. Maximum size is 10MB.');
+            e.target.value = '';
+            return;
+        }
+
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(ext)) {
+            toast.error('Invalid file type. Please upload PNG, PDF, AI, or PSD files.');
+            e.target.value = '';
+            return;
+        }
+
         setIsUploading(true);
         try {
             const storageRef = ref(storage, `uploads/${Date.now()}_${file.name}`);

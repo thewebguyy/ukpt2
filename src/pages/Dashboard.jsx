@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { OrderService } from '../services/order.service';
 import { AuthService } from '../services/auth.service';
 import { Helmet } from 'react-helmet-async';
@@ -123,7 +124,7 @@ const Dashboard = () => {
                                         {orders.map(order => (
                                             <tr key={order.id}>
                                                 <td className="px-4 fw-bold">{order.id}</td>
-                                                <td>{order.createdAt?.toDate ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+                                                <td>{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}</td>
                                                 <td>
                                                     <span className={`badge rounded-pill px-3 ${order.status === 'paid' ? 'bg-success' : 'bg-warning text-dark'}`}>
                                                         {(order.status || 'pending').toUpperCase()}
@@ -138,7 +139,7 @@ const Dashboard = () => {
                         ) : (
                             <div className="card border-0 shadow-sm p-5 text-center rounded-4">
                                 <p className="text-muted mb-0">You haven't placed any orders yet.</p>
-                                <a href="/shop" className="btn btn-link fw-bold text-dark text-decoration-none mt-2">Start Shopping &rarr;</a>
+                                <Link to="/shop" className="btn btn-link fw-bold text-dark text-decoration-none mt-2">Start Shopping &rarr;</Link>
                             </div>
                         )}
                     </div>

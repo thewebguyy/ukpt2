@@ -25,7 +25,8 @@ const Terms = () => {
                             <div className="bg-white p-4 rounded shadow-sm mb-4">
                                 <h2 className="h4 fw-bold mb-3">2. Orders and Payment</h2>
                                 <p className="text-grey-dark">
-                                    All prices are in GBP and include VAT. Payment is processed securely through Stripe.
+                                    All prices are in GBP and displayed excluding VAT. VAT at 20% is added at checkout.
+                                    Payment is processed securely through Stripe.
                                     Orders are confirmed upon successful payment.
                                 </p>
                             </div>

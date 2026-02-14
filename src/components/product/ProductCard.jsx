@@ -25,7 +25,7 @@ const ProductCard = ({ product }) => {
                     {product.imageUrl ? (
                         <img src={product.imageUrl} alt={product.name} loading="lazy" />
                     ) : (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyCenter: 'center', height: '100%', color: 'var(--color-grey)' }}>No Image</div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--color-grey)' }}>No Image</div>
                     )}
                 </div>
                 <div className="product-info">

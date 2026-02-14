@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 const About = () => {
@@ -68,8 +69,8 @@ const About = () => {
                         <h2 className="h3 fw-bold mb-3">READY TO START YOUR PROJECT?</h2>
                         <p className="mb-4">Browse our products or get in touch to discuss custom solutions</p>
                         <div className="d-flex gap-3 justify-content-center flex-wrap">
-                            <a href="/shop" className="btn btn-light btn-lg px-5">BROWSE PRODUCTS</a>
-                            <a href="/contact" className="btn btn-outline-light btn-lg px-5">CONTACT US</a>
+                            <Link to="/shop" className="btn btn-light btn-lg px-5">BROWSE PRODUCTS</Link>
+                            <Link to="/contact" className="btn btn-outline-light btn-lg px-5">CONTACT US</Link>
                         </div>
                     </div>
                 </div>

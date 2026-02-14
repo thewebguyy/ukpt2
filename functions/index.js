@@ -4,7 +4,7 @@ const stripe = require("stripe");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
-const { getOrderConfirmationHTML } = require("./email-templates");
+const { getOrderConfirmationHTML, getContactEmailHTML } = require("./email-templates");
 
 admin.initializeApp();
 
@@ -46,7 +46,7 @@ async function sendOrderEmail(order, orderId, secrets) {
             from: secrets.from,
             to: secrets.admin,
             subject: `New Order Received - ${orderId}`,
-            html: `<h3>New Order from ${order.shippingAddress.name}</h3><p>Total: £${order.total.toFixed(2)}</p><a href="https://customisemeuk.com/order-tracking.html?order=${orderId}">View Order</a>`
+            html: `<h3>New Order from ${(order.shippingAddress.name || '').replace(/[<>"'&]/g, '')}</h3><p>Total: &pound;${order.total.toFixed(2)}</p><p>Order ID: ${orderId}</p>`
         });
 
         return true;
@@ -70,11 +70,31 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
     try {
         const stripeClient = stripe(stripeSecret.value());
 
-        // Recalculate Totals (Backend Source of Truth)
+        // Recalculate Totals from Firestore (Backend Source of Truth)
         let subtotal = 0;
-        items.forEach(item => {
-            subtotal += (item.price || 0) * (item.quantity || 1);
-        });
+        for (const item of items) {
+            const productDoc = await admin.firestore().collection('products').doc(item.productId).get();
+            if (productDoc.exists) {
+                const productData = productDoc.data();
+                const qty = item.quantity || 1;
+
+                // Use bulk pricing if applicable
+                if (productData.hasBulkPricing && productData.bulkPricing && productData.bulkPricing.length > 0) {
+                    const tiers = [...productData.bulkPricing].sort((a, b) => b.quantity - a.quantity);
+                    const tier = tiers.find(t => qty >= t.quantity);
+                    subtotal += tier ? tier.price : (productData.price || 0) * qty;
+                } else {
+                    let unitPrice = productData.price || 0;
+                    if (item.customization?.printLocation === 'Front & Back') {
+                        unitPrice += 5;
+                    }
+                    subtotal += unitPrice * qty;
+                }
+            } else {
+                // Fallback to client price if product not found (shouldn't happen)
+                subtotal += (item.price || 0) * (item.quantity || 1);
+            }
+        }
 
         const tax = subtotal * 0.20;
         const shippingCost = subtotal >= 100 ? 0 : 4.99;

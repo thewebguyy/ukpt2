@@ -5,9 +5,12 @@ import { ProductService } from '../services/product.service';
 import ProductCard from '../components/product/ProductCard';
 import { Helmet } from 'react-helmet-async';
 
+const PRODUCTS_PER_PAGE = 12;
+
 const Shop = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE);
 
     // Filter States
     const categoryFilter = searchParams.get('category') || 'all';
@@ -65,7 +68,11 @@ const Shop = () => {
         setSearchParams({});
         setPriceRange({ min: '', max: '' });
         setSortBy('featured');
+        setVisibleCount(PRODUCTS_PER_PAGE);
     };
+
+    const visibleProducts = filteredProducts.slice(0, visibleCount);
+    const hasMore = visibleCount < filteredProducts.length;
 
     return (
         <div className="shop-page">
@@ -171,12 +178,24 @@ const Shop = () => {
                                             </div>
                                         </div>
                                     ))
-                                ) : filteredProducts.length > 0 ? (
-                                    filteredProducts.map(product => (
-                                        <div key={product.id} className="col-6 col-md-4">
-                                            <ProductCard product={product} />
-                                        </div>
-                                    ))
+                                ) : visibleProducts.length > 0 ? (
+                                    <>
+                                        {visibleProducts.map(product => (
+                                            <div key={product.id} className="col-6 col-md-4">
+                                                <ProductCard product={product} />
+                                            </div>
+                                        ))}
+                                        {hasMore && (
+                                            <div className="col-12 text-center mt-4">
+                                                <button
+                                                    className="btn btn-outline-dark px-5"
+                                                    onClick={() => setVisibleCount(prev => prev + PRODUCTS_PER_PAGE)}
+                                                >
+                                                    LOAD MORE ({filteredProducts.length - visibleCount} remaining)
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
                                 ) : (
                                     <div className="col-12 text-center py-5">
                                         <p className="lead text-muted">No products found matching your filters.</p>

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../services/firebase';
 
 const OrderTracking = () => {
     const [orderId, setOrderId] = useState('');
@@ -11,19 +13,35 @@ const OrderTracking = () => {
     const handleTrack = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setOrderData(null);
 
         try {
-            // TODO: Implement actual order tracking via Firebase
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const orderRef = doc(db, 'orders', orderId.trim());
+            const orderSnap = await getDoc(orderRef);
+
+            if (!orderSnap.exists()) {
+                toast.error('Order not found. Please check your order number.');
+                return;
+            }
+
+            const data = orderSnap.data();
+
+            // Verify email matches order for security
+            if (data.email?.toLowerCase() !== email.trim().toLowerCase()) {
+                toast.error('Email does not match this order. Please check your details.');
+                return;
+            }
+
             toast.success('Order found!');
             setOrderData({
-                id: orderId,
-                status: 'shipped',
-                trackingNumber: 'UK123456789GB',
-                estimatedDelivery: 'Feb 17, 2026'
+                id: orderId.trim(),
+                status: data.status || 'pending',
+                trackingNumber: data.trackingNumber || null,
+                estimatedDelivery: data.estimatedDelivery || null
             });
         } catch (error) {
-            toast.error('Order not found. Please check your details.');
+            console.error('Order tracking error:', error);
+            toast.error('Failed to look up order. Please try again.');
             setOrderData(null);
         } finally {
             setLoading(false);
@@ -86,20 +104,28 @@ const OrderTracking = () => {
                                         <strong>Status:</strong>
                                         <span className="badge bg-success ms-2">{orderData.status.toUpperCase()}</span>
                                     </div>
-                                    <div className="mb-3">
-                                        <strong>Tracking Number:</strong> {orderData.trackingNumber}
-                                    </div>
-                                    <div className="mb-4">
-                                        <strong>Estimated Delivery:</strong> {orderData.estimatedDelivery}
-                                    </div>
-                                    <a
-                                        href={`https://www.royalmail.com/track-your-item#/${orderData.trackingNumber}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn-outline-dark w-100"
-                                    >
-                                        TRACK WITH ROYAL MAIL
-                                    </a>
+                                    {orderData.trackingNumber && (
+                                        <div className="mb-3">
+                                            <strong>Tracking Number:</strong> {orderData.trackingNumber}
+                                        </div>
+                                    )}
+                                    {orderData.estimatedDelivery && (
+                                        <div className="mb-4">
+                                            <strong>Estimated Delivery:</strong> {orderData.estimatedDelivery}
+                                        </div>
+                                    )}
+                                    {orderData.trackingNumber ? (
+                                        <a
+                                            href={`https://www.royalmail.com/track-your-item#/${orderData.trackingNumber}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn btn-outline-dark w-100"
+                                        >
+                                            TRACK WITH ROYAL MAIL
+                                        </a>
+                                    ) : (
+                                        <p className="text-muted small mb-0">Tracking information will be available once your order ships.</p>
+                                    )}
                                 </div>
                             )}
                         </div>

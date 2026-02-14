@@ -1,12 +1,17 @@
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 
+// Encode email to be safe as a Firestore document ID
+function emailToDocId(email) {
+    return email.toLowerCase().replace(/[.#$[\]/]/g, '_');
+}
+
 export const NewsletterService = {
     async subscribe(email) {
         try {
-            const docRef = doc(db, 'newsletter', email);
+            const docRef = doc(db, 'newsletter', emailToDocId(email));
             await setDoc(docRef, {
-                email,
+                email: email.toLowerCase(),
                 createdAt: serverTimestamp(),
                 source: 'react_website_footer'
             }, { merge: true });
