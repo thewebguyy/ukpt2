@@ -129,7 +129,7 @@ const getOrderConfirmationHTML = (order, orderId) => {
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
-            <a href="${baseUrl}/dashboard" class="btn">VIEW ORDER STATUS</a>
+            <a href="${baseUrl}/order-tracking" class="btn">VIEW ORDER STATUS</a>
         </div>
     `;
 
@@ -188,7 +188,7 @@ const getShippingNotificationHTML = (data) => {
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
-            <a href="${baseUrl}/dashboard" class="btn">TRACK YOUR ORDER</a>
+            <a href="${baseUrl}/order-tracking" class="btn">TRACK YOUR ORDER</a>
         </div>
 
         <p style="margin-top: 30px; color: #666; font-size: 0.9em;">If you have any questions about your delivery, please don't hesitate to <a href="${baseUrl}/contact" style="color: #000;">contact us</a>.</p>

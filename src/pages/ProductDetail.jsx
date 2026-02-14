@@ -282,6 +282,12 @@ const ProductDetail = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Design CTAs */}
+                            <div className="d-grid gap-2 mt-4">
+                                <Link to="/designservice" className="btn btn-outline-dark btn-lg fw-bold">DESIGN IN STUDIO</Link>
+                                <Link to="/contact?service=custom" className="btn btn-outline-secondary fw-bold">REQUEST CUSTOM DESIGN</Link>
+                            </div>
                         </div>
                     </div>
                 </div>

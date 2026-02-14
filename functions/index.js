@@ -4,7 +4,14 @@ const stripe = require("stripe");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
-const { getOrderConfirmationHTML, getContactEmailHTML } = require("./email-templates");
+const {
+    getOrderConfirmationHTML,
+    getContactEmailHTML,
+    getWelcomeEmailHTML,
+    getShippingNotificationHTML,
+    getAccountCreationHTML,
+    getContactConfirmationHTML
+} = require("./email-templates");
 
 admin.initializeApp();
 
@@ -284,4 +291,227 @@ exports.stripeWebhook = onRequest({
     }
 
     res.status(200).json({ received: true });
+});
+
+/**
+ * Send Welcome Email — Called when a user subscribes to the newsletter
+ */
+exports.sendWelcomeEmail = onCall({
+    secrets: [emailUser, emailPass, emailFrom]
+}, async (request) => {
+    const { email } = request.data;
+
+    if (!email) {
+        throw new HttpsError('invalid-argument', 'Email is required.');
+    }
+
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: emailUser.value(), pass: emailPass.value() }
+        });
+
+        const html = getWelcomeEmailHTML(email);
+
+        await transporter.sendMail({
+            from: emailFrom.value(),
+            to: email,
+            subject: 'Welcome to Customise Me UK!',
+            html
+        });
+
+        logger.info(`Welcome email sent to ${email}`);
+        return { success: true };
+    } catch (error) {
+        logger.error('Welcome email failed:', error);
+        throw new HttpsError('internal', 'Failed to send welcome email.');
+    }
+});
+
+/**
+ * Send Shipping Notification — Called from admin when an order ships
+ */
+exports.sendShippingNotification = onCall({
+    secrets: [emailUser, emailPass, emailFrom]
+}, async (request) => {
+    const { email, orderId, trackingNumber, carrier, estimatedDelivery } = request.data;
+
+    if (!email || !orderId) {
+        throw new HttpsError('invalid-argument', 'Email and orderId are required.');
+    }
+
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: emailUser.value(), pass: emailPass.value() }
+        });
+
+        const html = getShippingNotificationHTML({ orderId, trackingNumber, carrier, estimatedDelivery });
+
+        await transporter.sendMail({
+            from: emailFrom.value(),
+            to: email,
+            subject: `Your Order ${orderId} Has Been Shipped!`,
+            html
+        });
+
+        logger.info(`Shipping notification sent to ${email} for order ${orderId}`);
+        return { success: true };
+    } catch (error) {
+        logger.error('Shipping notification failed:', error);
+        throw new HttpsError('internal', 'Failed to send shipping notification.');
+    }
+});
+
+/**
+ * Send Account Creation Email — Called on user registration
+ */
+exports.sendAccountCreationEmail = onCall({
+    secrets: [emailUser, emailPass, emailFrom]
+}, async (request) => {
+    const { email, name } = request.data;
+
+    if (!email) {
+        throw new HttpsError('invalid-argument', 'Email is required.');
+    }
+
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: emailUser.value(), pass: emailPass.value() }
+        });
+
+        const html = getAccountCreationHTML({ name, email });
+
+        await transporter.sendMail({
+            from: emailFrom.value(),
+            to: email,
+            subject: 'Welcome to Customise Me UK — Account Created',
+            html
+        });
+
+        logger.info(`Account creation email sent to ${email}`);
+        return { success: true };
+    } catch (error) {
+        logger.error('Account creation email failed:', error);
+        throw new HttpsError('internal', 'Failed to send account creation email.');
+    }
+});
+
+/**
+ * Send Contact Confirmation Email — Called after contact form submit
+ */
+exports.sendContactConfirmation = onCall({
+    secrets: [emailUser, emailPass, emailFrom]
+}, async (request) => {
+    const { email, name, subject, message } = request.data;
+
+    if (!email || !name) {
+        throw new HttpsError('invalid-argument', 'Email and name are required.');
+    }
+
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: emailUser.value(), pass: emailPass.value() }
+        });
+
+        const html = getContactConfirmationHTML({ name, email, subject, message });
+
+        await transporter.sendMail({
+            from: emailFrom.value(),
+            to: email,
+            subject: 'We received your message — Customise Me UK',
+            html
+        });
+
+        logger.info(`Contact confirmation email sent to ${email}`);
+        return { success: true };
+    } catch (error) {
+        logger.error('Contact confirmation email failed:', error);
+        throw new HttpsError('internal', 'Failed to send contact confirmation.');
+    }
+});
+
+/**
+ * Send Newsletter Campaign — Admin sends newsletter to all subscribers
+ */
+exports.sendNewsletterCampaign = onCall({
+    secrets: [emailUser, emailPass, emailFrom]
+}, async (request) => {
+    const { subject, htmlContent } = request.data;
+
+    if (!subject || !htmlContent) {
+        throw new HttpsError('invalid-argument', 'Subject and htmlContent are required.');
+    }
+
+    try {
+        const subscribersSnapshot = await admin.firestore()
+            .collection('newsletter')
+            .where('subscribed', '==', true)
+            .get();
+
+        if (subscribersSnapshot.empty) {
+            return { success: true, sent: 0 };
+        }
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: emailUser.value(), pass: emailPass.value() }
+        });
+
+        let sent = 0;
+        for (const doc of subscribersSnapshot.docs) {
+            const subscriber = doc.data();
+            try {
+                await transporter.sendMail({
+                    from: emailFrom.value(),
+                    to: subscriber.email,
+                    subject,
+                    html: htmlContent
+                });
+                sent++;
+            } catch (err) {
+                logger.warn(`Failed to send to ${subscriber.email}:`, err.message);
+            }
+        }
+
+        logger.info(`Newsletter campaign sent to ${sent} subscribers`);
+        return { success: true, sent };
+    } catch (error) {
+        logger.error('Newsletter campaign failed:', error);
+        throw new HttpsError('internal', 'Failed to send newsletter campaign.');
+    }
+});
+
+/**
+ * Unsubscribe Newsletter — Updates subscriber doc to subscribed: false
+ */
+exports.unsubscribeNewsletter = onCall(async (request) => {
+    const { email } = request.data;
+
+    if (!email) {
+        throw new HttpsError('invalid-argument', 'Email is required.');
+    }
+
+    try {
+        const subscribersSnapshot = await admin.firestore()
+            .collection('newsletter')
+            .where('email', '==', email)
+            .limit(1)
+            .get();
+
+        if (subscribersSnapshot.empty) {
+            throw new HttpsError('not-found', 'Subscriber not found.');
+        }
+
+        await subscribersSnapshot.docs[0].ref.update({ subscribed: false });
+
+        logger.info(`${email} unsubscribed from newsletter`);
+        return { success: true };
+    } catch (error) {
+        if (error instanceof HttpsError) throw error;
+        logger.error('Unsubscribe failed:', error);
+        throw new HttpsError('internal', 'Failed to unsubscribe.');
+    }
 });

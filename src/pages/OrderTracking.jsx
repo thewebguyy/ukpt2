@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 import { doc, getDoc } from 'firebase/firestore';
@@ -126,6 +127,11 @@ const OrderTracking = () => {
                                     ) : (
                                         <p className="text-muted small mb-0">Tracking information will be available once your order ships.</p>
                                     )}
+
+                                    <div className="d-flex gap-2 mt-4">
+                                        <Link to="/shop" className="btn btn-outline-dark flex-grow-1">Continue Shopping</Link>
+                                        <Link to="/checkout" className="btn btn-dark flex-grow-1">Buy Again</Link>
+                                    </div>
                                 </div>
                             )}
                         </div>

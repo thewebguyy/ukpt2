@@ -90,7 +90,8 @@ const OrderConfirmation = () => {
                             </div>
 
                             <div className="d-grid gap-2 mb-4">
-                                <Link to="/dashboard" className="btn btn-dark btn-lg py-3 rounded-pill fw-bold shadow-sm">VIEW ORDER STATUS</Link>
+                                <Link to="/order-tracking" className="btn btn-dark btn-lg py-3 rounded-pill fw-bold shadow-sm">VIEW ORDER STATUS</Link>
+                                <Link to="/dashboard" className="btn btn-outline-dark btn-md py-2 rounded-pill fw-bold border-2">ACCOUNT PANEL</Link>
                                 <Link to="/shop" className="btn btn-outline-dark btn-md py-2 rounded-pill fw-bold border-2">Continue Shopping</Link>
                             </div>
 
