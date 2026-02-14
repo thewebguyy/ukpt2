@@ -1,13 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../services/firebase';
 import { EmailService } from '../services/email.service';
 
+const SERVICE_SUBJECT_MAP = {
+    business: 'Business Inquiry',
+    custom: 'Custom Design Request',
+    design: 'Design Service Inquiry'
+};
+
 const Contact = () => {
+    const [searchParams] = useSearchParams();
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        const service = searchParams.get('service');
+        if (service && SERVICE_SUBJECT_MAP[service]) {
+            setFormData(prev => ({ ...prev, subject: SERVICE_SUBJECT_MAP[service] }));
+        }
+    }, [searchParams]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

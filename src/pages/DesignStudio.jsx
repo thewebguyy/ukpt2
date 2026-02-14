@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 const DesignStudio = () => {
@@ -89,6 +90,22 @@ const DesignStudio = () => {
                             <h5 className="fw-bold">BESPOKE QUALITY</h5>
                             <p className="text-muted small">What you see is what you get. Every 3D model is calibrated to our production equipment.</p>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="section py-5 bg-light">
+                <div className="container text-center">
+                    <h3 className="h4 fw-bold mb-3">NEED EXPERT HELP?</h3>
+                    <p className="text-muted mb-4 mx-auto" style={{ maxWidth: '500px' }}>
+                        Our design team can bring your vision to life. Book a consultation or explore our resource library.
+                    </p>
+                    <div className="d-flex justify-content-center gap-3 flex-wrap">
+                        <Link to="/designservice" className="btn btn-dark btn-lg fw-bold px-4">Book Consultation</Link>
+                        <Link to="/resources" className="btn btn-outline-dark btn-lg fw-bold px-4">Check Out Resources</Link>
+                    </div>
+                    <div className="mt-4">
+                        <Link to="/contact?service=design" className="text-dark fw-bold">Have questions? Contact our design team &rarr;</Link>
                     </div>
                 </div>
             </section>
