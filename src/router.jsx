@@ -9,6 +9,12 @@ import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import DesignStudio from './pages/DesignStudio';
+import DesignService from './pages/DesignService';
+import PremiumServices from './pages/PremiumServices';
+import Resources from './pages/Resources';
+import SendItems from './pages/SendItems';
+import Installation from './pages/Installation';
+import Workshop from './pages/Workshop';
 import Wishlist from './pages/Wishlist';
 import Contact from './pages/Contact';
 import FAQ from './pages/FAQ';
@@ -30,7 +36,13 @@ const router = createBrowserRouter([
             { path: 'account', element: <Account /> },
             { path: 'checkout', element: <Checkout /> },
             { path: 'order-confirmation', element: <OrderConfirmation /> },
-            { path: 'design-studio', element: <DesignStudio /> },
+            { path: 'designstudio', element: <DesignStudio /> },
+            { path: 'designservice', element: <DesignService /> },
+            { path: 'premiumservices', element: <PremiumServices /> },
+            { path: 'resources', element: <Resources /> },
+            { path: 'senditems', element: <SendItems /> },
+            { path: 'installation', element: <Installation /> },
+            { path: 'workshop', element: <Workshop /> },
             { path: 'wishlist', element: <Wishlist /> },
             { path: 'contact', element: <Contact /> },
             { path: 'faq', element: <FAQ /> },

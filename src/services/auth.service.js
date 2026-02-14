@@ -11,6 +11,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from './firebase';
+import { EmailService } from './email.service';
 
 export const AuthService = {
     async register({ email, password, name }) {
@@ -39,6 +40,9 @@ export const AuthService = {
             } catch (e) {
                 console.error('Firestore user doc creation error:', e);
             }
+
+            // Send account creation welcome email (fire and forget)
+            EmailService.sendAccountCreationEmail({ email, name });
 
             return {
                 success: true,

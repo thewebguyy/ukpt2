@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../services/firebase';
+import { EmailService } from '../services/email.service';
 
 const Contact = () => {
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -21,6 +22,15 @@ const Contact = () => {
                 message: formData.message
             });
             toast.success('Message sent! We\'ll get back to you soon.');
+
+            // Send contact confirmation email (fire and forget)
+            EmailService.sendContactConfirmation({
+                email: formData.email,
+                name: formData.name,
+                subject: formData.subject,
+                message: formData.message
+            });
+
             setFormData({ name: '', email: '', subject: '', message: '' });
         } catch (error) {
             console.error('Contact form error:', error);

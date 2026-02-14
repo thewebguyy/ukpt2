@@ -1,62 +1,77 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { NewsletterService } from '../services/newsletter.service';
+import { toast } from 'react-hot-toast';
 
 const Subscriptions = () => {
+    const [email, setEmail] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleWaitlist = async (e) => {
+        e.preventDefault();
+        if (!email.trim()) return;
+
+        setIsSubmitting(true);
+        try {
+            const result = await NewsletterService.subscribe(email.trim());
+            if (result.success) {
+                toast.success('You\'ve been added to the waitlist!');
+                setEmail('');
+            } else {
+                toast.error(result.message);
+            }
+        } catch {
+            toast.error('Something went wrong. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="subscriptions-page">
             <Helmet>
-                <title>Subscription Plans - CustomiseMe UK</title>
+                <title>Subscriptions - Coming Soon - CustomiseMe UK</title>
             </Helmet>
 
-            <section className="section bg-light">
+            <section className="section bg-light min-vh-75 d-flex align-items-center">
                 <div className="container">
-                    <div className="text-center mb-5">
-                        <h1 className="display-4 fw-bold">SUBSCRIPTION PLANS</h1>
-                        <p className="text-grey-dark lead">Save more with regular deliveries and exclusive benefits</p>
-                    </div>
-
-                    <div className="row g-4 justify-content-center">
-                        <div className="col-md-5">
-                            <div className="card border-0 shadow-lg p-5 h-100">
-                                <div className="text-center mb-4">
-                                    <h2 className="h3 fw-bold mb-3">MONTHLY ESSENTIALS</h2>
-                                    <div className="display-4 fw-bold mb-2">£29<span className="h5 text-muted">/month</span></div>
-                                    <p className="text-muted">Perfect for regular party planners</p>
-                                </div>
-                                <ul className="list-unstyled mb-4">
-                                    <li className="mb-3">✓ 15% discount on all orders</li>
-                                    <li className="mb-3">✓ Free UK shipping (no minimum)</li>
-                                    <li className="mb-3">✓ Priority customer support</li>
-                                    <li className="mb-3">✓ Early access to new products</li>
-                                    <li className="mb-3">✓ Cancel anytime</li>
-                                </ul>
-                                <Link to="/contact?plan=monthly" className="btn btn-dark btn-lg w-100">GET STARTED</Link>
-                            </div>
+                    <div className="card border-0 shadow-lg p-5 mx-auto text-center" style={{ maxWidth: '600px' }}>
+                        <div className="display-1 mb-4">
+                            <svg width="80" height="80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                         </div>
+                        <h1 className="display-4 fw-bold mb-3">COMING SOON</h1>
+                        <p className="lead text-muted mb-4">
+                            We're working on something exciting. Our subscription plans will offer exclusive discounts, priority access, and regular deliveries.
+                        </p>
 
-                        <div className="col-md-5">
-                            <div className="card border-0 shadow-lg p-5 h-100 position-relative" style={{ border: '3px solid #000 !important' }}>
-                                <span className="badge bg-dark position-absolute top-0 start-50 translate-middle px-4 py-2">MOST POPULAR</span>
-                                <div className="text-center mb-4">
-                                    <h2 className="h3 fw-bold mb-3">BUSINESS PACKAGE</h2>
-                                    <div className="display-4 fw-bold mb-2">Custom<span className="h5 text-muted"> pricing</span></div>
-                                    <p className="text-muted">For businesses & event planners</p>
-                                </div>
-                                <ul className="list-unstyled mb-4">
-                                    <li className="mb-3">✓ Wholesale pricing (up to 30% off)</li>
-                                    <li className="mb-3">✓ Dedicated account manager</li>
-                                    <li className="mb-3">✓ Custom design services included</li>
-                                    <li className="mb-3">✓ Flexible delivery schedule</li>
-                                    <li className="mb-3">✓ Priority production queue</li>
-                                    <li className="mb-3">✓ Net-30 payment terms available</li>
-                                </ul>
-                                <Link to="/contact?plan=business" className="btn btn-dark btn-lg w-100">CONTACT SALES</Link>
+                        <form onSubmit={handleWaitlist} className="mb-4">
+                            <p className="fw-bold small text-uppercase mb-2">Join the waitlist</p>
+                            <div className="d-flex gap-2">
+                                <input
+                                    type="email"
+                                    className="form-control form-control-lg"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    className="btn btn-dark btn-lg px-4 flex-shrink-0"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? '...' : 'NOTIFY ME'}
+                                </button>
                             </div>
-                        </div>
-                    </div>
+                            <p className="small text-muted mt-2 mb-0">We'll let you know as soon as subscriptions launch.</p>
+                        </form>
 
-                    <div className="text-center mt-5">
-                        <p className="text-muted">All plans can be cancelled anytime with no cancellation fees.</p>
+                        <Link to="/shop" className="btn btn-outline-dark">
+                            BROWSE THE SHOP
+                        </Link>
                     </div>
                 </div>
             </section>

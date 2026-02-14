@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
@@ -91,9 +91,9 @@ const Header = () => {
                                     <svg className="icon"><use xlinkHref="#icon-globe" /></svg>
                                 </a>
                                 <ul className="dropdown-menu dropdown-menu-end region-dropdown">
-                                    <li><a className="dropdown-item" href="#"><span className="flag">🇬🇧</span> UNITED KINGDOM</a></li>
-                                    <li><a className="dropdown-item" href="#"><span className="flag">🇪🇺</span> EUROPE</a></li>
-                                    <li><a className="dropdown-item" href="#"><span className="flag">🇺🇸</span> AMERICA</a></li>
+                                    <li><a className="dropdown-item" href="#">🇬🇧 UNITED KINGDOM</a></li>
+                                    <li><a className="dropdown-item" href="#">🇪🇺 EUROPE</a></li>
+                                    <li><a className="dropdown-item" href="#">🇺🇸 AMERICA</a></li>
                                 </ul>
                             </div>
 
@@ -155,20 +155,28 @@ const Header = () => {
                             </div>
                         </MegaMenu>
 
-                        <MegaMenu title="DESIGN STUDIO" link="/design-studio">
+                        <MegaMenu title="DESIGN STUDIO" link="/designstudio">
                             <div className="row">
-                                <div className="col-md-6">
+                                <div className="col-md-4">
                                     <h6 className="mega-title">SERVICES</h6>
-                                    <Link className="dropdown-item" to="/design-studio">DESIGN SERVICES</Link>
+                                    <Link className="dropdown-item" to="/designservice">DESIGN SERVICES</Link>
+                                    <Link className="dropdown-item" to="/resources">DESIGN TEMPLATES</Link>
+                                </div>
+                                <div className="col-md-4">
+                                    <h6 className="mega-title">RESOURCES</h6>
+                                    <Link className="dropdown-item" to="/resources">TEMPLATES & GUIDES</Link>
                                 </div>
                             </div>
                         </MegaMenu>
 
-                        <MegaMenu title="PREMIUM SERVICES" link="/subscriptions">
+                        <MegaMenu title="PREMIUM SERVICES" link="/premiumservices">
                             <div className="row">
-                                <div className="col-md-4">
+                                <div className="col-md-3">
                                     <h6 className="mega-title">SERVICES</h6>
+                                    <Link className="dropdown-item" to="/senditems">SEND ITEMS</Link>
                                     <Link className="dropdown-item" to="/subscriptions">SUBSCRIPTIONS</Link>
+                                    <Link className="dropdown-item" to="/installation">INSTALLATION</Link>
+                                    <Link className="dropdown-item" to="/workshop">WORKSHOP</Link>
                                 </div>
                             </div>
                         </MegaMenu>

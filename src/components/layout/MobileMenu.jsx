@@ -68,8 +68,9 @@ const MobileMenu = ({ isOpen, onClose }) => {
                     <span>DESIGN STUDIO</span>
                 </button>
                 <ul className="mobile-menu-list">
-                    <li><Link to="/design-studio" className="mobile-menu-item" onClick={onClose}><span>DESIGN SERVICES</span></Link></li>
-                    <li><Link to="/design-studio#resources" className="mobile-menu-item" onClick={onClose}><span>DESIGN TEMPLATES</span></Link></li>
+                    <li><Link to="/designstudio" className="mobile-menu-item" onClick={onClose}><span>DESIGN STUDIO</span></Link></li>
+                    <li><Link to="/designservice" className="mobile-menu-item" onClick={onClose}><span>DESIGN SERVICES</span></Link></li>
+                    <li><Link to="/resources" className="mobile-menu-item" onClick={onClose}><span>DESIGN TEMPLATES</span></Link></li>
                 </ul>
             </>
         ),
@@ -80,7 +81,10 @@ const MobileMenu = ({ isOpen, onClose }) => {
                     <span>PREMIUM SERVICES</span>
                 </button>
                 <ul className="mobile-menu-list">
+                    <li><Link to="/senditems" className="mobile-menu-item" onClick={onClose}><span>SEND ITEMS</span></Link></li>
                     <li><Link to="/subscriptions" className="mobile-menu-item" onClick={onClose}><span>SUBSCRIPTIONS</span></Link></li>
+                    <li><Link to="/installation" className="mobile-menu-item" onClick={onClose}><span>INSTALLATION</span></Link></li>
+                    <li><Link to="/workshop" className="mobile-menu-item" onClick={onClose}><span>WORKSHOP</span></Link></li>
                 </ul>
             </>
         )

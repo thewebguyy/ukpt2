@@ -170,7 +170,7 @@ const Shop = () => {
                             <div className="row g-4">
                                 {isLoading ? (
                                     [...Array(6)].map((_, i) => (
-                                        <div key={i} className="col-6 col-md-4">
+                                        <div key={i} className="col-6">
                                             <div className="placeholder-glow">
                                                 <div className="placeholder w-100" style={{ height: '250px' }}></div>
                                                 <div className="placeholder col-8 mt-2"></div>
@@ -181,7 +181,7 @@ const Shop = () => {
                                 ) : visibleProducts.length > 0 ? (
                                     <>
                                         {visibleProducts.map(product => (
-                                            <div key={product.id} className="col-6 col-md-4">
+                                            <div key={product.id} className="col-6">
                                                 <ProductCard product={product} />
                                             </div>
                                         ))}

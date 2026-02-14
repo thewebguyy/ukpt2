@@ -106,7 +106,7 @@ const Home = () => {
                                 <li>• Unlimited revisions</li>
                                 <li>• Fast turnaround times</li>
                             </ul>
-                            <Link to="/design-studio" className="btn btn-light btn-lg rounded-0 px-4 fw-bold">
+                            <Link to="/designstudio" className="btn btn-light btn-lg rounded-0 px-4 fw-bold">
                                 EXPLORE STUDIO
                             </Link>
                         </div>
