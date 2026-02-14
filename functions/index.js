@@ -3,7 +3,7 @@ const { defineSecret } = require("firebase-functions/params");
 const stripe = require("stripe");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
-const nodemailer = require("nodemailer");
+const brevo = require("@getbrevo/brevo");
 const {
     getOrderConfirmationHTML,
     getContactEmailHTML,
@@ -18,38 +18,52 @@ admin.initializeApp();
 // Define secrets
 const stripeSecret = defineSecret("STRIPE_SECRET_KEY");
 const webhookSecret = defineSecret("STRIPE_WEBHOOK_SECRET");
-const emailUser = defineSecret("EMAIL_USER");
-const emailPass = defineSecret("EMAIL_PASSWORD");
+const brevoApiKey = defineSecret("BREVO_API_KEY");
 const emailFrom = defineSecret("EMAIL_FROM");
 const adminEmail = defineSecret("ADMIN_EMAIL");
+
+/**
+ * Helper: Create a configured Brevo transactional email API instance
+ */
+function getBrevoEmailApi(apiKey) {
+    const apiInstance = new brevo.TransactionalEmailsApi();
+    apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, apiKey);
+    return apiInstance;
+}
+
+/**
+ * Helper: Send an email via Brevo
+ */
+async function sendBrevoEmail(apiInstance, { from, to, subject, html }) {
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
+    sendSmtpEmail.sender = { email: from, name: "Customise Me UK" };
+    sendSmtpEmail.to = [{ email: to }];
+    sendSmtpEmail.subject = subject;
+    sendSmtpEmail.htmlContent = html;
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    return result;
+}
 
 /**
  * Helper: Send Order Confirmation Email
  */
 async function sendOrderEmail(order, orderId, secrets) {
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: secrets.user,
-                pass: secrets.pass
-            }
-        });
-
+        const apiInstance = getBrevoEmailApi(secrets.apiKey);
         const html = getOrderConfirmationHTML(order, orderId);
 
-        const mailOptions = {
+        await sendBrevoEmail(apiInstance, {
             from: secrets.from,
             to: order.email,
             subject: `Order Confirmed: ${orderId}`,
             html: html
-        };
+        });
 
-        const info = await transporter.sendMail(mailOptions);
-        logger.info(`Email sent to ${order.email}: ${info.messageId}`);
+        logger.info(`Email sent to ${order.email} for order ${orderId}`);
 
         // Also notify admin
-        await transporter.sendMail({
+        await sendBrevoEmail(apiInstance, {
             from: secrets.from,
             to: secrets.admin,
             subject: `New Order Received - ${orderId}`,
@@ -193,7 +207,7 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
  * Submit Contact Form
  */
 exports.submitContact = onCall({
-    secrets: [emailUser, emailPass, emailFrom, adminEmail]
+    secrets: [brevoApiKey, emailFrom, adminEmail]
 }, async (request) => {
     const data = request.data;
     const { name, email, service, message } = data;
@@ -203,18 +217,11 @@ exports.submitContact = onCall({
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: emailUser.value(),
-                pass: emailPass.value()
-            }
-        });
-
+        const apiInstance = getBrevoEmailApi(brevoApiKey.value());
         const html = getContactEmailHTML(data);
 
         // Notify Admin
-        await transporter.sendMail({
+        await sendBrevoEmail(apiInstance, {
             from: emailFrom.value(),
             to: adminEmail.value(),
             subject: `New Inquiry: ${service} from ${name}`,
@@ -222,7 +229,7 @@ exports.submitContact = onCall({
         });
 
         // Auto-reply to customer
-        await transporter.sendMail({
+        await sendBrevoEmail(apiInstance, {
             from: emailFrom.value(),
             to: email,
             subject: "We received your message - Customise Me UK",
@@ -241,7 +248,7 @@ exports.submitContact = onCall({
  * Processes checkout.session.completed to update order status
  */
 exports.stripeWebhook = onRequest({
-    secrets: [stripeSecret, webhookSecret, emailUser, emailPass, emailFrom, adminEmail]
+    secrets: [stripeSecret, webhookSecret, brevoApiKey, emailFrom, adminEmail]
 }, async (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -275,8 +282,7 @@ exports.stripeWebhook = onRequest({
 
                     // Send Confirmation Email
                     await sendOrderEmail(orderData, orderId, {
-                        user: emailUser.value(),
-                        pass: emailPass.value(),
+                        apiKey: brevoApiKey.value(),
                         from: emailFrom.value(),
                         admin: adminEmail.value()
                     });
@@ -297,7 +303,7 @@ exports.stripeWebhook = onRequest({
  * Send Welcome Email — Called when a user subscribes to the newsletter
  */
 exports.sendWelcomeEmail = onCall({
-    secrets: [emailUser, emailPass, emailFrom]
+    secrets: [brevoApiKey, emailFrom]
 }, async (request) => {
     const { email } = request.data;
 
@@ -306,14 +312,10 @@ exports.sendWelcomeEmail = onCall({
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: emailUser.value(), pass: emailPass.value() }
-        });
-
+        const apiInstance = getBrevoEmailApi(brevoApiKey.value());
         const html = getWelcomeEmailHTML(email);
 
-        await transporter.sendMail({
+        await sendBrevoEmail(apiInstance, {
             from: emailFrom.value(),
             to: email,
             subject: 'Welcome to Customise Me UK!',
@@ -332,7 +334,7 @@ exports.sendWelcomeEmail = onCall({
  * Send Shipping Notification — Called from admin when an order ships
  */
 exports.sendShippingNotification = onCall({
-    secrets: [emailUser, emailPass, emailFrom]
+    secrets: [brevoApiKey, emailFrom]
 }, async (request) => {
     const { email, orderId, trackingNumber, carrier, estimatedDelivery } = request.data;
 
@@ -341,14 +343,10 @@ exports.sendShippingNotification = onCall({
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: emailUser.value(), pass: emailPass.value() }
-        });
-
+        const apiInstance = getBrevoEmailApi(brevoApiKey.value());
         const html = getShippingNotificationHTML({ orderId, trackingNumber, carrier, estimatedDelivery });
 
-        await transporter.sendMail({
+        await sendBrevoEmail(apiInstance, {
             from: emailFrom.value(),
             to: email,
             subject: `Your Order ${orderId} Has Been Shipped!`,
@@ -367,7 +365,7 @@ exports.sendShippingNotification = onCall({
  * Send Account Creation Email — Called on user registration
  */
 exports.sendAccountCreationEmail = onCall({
-    secrets: [emailUser, emailPass, emailFrom]
+    secrets: [brevoApiKey, emailFrom]
 }, async (request) => {
     const { email, name } = request.data;
 
@@ -376,14 +374,10 @@ exports.sendAccountCreationEmail = onCall({
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: emailUser.value(), pass: emailPass.value() }
-        });
-
+        const apiInstance = getBrevoEmailApi(brevoApiKey.value());
         const html = getAccountCreationHTML({ name, email });
 
-        await transporter.sendMail({
+        await sendBrevoEmail(apiInstance, {
             from: emailFrom.value(),
             to: email,
             subject: 'Welcome to Customise Me UK — Account Created',
@@ -402,7 +396,7 @@ exports.sendAccountCreationEmail = onCall({
  * Send Contact Confirmation Email — Called after contact form submit
  */
 exports.sendContactConfirmation = onCall({
-    secrets: [emailUser, emailPass, emailFrom]
+    secrets: [brevoApiKey, emailFrom]
 }, async (request) => {
     const { email, name, subject, message } = request.data;
 
@@ -411,14 +405,10 @@ exports.sendContactConfirmation = onCall({
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: emailUser.value(), pass: emailPass.value() }
-        });
-
+        const apiInstance = getBrevoEmailApi(brevoApiKey.value());
         const html = getContactConfirmationHTML({ name, email, subject, message });
 
-        await transporter.sendMail({
+        await sendBrevoEmail(apiInstance, {
             from: emailFrom.value(),
             to: email,
             subject: 'We received your message — Customise Me UK',
@@ -437,7 +427,7 @@ exports.sendContactConfirmation = onCall({
  * Send Newsletter Campaign — Admin sends newsletter to all subscribers
  */
 exports.sendNewsletterCampaign = onCall({
-    secrets: [emailUser, emailPass, emailFrom]
+    secrets: [brevoApiKey, emailFrom]
 }, async (request) => {
     const { subject, htmlContent } = request.data;
 
@@ -455,16 +445,13 @@ exports.sendNewsletterCampaign = onCall({
             return { success: true, sent: 0 };
         }
 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: emailUser.value(), pass: emailPass.value() }
-        });
+        const apiInstance = getBrevoEmailApi(brevoApiKey.value());
 
         let sent = 0;
         for (const doc of subscribersSnapshot.docs) {
             const subscriber = doc.data();
             try {
-                await transporter.sendMail({
+                await sendBrevoEmail(apiInstance, {
                     from: emailFrom.value(),
                     to: subscriber.email,
                     subject,
