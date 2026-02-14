@@ -20,52 +20,54 @@ const DesignStudio = () => {
                 </div>
             </section>
 
-            <div className="container-fluid p-0 bg-light vh-75 position-relative">
-                {/* Sidebar Controls */}
-                <div className="studio-sidebar position-absolute top-0 start-0 h-100 bg-white shadow-lg p-4" style={{ width: '320px', zIndex: 10 }}>
-                    <h5 className="fw-bold mb-4 border-bottom pb-2">CONFIGURATION</h5>
+            <div className="container-fluid p-0 bg-light vh-75 position-relative studio-container">
+                <div className="row g-0 h-100">
+                    {/* Sidebar Controls */}
+                    <div className="col-lg-auto h-100 bg-white shadow-lg p-4 studio-sidebar" style={{ width: '320px', zIndex: 10 }}>
+                        <h5 className="fw-bold mb-4 border-bottom pb-2">CONFIGURATION</h5>
 
-                    <div className="config-group mb-4">
-                        <label className="small fw-bold text-uppercase mb-2 d-block">Select Base Model</label>
-                        <select className="form-select border-0 bg-light">
-                            <option value="tshirt">Heavyweight T-Shirt</option>
-                            <option value="hoodie">Premium Hoodie (Coming Soon)</option>
-                            <option value="tote">Canvas Tote Bag (Coming Soon)</option>
-                        </select>
-                    </div>
+                        <div className="config-group mb-4">
+                            <label className="small fw-bold text-uppercase mb-2 d-block">Select Base Model</label>
+                            <select className="form-select border-0 bg-light">
+                                <option value="tshirt">Heavyweight T-Shirt</option>
+                                <option value="hoodie">Premium Hoodie (Coming Soon)</option>
+                                <option value="tote">Canvas Tote Bag (Coming Soon)</option>
+                            </select>
+                        </div>
 
-                    <div className="config-group mb-4">
-                        <label className="small fw-bold text-uppercase mb-2 d-block">Fabric Color</label>
-                        <div className="d-flex gap-2 flex-wrap">
-                            {['#000000', '#ffffff', '#000080', '#e63946', '#6b7280', '#059669'].map(c => (
-                                <button key={c} className="rounded-circle border-0 shadow-sm" style={{ width: '30px', height: '30px', backgroundColor: c }}></button>
-                            ))}
+                        <div className="config-group mb-4">
+                            <label className="small fw-bold text-uppercase mb-2 d-block">Fabric Color</label>
+                            <div className="d-flex gap-2 flex-wrap">
+                                {['#000000', '#ffffff', '#000080', '#e63946', '#6b7280', '#059669'].map(c => (
+                                    <button key={c} className="rounded-circle border-0 shadow-sm" style={{ width: '30px', height: '30px', backgroundColor: c }}></button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="config-group mb-4">
+                            <label className="small fw-bold text-uppercase mb-2 d-block">Overlay Artwork</label>
+                            <button className="btn btn-outline-dark btn-sm w-100 py-3 d-flex align-items-center justify-content-center gap-2">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                Upload PNG
+                            </button>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-top">
+                            <button className="btn btn-dark w-100 py-3 fw-bold rounded-0">ADD TO CART</button>
+                            <p className="small text-muted text-center mt-2 mb-0">Rendering via CustomiseMe 3D Engine v2.1</p>
                         </div>
                     </div>
 
-                    <div className="config-group mb-4">
-                        <label className="small fw-bold text-uppercase mb-2 d-block">Overlay Artwork</label>
-                        <button className="btn btn-outline-dark btn-sm w-100 py-3 d-flex align-items-center justify-content-center gap-2">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                            Upload PNG
-                        </button>
-                    </div>
-
-                    <div className="mt-auto pt-4 border-top">
-                        <button className="btn btn-dark w-100 py-3 fw-bold rounded-0">ADD TO CART</button>
-                        <p className="small text-muted text-center mt-2 mb-0">Rendering via CustomiseMe 3D Engine v2.1</p>
-                    </div>
-                </div>
-
-                {/* 3D Viewport Placeholder */}
-                <div
-                    ref={containerRef}
-                    className="studio-viewport w-100 h-100 d-flex align-items-center justify-content-center bg-gray-200"
-                    style={{ paddingLeft: '320px', minHeight: '600px' }}
-                >
-                    <div className="text-center">
-                        <div className="spinner-border text-dark mb-3"></div>
-                        <p className="fw-bold text-muted text-uppercase small">Initializing 3D Environment...</p>
+                    {/* 3D Viewport Placeholder */}
+                    <div
+                        ref={containerRef}
+                        className="col studio-viewport d-flex align-items-center justify-content-center bg-gray-200"
+                        style={{ minHeight: '500px' }}
+                    >
+                        <div className="text-center">
+                            <div className="spinner-border text-dark mb-3"></div>
+                            <p className="fw-bold text-muted text-uppercase small">Initializing 3D Environment...</p>
+                        </div>
                     </div>
                 </div>
             </div>

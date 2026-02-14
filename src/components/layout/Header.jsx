@@ -100,7 +100,7 @@ const Header = () => {
                             {/* Wishlist */}
                             <Link to="/wishlist" className="nav-icon">
                                 <svg className="icon"><use xlinkHref="#icon-heart" /></svg>
-                                {wishlistCount > 0 && <span className="badge-wishlist">{wishlistCount}</span>}
+                                {wishlistCount > 0 && <span className="badge-wishlist has-items">{wishlistCount}</span>}
                             </Link>
 
                             {/* Cart */}
@@ -110,7 +110,7 @@ const Header = () => {
                                 data-bs-target="#cartOffcanvas"
                             >
                                 <svg className="icon"><use xlinkHref="#icon-shopping-bag" /></svg>
-                                {cartCount > 0 && <span className="badge-cart">{cartCount}</span>}
+                                {cartCount > 0 && <span className="badge-cart has-items">{cartCount}</span>}
                             </button>
 
                             {/* User Account */}

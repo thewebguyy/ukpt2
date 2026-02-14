@@ -1921,13 +1921,20 @@ footer {
   letter-spacing: 0.05em;
 }
 
-.offcanvas-body {
-  padding: var(--spacing-md);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
+ .offcanvas-body {
+   padding: var(--spacing-md);
+   overflow-y: auto;
+   -webkit-overflow-scrolling: touch;
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+ }
+ 
+ body.offcanvas-open {
+   overflow: hidden !important;
+   position: fixed;
+   width: 100%;
+ }
 
 #cart-items {
   flex: 1;
@@ -2228,10 +2235,10 @@ footer {
     --spacing-xl: 4rem;
   }
 
-  body {
-    padding-top: 164px;
-    /* Mobile stack is different */
-  }
+   body {
+     padding-top: 140px;
+     /* Reduced from 164px */
+   }
 
   .main-nav {
     top: 104px;
@@ -2265,11 +2272,11 @@ footer {
     flex-direction: column;
   }
 
-  .product-grid-four,
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-sm);
-  }
+   .product-grid-four,
+   .product-grid {
+     grid-template-columns: repeat(2, 1fr) !important;
+     gap: var(--spacing-sm);
+   }
 
   .nav-link {
     padding: 0.5rem 1.5rem !important;
@@ -2292,10 +2299,18 @@ footer {
     --spacing-xl: 3rem;
   }
 
-  body {
-    padding-top: 190px;
-    /* Adjusted for stacked bars (Announcement, Utility, Header, Search) */
-  }
+   body {
+     padding-top: 150px !important;
+     /* Reduced from 190px */
+   }
+ 
+   .section {
+     padding: var(--spacing-md) 0 !important;
+   }
+ 
+   .top-bar {
+     top: 40px !important;
+   }
 
   .announcement-banner {
     position: fixed;

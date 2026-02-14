@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useWishlistStore } from '../../store/wishlistStore';
+import { toast } from 'react-hot-toast';
 
 const ProductCard = ({ product }) => {
     const { toggleItem, isInWishlist } = useWishlistStore();
@@ -13,6 +14,7 @@ const ProductCard = ({ product }) => {
                     onClick={(e) => {
                         e.preventDefault();
                         toggleItem(product);
+                        toast.success(active ? 'Removed from wishlist' : 'Added to wishlist');
                     }}
                 >
                     <svg className="icon"><use xlinkHref="#icon-heart" /></svg>

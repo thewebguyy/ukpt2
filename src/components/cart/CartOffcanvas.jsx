@@ -23,7 +23,10 @@ const CartOffcanvas = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
                         <p className="text-muted mb-4">Your cart is currently empty.</p>
-                        <Link to="/shop" className="btn btn-dark px-4" data-bs-dismiss="offcanvas">START SHOPPING</Link>
+                        <Link to="/shop" className="btn btn-dark px-4" onClick={() => {
+                            const closeBtn = document.querySelector('#cartOffcanvas .btn-close');
+                            if (closeBtn) closeBtn.click();
+                        }}>START SHOPPING</Link>
                     </div>
                 ) : (
                     <>

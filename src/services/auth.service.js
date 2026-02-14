@@ -117,6 +117,27 @@ export const AuthService = {
         }
     },
 
+    async updateUserProfile(uid, data) {
+        try {
+            const user = auth.currentUser;
+            if (!user) throw new Error('No user logged in');
+
+            if (data.name) {
+                await updateProfile(user, { displayName: data.name });
+            }
+
+            await setDoc(doc(db, 'users', uid), {
+                ...data,
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+
+            return { success: true };
+        } catch (error) {
+            console.error('Update profile error:', error);
+            return { success: false, message: this.getErrorMessage(error) };
+        }
+    },
+
     getErrorMessage(error) {
         switch (error.code) {
             case 'auth/user-not-found': return 'No account found with this email.';
