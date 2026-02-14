@@ -45,9 +45,10 @@ const Checkout = () => {
                 items: items.map(item => ({
                     productId: item.product.id,
                     name: item.product.name,
-                    price: calculateTotalPrice(item.product, item.quantity, item.customization) / item.quantity, // Derive unit price from total for Stripe
+                    price: calculateTotalPrice(item.product, item.quantity, item.customization) / item.quantity,
                     quantity: item.quantity,
-                    customization: item.customization
+                    customization: item.customization,
+                    imageUrl: item.product.imageUrl || item.product.images?.[0]
                 })),
                 email: shippingData.email,
                 shippingAddress: shippingData,

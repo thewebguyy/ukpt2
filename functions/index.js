@@ -18,43 +18,60 @@ admin.initializeApp();
 // Define secrets
 const stripeSecret = defineSecret("STRIPE_SECRET_KEY");
 const webhookSecret = defineSecret("STRIPE_WEBHOOK_SECRET");
-const emailUser = defineSecret("EMAIL_USER");
-const emailPass = defineSecret("EMAIL_PASSWORD");
+const brevoApiKey = defineSecret("BREVO_API_KEY");
 const emailFrom = defineSecret("EMAIL_FROM");
 const adminEmail = defineSecret("ADMIN_EMAIL");
+// Legacy Gmail (fallback if Brevo not configured)
+const emailUser = defineSecret("EMAIL_USER");
+const emailPass = defineSecret("EMAIL_PASSWORD");
+
+const brevo = require("./brevo-helper");
 
 /**
- * Helper: Send Order Confirmation Email
+ * Helper: Send Order Confirmation Email (Brevo or Nodemailer fallback)
  */
 async function sendOrderEmail(order, orderId, secrets) {
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: secrets.user,
-                pass: secrets.pass
+        const senderEmail = secrets.from || "noreply@customisemeuk.com";
+
+        if (secrets.brevoKey) {
+            await brevo.sendOrderConfirmation(secrets.brevoKey, order, orderId, senderEmail);
+            logger.info(`Brevo order confirmation sent to ${order.email}`);
+        } else if (secrets.user && secrets.pass) {
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: { user: secrets.user, pass: secrets.pass }
+            });
+            const html = getOrderConfirmationHTML(order, orderId);
+            await transporter.sendMail({
+                from: senderEmail,
+                to: order.email,
+                subject: `Order Confirmed: ${orderId}`,
+                html
+            });
+            logger.info(`Order confirmation sent to ${order.email} (Nodemailer)`);
+        } else {
+            logger.error("No email provider configured (Brevo or Gmail)");
+            return false;
+        }
+
+        // Admin notification (use Nodemailer if available, else skip)
+        if (secrets.admin && secrets.user && secrets.pass) {
+            try {
+                const transporter = nodemailer.createTransport({
+                    service: "gmail",
+                    auth: { user: secrets.user, pass: secrets.pass }
+                });
+                await transporter.sendMail({
+                    from: senderEmail,
+                    to: secrets.admin,
+                    subject: `New Order Received - ${orderId}`,
+                    html: `<h3>New Order from ${(order.shippingAddress?.name || "").replace(/[<>"'&]/g, "")}</h3><p>Total: &pound;${order.total.toFixed(2)}</p><p>Order ID: ${orderId}</p>`
+                });
+            } catch (adminErr) {
+                logger.warn("Admin notification failed:", adminErr.message);
             }
-        });
-
-        const html = getOrderConfirmationHTML(order, orderId);
-
-        const mailOptions = {
-            from: secrets.from,
-            to: order.email,
-            subject: `Order Confirmed: ${orderId}`,
-            html: html
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-        logger.info(`Email sent to ${order.email}: ${info.messageId}`);
-
-        // Also notify admin
-        await transporter.sendMail({
-            from: secrets.from,
-            to: secrets.admin,
-            subject: `New Order Received - ${orderId}`,
-            html: `<h3>New Order from ${(order.shippingAddress.name || '').replace(/[<>"'&]/g, '')}</h3><p>Total: &pound;${order.total.toFixed(2)}</p><p>Order ID: ${orderId}</p>`
-        });
+        }
 
         return true;
     } catch (error) {
@@ -241,7 +258,7 @@ exports.submitContact = onCall({
  * Processes checkout.session.completed to update order status
  */
 exports.stripeWebhook = onRequest({
-    secrets: [stripeSecret, webhookSecret, emailUser, emailPass, emailFrom, adminEmail]
+    secrets: [stripeSecret, webhookSecret, brevoApiKey, emailFrom, adminEmail, emailUser, emailPass]
 }, async (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -273,8 +290,10 @@ exports.stripeWebhook = onRequest({
                         stripeSessionId: session.id
                     });
 
-                    // Send Confirmation Email
+                    // Send Confirmation Email (Brevo preferred, Nodemailer fallback)
+                    const brevoKey = brevoApiKey.value();
                     await sendOrderEmail(orderData, orderId, {
+                        brevoKey: brevoKey && brevoKey !== "disabled" ? brevoKey : null,
                         user: emailUser.value(),
                         pass: emailPass.value(),
                         from: emailFrom.value(),
@@ -294,33 +313,37 @@ exports.stripeWebhook = onRequest({
 });
 
 /**
- * Send Welcome Email — Called when a user subscribes to the newsletter
+ * Send Welcome Email — Called when a user subscribes to the newsletter (Brevo)
  */
 exports.sendWelcomeEmail = onCall({
-    secrets: [emailUser, emailPass, emailFrom]
+    secrets: [brevoApiKey, emailFrom, emailUser, emailPass]
 }, async (request) => {
-    const { email } = request.data;
+    const { email, firstName } = request.data || {};
 
     if (!email) {
         throw new HttpsError('invalid-argument', 'Email is required.');
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: emailUser.value(), pass: emailPass.value() }
-        });
-
-        const html = getWelcomeEmailHTML(email);
-
-        await transporter.sendMail({
-            from: emailFrom.value(),
-            to: email,
-            subject: 'Welcome to Customise Me UK!',
-            html
-        });
-
-        logger.info(`Welcome email sent to ${email}`);
+        const apiKey = brevoApiKey.value();
+        const useBrevo = apiKey && apiKey !== "disabled";
+        if (useBrevo) {
+            await brevo.sendWelcomeEmail(apiKey, email, firstName || '', emailFrom.value());
+            logger.info(`Brevo welcome email sent to ${email}`);
+        } else {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: { user: emailUser.value(), pass: emailPass.value() }
+            });
+            const html = getWelcomeEmailHTML(email);
+            await transporter.sendMail({
+                from: emailFrom.value(),
+                to: email,
+                subject: 'Welcome to Customise Me UK!',
+                html
+            });
+            logger.info(`Welcome email sent to ${email} (Nodemailer)`);
+        }
         return { success: true };
     } catch (error) {
         logger.error('Welcome email failed:', error);
@@ -329,33 +352,45 @@ exports.sendWelcomeEmail = onCall({
 });
 
 /**
- * Send Shipping Notification — Called from admin when an order ships
+ * Send Shipping Notification — Called from admin when an order ships (Brevo)
  */
 exports.sendShippingNotification = onCall({
-    secrets: [emailUser, emailPass, emailFrom]
+    secrets: [brevoApiKey, emailFrom, emailUser, emailPass]
 }, async (request) => {
-    const { email, orderId, trackingNumber, carrier, estimatedDelivery } = request.data;
+    const { email, firstName, orderId, trackingNumber, carrier, estimatedDelivery } = request.data || {};
 
     if (!email || !orderId) {
         throw new HttpsError('invalid-argument', 'Email and orderId are required.');
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: emailUser.value(), pass: emailPass.value() }
-        });
-
-        const html = getShippingNotificationHTML({ orderId, trackingNumber, carrier, estimatedDelivery });
-
-        await transporter.sendMail({
-            from: emailFrom.value(),
-            to: email,
-            subject: `Your Order ${orderId} Has Been Shipped!`,
-            html
-        });
-
-        logger.info(`Shipping notification sent to ${email} for order ${orderId}`);
+        const apiKey = brevoApiKey.value();
+        const useBrevo = apiKey && apiKey !== "disabled";
+        const senderEmail = emailFrom.value();
+        if (useBrevo) {
+            await brevo.sendShippingNotification(apiKey, {
+                email,
+                firstName: firstName || 'Customer',
+                orderId,
+                trackingNumber,
+                carrier,
+                estimatedDelivery
+            }, senderEmail);
+            logger.info(`Brevo shipping notification sent to ${email} for order ${orderId}`);
+        } else {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: { user: emailUser.value(), pass: emailPass.value() }
+            });
+            const html = getShippingNotificationHTML({ orderId, trackingNumber, carrier, estimatedDelivery });
+            await transporter.sendMail({
+                from: senderEmail,
+                to: email,
+                subject: `Your Order ${orderId} Has Been Shipped!`,
+                html
+            });
+            logger.info(`Shipping notification sent to ${email} (Nodemailer)`);
+        }
         return { success: true };
     } catch (error) {
         logger.error('Shipping notification failed:', error);
@@ -364,33 +399,38 @@ exports.sendShippingNotification = onCall({
 });
 
 /**
- * Send Account Creation Email — Called on user registration
+ * Send Account Creation Email — Called on user registration (Brevo)
  */
 exports.sendAccountCreationEmail = onCall({
-    secrets: [emailUser, emailPass, emailFrom]
+    secrets: [brevoApiKey, emailFrom, emailUser, emailPass]
 }, async (request) => {
-    const { email, name } = request.data;
+    const { email, name } = request.data || {};
 
     if (!email) {
         throw new HttpsError('invalid-argument', 'Email is required.');
     }
 
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: emailUser.value(), pass: emailPass.value() }
-        });
-
-        const html = getAccountCreationHTML({ name, email });
-
-        await transporter.sendMail({
-            from: emailFrom.value(),
-            to: email,
-            subject: 'Welcome to Customise Me UK — Account Created',
-            html
-        });
-
-        logger.info(`Account creation email sent to ${email}`);
+        const apiKey = brevoApiKey.value();
+        const useBrevo = apiKey && apiKey !== "disabled";
+        const senderEmail = emailFrom.value();
+        if (useBrevo) {
+            await brevo.sendAccountWelcome(apiKey, { email, name }, senderEmail);
+            logger.info(`Brevo account welcome sent to ${email}`);
+        } else {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: { user: emailUser.value(), pass: emailPass.value() }
+            });
+            const html = getAccountCreationHTML({ name, email });
+            await transporter.sendMail({
+                from: senderEmail,
+                to: email,
+                subject: 'Welcome to Customise Me UK — Account Created',
+                html
+            });
+            logger.info(`Account creation email sent to ${email} (Nodemailer)`);
+        }
         return { success: true };
     } catch (error) {
         logger.error('Account creation email failed:', error);
