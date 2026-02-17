@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../services/firebase';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions, auth } from '../services/firebase';
 
 const OrderTracking = () => {
     const [orderId, setOrderId] = useState('');
@@ -17,29 +18,36 @@ const OrderTracking = () => {
         setOrderData(null);
 
         try {
-            const orderRef = doc(db, 'orders', orderId.trim());
-            const orderSnap = await getDoc(orderRef);
+            // If logged in, try direct Firestore access (faster)
+            if (auth.currentUser) {
+                const orderRef = doc(db, 'orders', orderId.trim());
+                const orderSnap = await getDoc(orderRef);
 
-            if (!orderSnap.exists()) {
-                toast.error('Order not found. Please check your order number.');
-                return;
+                if (orderSnap.exists()) {
+                    const data = orderSnap.data();
+                    if (data.email?.toLowerCase() === email.trim().toLowerCase()) {
+                        setOrderData({
+                            id: orderId.trim(),
+                            status: data.status || 'pending',
+                            trackingNumber: data.trackingNumber || null,
+                            estimatedDelivery: data.estimatedDelivery || null
+                        });
+                        toast.success('Order found!');
+                        return;
+                    }
+                }
             }
 
-            const data = orderSnap.data();
+            // Fallback: Call Cloud Function (for guests or if direct access fails)
+            const trackOrderFn = httpsCallable(functions, 'trackOrder');
+            const result = await trackOrderFn({ orderId: orderId.trim(), email: email.trim().toLowerCase() });
 
-            // Verify email matches order for security
-            if (data.email?.toLowerCase() !== email.trim().toLowerCase()) {
-                toast.error('Email does not match this order. Please check your details.');
-                return;
+            if (result.data.success) {
+                setOrderData(result.data.order);
+                toast.success('Order found!');
+            } else {
+                toast.error(result.data.message || 'Order not found.');
             }
-
-            toast.success('Order found!');
-            setOrderData({
-                id: orderId.trim(),
-                status: data.status || 'pending',
-                trackingNumber: data.trackingNumber || null,
-                estimatedDelivery: data.estimatedDelivery || null
-            });
         } catch (error) {
             console.error('Order tracking error:', error);
             toast.error('Failed to look up order. Please try again.');

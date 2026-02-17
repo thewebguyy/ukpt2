@@ -61,12 +61,16 @@ const DesignStudio = () => {
                     {/* 3D Viewport Placeholder */}
                     <div
                         ref={containerRef}
-                        className="col studio-viewport d-flex align-items-center justify-content-center bg-gray-200"
+                        className="col studio-viewport d-flex align-items-center justify-content-center bg-light"
                         style={{ minHeight: '500px' }}
                     >
-                        <div className="text-center">
-                            <div className="spinner-border text-dark mb-3"></div>
-                            <p className="fw-bold text-muted text-uppercase small">Initializing 3D Environment...</p>
+                        <div className="text-center p-5">
+                            <h2 className="display-6 fw-bold mb-3">STUDIO COMING SOON</h2>
+                            <p className="text-muted mb-4 lead">We are building an amazing 3D design experience for you.<br />Launching Q3 2026.</p>
+                            <div className="bg-white p-3 rounded shadow-sm d-inline-block border">
+                                <img src="/assets/tshirt-mockup.png" alt="Preview" style={{ maxWidth: '200px', opacity: 0.5 }} />
+                                <p className="small text-muted mt-2 mb-0">2D Preview Mode</p>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -7,6 +7,7 @@ import {
     where,
     limit,
     orderBy,
+    startAfter,
     addDoc
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
@@ -24,6 +25,15 @@ export const ProductService = {
 
             if (filters.featured) {
                 q = query(q, where('featured', '==', true));
+            }
+
+            if (filters.orderByField) {
+                const direction = filters.orderDirection || 'asc';
+                q = query(q, orderBy(filters.orderByField, direction));
+            }
+
+            if (filters.startAfterDoc) {
+                q = query(q, startAfter(filters.startAfterDoc));
             }
 
             const limitCount = filters.limit || 50;

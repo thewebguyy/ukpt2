@@ -21,10 +21,10 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Orders: Read by email match, create by anyone (Cloud Functions), update/delete admin only
+    // Orders: Read by email match, create by Cloud Functions only
     match /orders/{orderId} {
       allow read: if isSignedIn() && (resource.data.email == request.auth.token.email || isAdmin());
-      allow create: if true; // Allow Cloud Functions to create orders
+      allow create: if false; // Creation restricted to Cloud Functions
       allow update, delete: if isAdmin();
     }
 
@@ -44,9 +44,10 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Newsletter: Public write (create/update) if doc ID is email, Admin read/delete
+    // Newsletter: Rate-limited updates, create with email match
     match /newsletter/{email} {
-      allow create, update: if request.resource.data.email == email;
+      allow create: if request.resource.data.email == email;
+      allow update: if request.resource.data.email == email && request.time > resource.data.createdAt + duration('1m');
       allow read, delete: if isAdmin();
     }
 

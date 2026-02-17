@@ -50,18 +50,29 @@ export const useCartStore = create(
                 const user = auth.currentUser;
                 if (!user) return;
 
-                try {
-                    const cartRef = doc(db, 'carts', user.uid);
-                    await setDoc(cartRef, {
-                        items: get().items,
-                        userId: user.uid,
-                        email: user.email,
-                        status: 'active',
-                        updatedAt: serverTimestamp()
-                    }, { merge: true });
-                } catch (e) {
-                    console.error("Failed to sync cart to Firestore", e);
+                // Simple debounce implementation
+                if (get().syncTimer) {
+                    clearTimeout(get().syncTimer);
                 }
+
+                const timer = setTimeout(async () => {
+                    try {
+                        const cartRef = doc(db, 'carts', user.uid);
+                        await setDoc(cartRef, {
+                            items: get().items,
+                            userId: user.uid,
+                            email: user.email,
+                            status: 'active',
+                            updatedAt: serverTimestamp()
+                        }, { merge: true });
+                        // Clear timer from state after execution
+                        set({ syncTimer: null });
+                    } catch (e) {
+                        console.error("Failed to sync cart to Firestore", e);
+                    }
+                }, 800);
+
+                set({ syncTimer: timer });
             }
         }),
         {

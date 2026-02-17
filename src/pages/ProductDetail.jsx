@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ProductService } from '../services/product.service';
 import { useCartStore } from '../store/cartStore';
 import { useWishlistStore } from '../store/wishlistStore';
+import { useAuthStore } from '../store/authStore';
 import { calculateTotalPrice } from '../utils/pricing';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../services/firebase';
@@ -14,6 +15,7 @@ import { motion } from 'framer-motion';
 const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuthStore();
     const addItem = useCartStore(state => state.addItem);
     const { toggleItem, isInWishlist } = useWishlistStore();
 
@@ -80,7 +82,8 @@ const ProductDetail = () => {
 
         setIsUploading(true);
         try {
-            const storageRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
+            const path = user ? `uploads/${user.uid}/${Date.now()}_${file.name}` : `uploads/guest/${Date.now()}_${file.name}`;
+            const storageRef = ref(storage, path);
             const snapshot = await uploadBytes(storageRef, file);
             const url = await getDownloadURL(snapshot.ref);
 
@@ -217,7 +220,8 @@ const ProductDetail = () => {
                                     <input
                                         type="file"
                                         id="artwork"
-                                        className="d-none"
+                                        className="visually-hidden"
+                                        style={{ position: 'absolute', opacity: 0, width: 1, height: 1 }}
                                         onChange={handleFileUpload}
                                         accept=".png,.pdf,.ai,.psd"
                                     />

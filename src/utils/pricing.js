@@ -3,6 +3,8 @@
  * - Bulk pricing: tier.price is the TOTAL price for that tier quantity (e.g., 50 stickers for £25).
  * - Standard pricing: unit price * quantity, plus any customization surcharges.
  */
+export const DOUBLE_SIDED_SURCHARGE = 5;
+
 export const calculateTotalPrice = (product, quantity, customization = {}) => {
     if (!product) return 0;
 
@@ -21,7 +23,7 @@ export const calculateTotalPrice = (product, quantity, customization = {}) => {
 
     // Customization surcharges
     if (customization.printLocation === 'Front & Back') {
-        unitPrice += 5;
+        unitPrice += DOUBLE_SIDED_SURCHARGE;
     }
 
     return unitPrice * quantity;
