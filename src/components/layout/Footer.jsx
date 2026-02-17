@@ -3,7 +3,7 @@ import NewsletterForm from '../NewsletterForm';
 
 const Footer = () => {
     return (
-        <footer style={{ backgroundColor: '#f8f9fa', padding: '4rem 0' }}>
+        <footer style={{ backgroundColor: 'var(--color-grey-light)', padding: 'var(--spacing-lg) 0' }}>
             <div className="container">
                 <div className="row">
                     {/* About */}

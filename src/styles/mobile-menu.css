@@ -15,12 +15,6 @@
    ============================================ */
 @media (max-width: 991.98px) {
 
-    /* Force hide desktop mega dropdowns on mobile */
-    .main-nav,
-    .mega-dropdown {
-        display: none !important;
-    }
-
     .mobile-menu-overlay {
         position: fixed;
         top: 0;
@@ -28,7 +22,7 @@
         right: 0;
         bottom: 0;
         background: var(--nav-bg);
-        z-index: 99999;
+        z-index: 1000;
         display: none;
         opacity: 0;
         transition: opacity var(--nav-transition);
@@ -136,20 +130,8 @@
         visibility: visible;
     }
 
-    .mobile-menu-view.sliding-out {
-        transform: translateX(-30%);
-        opacity: 0.5;
-    }
-
-    .mobile-menu-view.sliding-in-back {
-        transform: translateX(-30%);
-        opacity: 0.5;
-    }
-
-    .mobile-menu-view.active.sliding-in-back {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    /* REDUNDANT ANIMATIONS REMOVED - Relying on Framer Motion AnimatePresence instead */
+    /* .mobile-menu-view.sliding-out ... .mobile-menu-view.active.sliding-in-back */
 
     /* List Items */
     .mobile-menu-list {
@@ -171,6 +153,8 @@
         background: transparent;
         width: 100%;
         text-align: left;
+        min-height: 48px;
+        /* Improved touch target accessibility */
         transition: background 0.2s ease;
     }
 

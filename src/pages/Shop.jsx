@@ -178,7 +178,13 @@ const Shop = () => {
                                             </div>
                                         </div>
                                     ))
+                                ) : filteredProducts.length === 0 && !isLoading && !allProducts ? (
+                                    <div className="col-12 text-center py-5">
+                                        <p className="lead text-danger">Failed to load products. Please try again.</p>
+                                        <button className="btn btn-outline-dark" onClick={() => window.location.reload()}>Reload Page</button>
+                                    </div>
                                 ) : visibleProducts.length > 0 ? (
+
                                     <>
                                         {visibleProducts.map(product => (
                                             <div key={product.id} className="col-6">

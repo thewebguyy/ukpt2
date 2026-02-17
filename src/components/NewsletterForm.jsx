@@ -48,30 +48,16 @@ export default function NewsletterForm() {
         try {
             const data = { email: email.trim().toLowerCase(), firstName: firstName.trim(), lastName: lastName.trim() };
 
-            if (EmailApiService.isConfigured()) {
-                const result = await EmailApiService.subscribe(data);
-                if (result.success) {
-                    setMessage({ type: 'success', text: 'Successfully subscribed! Check your inbox for your 10% discount code.' });
-                    setEmail('');
-                    setFirstName('');
-                    setLastName('');
-                    setConsent(false);
-                    toast.success('Welcome! Check your inbox for 10% off.');
-                } else {
-                    setMessage({ type: 'error', text: result.message || 'Subscription failed.' });
-                }
+            const result = await NewsletterService.subscribe(data);
+            if (result.success) {
+                setMessage({ type: 'success', text: 'Successfully subscribed to our newsletter! Check your inbox for your 10% discount code.' });
+                setEmail('');
+                setFirstName('');
+                setLastName('');
+                setConsent(false);
+                toast.success('Successfully subscribed!');
             } else {
-                const result = await NewsletterService.subscribe(data);
-                if (result.success) {
-                    setMessage({ type: 'success', text: 'Successfully subscribed to our newsletter!' });
-                    setEmail('');
-                    setFirstName('');
-                    setLastName('');
-                    setConsent(false);
-                    toast.success('Successfully subscribed!');
-                } else {
-                    setMessage({ type: 'error', text: result.message || 'Subscription failed.' });
-                }
+                setMessage({ type: 'error', text: result.message || 'Subscription failed.' });
             }
         } catch (err) {
             const text = err.message || 'Something went wrong. Please try again.';

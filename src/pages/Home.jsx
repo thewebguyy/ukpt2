@@ -88,15 +88,15 @@ const Home = () => {
                 style={{
                     background: "linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%), url('/design_studio_bg.png') no-repeat center center",
                     backgroundSize: 'cover',
-                    color: '#fff',
-                    padding: '6rem 0'
+                    color: 'var(--color-white)',
+                    padding: 'var(--spacing-xl) 0'
                 }}
             >
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-12 col-md-6 pe-md-5 text-start">
                             <h2 className="display-5 fw-bold mb-4">DESIGN STUDIO</h2>
-                            <p className="lead mb-4" style={{ color: '#e0e0e0', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                            <p className="lead mb-4" style={{ color: 'var(--color-grey-light)', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                                 Work with our design team to create something truly unique. From concept to execution, we bring your vision
                                 to life with professional-grade results.
                             </p>

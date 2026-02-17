@@ -26,11 +26,11 @@ const Header = () => {
     };
 
     const getGreeting = () => {
-        if (user) {
+        if (user && user.name) {
             const firstName = user.name.split(' ')[0].toUpperCase();
             return `HI, ${firstName}`;
         }
-        return "SIGN IN / SIGN UP";
+        return user ? "HI, USER" : "SIGN IN / SIGN UP";
     };
 
     return (
@@ -71,9 +71,11 @@ const Header = () => {
 
                         {/* Search Bar (Desktop) */}
                         <form className="search-bar-form-compact d-none d-lg-flex" style={{ order: 4 }} onSubmit={handleSearch}>
-                            <svg className="search-icon">
-                                <use xlinkHref="#icon-search" />
-                            </svg>
+                            <button type="submit" className="bg-transparent border-0 p-0" aria-label="Search">
+                                <svg className="search-icon">
+                                    <use xlinkHref="#icon-search" />
+                                </svg>
+                            </button>
                             <input
                                 type="search"
                                 className="search-input"

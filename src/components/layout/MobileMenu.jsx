@@ -113,7 +113,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
             <div className="mobile-menu-container">
                 <div className="mobile-menu-header">
                     <Link to="/" className="mobile-menu-logo" onClick={onClose}>
-                        <img src="/icon.png" alt="Creative Merch UK" />
+                        <img src="/icon.png" alt="CustomiseMe UK" />
                     </Link>
                     <button className="mobile-menu-close" onClick={onClose}>
                         <svg><use xlinkHref="#icon-x" /></svg>
@@ -152,7 +152,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
                     <Link to="/account" className="mobile-menu-footer-item" onClick={onClose}>
                         <svg><use xlinkHref="#icon-user" /></svg>
                         <span className="nav-text">
-                            {user ? `HI, ${user.name.split(' ')[0].toUpperCase()}` : 'LOG IN'}
+                            {user ? `HI, ${user?.name ? user.name.split(' ')[0].toUpperCase() : 'USER'}` : 'LOG IN'}
                         </span>
                     </Link>
                     <Link to="/contact" className="mobile-menu-footer-item" onClick={onClose}>
