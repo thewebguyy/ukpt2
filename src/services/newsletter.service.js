@@ -11,6 +11,8 @@ export const NewsletterService = {
     async subscribe(emailOrData) {
         const email = typeof emailOrData === 'string' ? emailOrData : emailOrData?.email;
         const firstName = typeof emailOrData === 'object' ? emailOrData?.firstName : '';
+        const lastName = typeof emailOrData === 'object' ? emailOrData?.lastName : '';
+
         if (!email) return { success: false, message: 'Email is required.' };
 
         try {
@@ -18,13 +20,14 @@ export const NewsletterService = {
             await setDoc(docRef, {
                 email: email.toLowerCase(),
                 firstName: firstName || '',
+                lastName: lastName || '',
                 createdAt: serverTimestamp(),
                 source: 'react_website_footer',
                 subscribed: true
             }, { merge: true });
 
             // Send welcome email (fire and forget) - Firebase function uses Brevo
-            EmailService.sendWelcomeEmail(email.toLowerCase(), firstName);
+            EmailService.sendWelcomeEmail(email.toLowerCase(), firstName, lastName);
 
             return { success: true, message: 'Successfully subscribed!' };
         } catch (error) {

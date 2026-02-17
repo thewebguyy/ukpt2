@@ -5,10 +5,10 @@ export const EmailService = {
     /**
      * Send welcome email when user subscribes to newsletter
      */
-    async sendWelcomeEmail(email, firstName = '') {
+    async sendWelcomeEmail(email, firstName = '', lastName = '') {
         try {
             const sendEmail = httpsCallable(functions, 'sendWelcomeEmail');
-            const result = await sendEmail({ email, firstName: firstName || '' });
+            const result = await sendEmail({ email, firstName, lastName });
             return result.data;
         } catch (error) {
             console.error('Welcome email error:', error);

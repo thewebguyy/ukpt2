@@ -15,6 +15,9 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
+/**
+ * Send a transactional email via Brevo REST API
+ */
 async function sendTransactionalEmail(apiKey, { to, subject, htmlContent, textContent }, senderEmail = 'noreply@customisemeuk.com') {
     const res = await fetch(`${BREVO_API_URL}/smtp/email`, {
         method: 'POST',
@@ -38,126 +41,92 @@ async function sendTransactionalEmail(apiKey, { to, subject, htmlContent, textCo
     return data.messageId;
 }
 
-function getWelcomeEmailHtml(firstName, discountCode) {
-    return `
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="font-family:sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5">
-<div style="max-width:600px;margin:20px auto;background:#fff">
-<div style="text-align:center;padding:30px 20px;background:#000;color:#fff"><h1 style="margin:0;letter-spacing:3px">CUSTOMISE ME UK</h1></div>
-<div style="padding:30px 20px">
-<h2 style="margin-top:0">Welcome to Customise Me UK!</h2>
-<p>Hi ${escapeHtml(firstName)},</p>
-<p>Thank you for subscribing. Use this code for 10% off your first order:</p>
-<div style="background:#f9f9f9;padding:20px;text-align:center;margin:25px 0;border:2px dashed #000">
-<p style="margin:0;font-weight:bold">YOUR WELCOME DISCOUNT</p>
-<p style="font-size:2em;font-weight:bold;margin:10px 0;letter-spacing:3px">${escapeHtml(discountCode)}</p>
-</div>
-<p style="text-align:center"><a href="${BASE_URL}/shop" style="display:inline-block;padding:14px 28px;background:#000;color:#fff!important;text-decoration:none;font-weight:bold">SHOP NOW</a></p>
-</div>
-<div style="text-align:center;font-size:0.8em;color:#999;padding:20px;border-top:1px solid #eee">
-<p>Customise Me UK | <a href="${BASE_URL}/unsubscribe" style="color:#999">Unsubscribe</a></p>
-</div></div></body></html>`;
-}
+/**
+ * Add a contact to a Brevo list
+ */
+async function addContactToList(apiKey, { email, firstName, lastName, listIds }) {
+    const res = await fetch(`${BREVO_API_URL}/contacts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'api-key': apiKey
+        },
+        body: JSON.stringify({
+            email,
+            attributes: {
+                FIRSTNAME: firstName || '',
+                LASTNAME: lastName || ''
+            },
+            listIds: listIds || [],
+            updateEnabled: true
+        })
+    });
 
-function getOrderConfirmationHtml(order, orderId) {
-    const itemsHtml = (order.items || []).map(item => {
-        let opts = '';
-        if (item.customization) {
-            const arr = [];
-            if (item.customization.size) arr.push(`Size: ${escapeHtml(item.customization.size)}`);
-            if (item.customization.color) arr.push(`Color: ${escapeHtml(item.customization.color)}`);
-            if (arr.length) opts = `<div style="font-size:0.85em;color:#666">${arr.join(' | ')}</div>`;
-        }
-        return `<div style="padding:10px 0;border-bottom:1px solid #eee"><strong>${escapeHtml(item.name)}</strong>${opts}<span>x${item.quantity}</span></div>`;
-    }).join('');
-
-    const addr = order.shippingAddress || {};
-    const addrStr = [addr.name, addr.address, `${addr.city || ''} ${addr.postcode || ''}`.trim(), 'United Kingdom'].filter(Boolean).join(', ');
-
-    return `
-<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5">
-<div style="max-width:600px;margin:20px auto;background:#fff">
-<div style="text-align:center;padding:30px;background:#000;color:#fff"><h1 style="margin:0">CUSTOMISE ME UK</h1></div>
-<div style="padding:30px">
-<h2>Thank you for your order!</h2>
-<p>Hi ${escapeHtml(addr.name || 'there')},</p>
-<p>We've received your payment. You'll get another email when your order ships.</p>
-<div style="background:#f9f9f9;padding:15px;margin:20px 0"><strong>Order:</strong> ${orderId} | <strong>Date:</strong> ${new Date().toLocaleDateString('en-GB')}</div>
-<h3>Items</h3>${itemsHtml}
-<div style="margin-top:20px;border-top:2px solid #eee;padding-top:10px">
-<div style="display:flex;justify-content:space-between;font-weight:bold"><span>TOTAL</span><span>£${Number(order.total || 0).toFixed(2)}</span></div>
-</div>
-<div style="margin-top:30px"><h3>Shipping To</h3><p>${escapeHtml(addrStr || '—')}</p></div>
-<p style="text-align:center;margin-top:30px"><a href="${BASE_URL}/order-tracking" style="display:inline-block;padding:14px 28px;background:#000;color:#fff!important;text-decoration:none;font-weight:bold">VIEW ORDER STATUS</a></p>
-</div>
-<div style="text-align:center;font-size:0.8em;color:#999;padding:20px">Customise Me UK</div>
-</div></body></html>`;
-}
-
-function getShippingNotificationHtml(data) {
-    return `
-<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5">
-<div style="max-width:600px;margin:20px auto;background:#fff">
-<div style="text-align:center;padding:30px;background:#000;color:#fff"><h1 style="margin:0">CUSTOMISE ME UK</h1></div>
-<div style="padding:30px">
-<h2>Your Order Has Been Shipped!</h2>
-<p>Hi ${escapeHtml(data.firstName || 'there')},</p>
-<p>Your order <strong>${escapeHtml(data.orderId)}</strong> is on its way.</p>
-<div style="background:#f9f9f9;padding:15px;margin:20px 0">
-<strong>Tracking:</strong> ${escapeHtml(data.trackingNumber || 'TBD')}<br>
-<strong>Carrier:</strong> ${escapeHtml(data.carrier || 'Royal Mail')}<br>
-<strong>Estimated Delivery:</strong> ${escapeHtml(data.estimatedDelivery || '3-5 business days')}
-</div>
-<p style="text-align:center;margin-top:30px"><a href="${BASE_URL}/order-tracking" style="display:inline-block;padding:14px 28px;background:#000;color:#fff!important;text-decoration:none;font-weight:bold">TRACK YOUR ORDER</a></p>
-</div></div></body></html>`;
-}
-
-function getAccountWelcomeHtml(data) {
-    return `
-<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:sans-serif;line-height:1.6;color:#333;margin:0;padding:0;background:#f5f5f5">
-<div style="max-width:600px;margin:20px auto;background:#fff">
-<div style="text-align:center;padding:30px;background:#000;color:#fff"><h1 style="margin:0">CUSTOMISE ME UK</h1></div>
-<div style="padding:30px">
-<h2>Welcome to Customise Me UK!</h2>
-<p>Hi ${escapeHtml(data.name || 'there')},</p>
-<p>Your account has been created. Track orders, save wishlists, and access exclusive offers.</p>
-<p style="text-align:center;margin-top:30px"><a href="${BASE_URL}/account" style="display:inline-block;padding:14px 28px;background:#000;color:#fff!important;text-decoration:none;font-weight:bold">GO TO YOUR ACCOUNT</a></p>
-</div></div></body></html>`;
+    const data = await res.json().catch(() => ({}));
+    // 400 with 'duplicate_parameter' is fine, it means contact already exists and updateEnabled:true handled it
+    if (!res.ok && data.code !== 'duplicate_parameter') {
+        throw new Error(data.message || data.code || `Brevo API error: ${res.status}`);
+    }
+    return data;
 }
 
 module.exports = {
-    async sendWelcomeEmail(apiKey, email, firstName = '', senderEmail = 'noreply@customisemeuk.com') {
+    sendTransactionalEmail,
+    addContactToList,
+
+    // High-level wrappers that can take pre-rendered HTML
+    async sendWelcomeEmail(apiKey, email, firstName = '', lastName = '', senderEmail = 'noreply@customisemeuk.com', htmlContent = null) {
         const name = (firstName || '').trim() || 'there';
+        // Add to newsletter list (List ID 2 as per EMAIL_SYSTEM.md)
+        try {
+            await addContactToList(apiKey, { email, firstName: name, lastName, listIds: [2] });
+        } catch (err) {
+            console.error('Failed to add contact to Brevo list:', err.message);
+        }
+
         return sendTransactionalEmail(apiKey, {
             to: [{ email, name }],
             subject: 'Welcome to Customise Me UK! 10% Off Your First Order',
-            htmlContent: getWelcomeEmailHtml(name, 'WELCOME10')
+            htmlContent: htmlContent || `<h3>Welcome ${name}!</h3><p>Use code WELCOME10 for 10% off.</p>`
         }, senderEmail);
     },
-    async sendOrderConfirmation(apiKey, order, orderId, senderEmail = 'noreply@customisemeuk.com') {
+
+    async sendOrderConfirmation(apiKey, order, orderId, senderEmail = 'noreply@customisemeuk.com', htmlContent = null) {
+        // Add to customers list (List ID 3 as per EMAIL_SYSTEM.md)
+        const firstName = order.shippingAddress?.name?.split(' ')[0] || 'Customer';
+        const lastName = order.shippingAddress?.name?.split(' ').slice(1).join(' ') || '';
+
+        try {
+            await addContactToList(apiKey, {
+                email: order.email,
+                firstName,
+                lastName,
+                listIds: [3]
+            });
+        } catch (err) {
+            console.error('Failed to add customer to Brevo list:', err.message);
+        }
+
         return sendTransactionalEmail(apiKey, {
             to: [{ email: order.email, name: (order.shippingAddress?.name || 'Customer') }],
             subject: `Order Confirmed: ${orderId}`,
-            htmlContent: getOrderConfirmationHtml(order, orderId)
+            htmlContent: htmlContent || `<h3>Order Confirmed!</h3><p>Order ID: ${orderId}</p>`
         }, senderEmail);
     },
-    async sendShippingNotification(apiKey, { email, firstName, orderId, trackingNumber, carrier, estimatedDelivery }, senderEmail = 'noreply@customisemeuk.com') {
+
+    async sendShippingNotification(apiKey, { email, firstName, orderId, trackingNumber, carrier, estimatedDelivery }, senderEmail = 'noreply@customisemeuk.com', htmlContent = null) {
         return sendTransactionalEmail(apiKey, {
             to: [{ email, name: firstName || 'Customer' }],
             subject: `Your Order ${orderId} Has Been Shipped!`,
-            htmlContent: getShippingNotificationHtml({
-                firstName: firstName || 'there',
-                orderId,
-                trackingNumber: trackingNumber || 'TBD',
-                carrier: carrier || 'Royal Mail',
-                estimatedDelivery: estimatedDelivery || '3-5 business days'
-            })
+            htmlContent: htmlContent || `<h3>Your order ${orderId} has been shipped!</h3>`
         }, senderEmail);
     },
-    async sendAccountWelcome(apiKey, { email, name }, senderEmail = 'noreply@customisemeuk.com') {
+
+    async sendAccountWelcome(apiKey, { email, name }, senderEmail = 'noreply@customisemeuk.com', htmlContent = null) {
         return sendTransactionalEmail(apiKey, {
             to: [{ email, name: name || 'Customer' }],
             subject: 'Welcome to Customise Me UK — Account Created',
-            htmlContent: getAccountWelcomeHtml({ name: name || 'there' })
+            htmlContent: htmlContent || `<h3>Account Created! Welcome ${name}.</h3>`
         }, senderEmail);
     }
 };
