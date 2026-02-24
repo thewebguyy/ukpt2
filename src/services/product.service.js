@@ -100,10 +100,28 @@ export const ProductService = {
     },
 
     formatProduct(doc) {
+        if (!doc.exists()) return null;
         const data = doc.data();
+
+        // Deep clean to convert Firestore Timestamps to ISO strings for serialization
+        const cleanData = (obj) => {
+            if (!obj || typeof obj !== 'object') return obj;
+            if (typeof obj.toDate === 'function') return obj.toDate().toISOString();
+
+            if (Array.isArray(obj)) return obj.map(cleanData);
+
+            const newObj = {};
+            for (const key in obj) {
+                newObj[key] = cleanData(obj[key]);
+            }
+            return newObj;
+        };
+
+        const cleaned = cleanData(data);
+
         return {
+            ...cleaned,
             id: doc.id,
-            ...data,
             category: Array.isArray(data.categories) ? data.categories[0] : (data.category || 'Uncategorized'),
             imageUrl: Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : (data.imageUrl || ''),
             stock: typeof data.stock === 'number' ? data.stock : 0

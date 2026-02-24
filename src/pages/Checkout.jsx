@@ -4,6 +4,7 @@ import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { calculateTotalPrice } from '../utils/pricing';
 import { CheckoutService } from '../services/checkout.service';
+import { PostcodeService } from '../services/postcode.service';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 
@@ -20,7 +21,9 @@ const Checkout = () => {
         city: '',
         postcode: ''
     });
+    const [errors, setErrors] = useState({});
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isLookingUp, setIsLookingUp] = useState(false);
 
     const subtotal = items.reduce((acc, item) => {
         return acc + calculateTotalPrice(item.product, item.quantity, item.customization);
@@ -34,8 +37,22 @@ const Checkout = () => {
     const freeShippingProgress = Math.min((subtotal / shippingThreshold) * 100, 100);
 
     const handleCheckout = async () => {
-        if (!shippingData.email || !shippingData.name || !shippingData.address) {
-            toast.error('Please fill in all required fields');
+        const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const newErrors = {};
+
+        if (!shippingData.email) newErrors.email = 'Email is required';
+        else if (!EMAIL_REGEX.test(shippingData.email.trim())) newErrors.email = 'Invalid email address';
+
+        if (!shippingData.name) newErrors.name = 'Full name is required';
+        if (!shippingData.address) newErrors.address = 'Address is required';
+        if (!shippingData.city) newErrors.city = 'City is required';
+
+        if (!shippingData.postcode) newErrors.postcode = 'Postcode is required';
+        else if (!PostcodeService.validate(shippingData.postcode)) newErrors.postcode = 'Invalid UK postcode format (e.g. SW1A 1AA)';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            toast.error('Please correct the errors in the form');
             return;
         }
 
@@ -140,23 +157,114 @@ const Checkout = () => {
                                     <div className="row g-3">
                                         <div className="col-12">
                                             <label className="form-label small fw-bold">EMAIL ADDRESS *</label>
-                                            <input type="email" className="form-control form-control-lg bg-light border-0" value={shippingData.email} onChange={(e) => setShippingData({ ...shippingData, email: e.target.value })} required />
+                                            <input
+                                                type="email"
+                                                autoComplete="email"
+                                                className={`form-control form-control-lg bg-light border-0 ${errors.email ? 'is-invalid' : ''}`}
+                                                value={shippingData.email}
+                                                onChange={(e) => {
+                                                    setShippingData({ ...shippingData, email: e.target.value });
+                                                    if (errors.email) setErrors({ ...errors, email: '' });
+                                                }}
+                                                placeholder="e.g. alex@example.com"
+                                                required
+                                            />
+                                            {errors.email && <div className="invalid-feedback small">{errors.email}</div>}
                                         </div>
                                         <div className="col-12">
                                             <label className="form-label small fw-bold">FULL NAME *</label>
-                                            <input type="text" className="form-control form-control-lg bg-light border-0" value={shippingData.name} onChange={(e) => setShippingData({ ...shippingData, name: e.target.value })} required />
+                                            <input
+                                                type="text"
+                                                autoComplete="name"
+                                                className={`form-control form-control-lg bg-light border-0 ${errors.name ? 'is-invalid' : ''}`}
+                                                value={shippingData.name}
+                                                onChange={(e) => {
+                                                    setShippingData({ ...shippingData, name: e.target.value });
+                                                    if (errors.name) setErrors({ ...errors, name: '' });
+                                                }}
+                                                placeholder="e.g. Alex Smith"
+                                                required
+                                            />
+                                            {errors.name && <div className="invalid-feedback small">{errors.name}</div>}
                                         </div>
                                         <div className="col-12">
                                             <label className="form-label small fw-bold">ADDRESS *</label>
-                                            <input type="text" className="form-control form-control-lg bg-light border-0" value={shippingData.address} onChange={(e) => setShippingData({ ...shippingData, address: e.target.value })} required />
+                                            <input
+                                                type="text"
+                                                autoComplete="address-line1"
+                                                className={`form-control form-control-lg bg-light border-0 ${errors.address ? 'is-invalid' : ''}`}
+                                                value={shippingData.address}
+                                                onChange={(e) => {
+                                                    setShippingData({ ...shippingData, address: e.target.value });
+                                                    if (errors.address) setErrors({ ...errors, address: '' });
+                                                }}
+                                                placeholder="e.g. 123 High Street"
+                                                required
+                                            />
+                                            {errors.address && <div className="invalid-feedback small">{errors.address}</div>}
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label small fw-bold">CITY *</label>
-                                            <input type="text" className="form-control form-control-lg bg-light border-0" value={shippingData.city} onChange={(e) => setShippingData({ ...shippingData, city: e.target.value })} required />
+                                            <input
+                                                type="text"
+                                                autoComplete="address-level2"
+                                                className={`form-control form-control-lg bg-light border-0 ${errors.city ? 'is-invalid' : ''}`}
+                                                value={shippingData.city}
+                                                onChange={(e) => {
+                                                    setShippingData({ ...shippingData, city: e.target.value });
+                                                    if (errors.city) setErrors({ ...errors, city: '' });
+                                                }}
+                                                placeholder="e.g. London"
+                                                required
+                                            />
+                                            {errors.city && <div className="invalid-feedback small">{errors.city}</div>}
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label small fw-bold">POSTCODE *</label>
-                                            <input type="text" className="form-control form-control-lg bg-light border-0" value={shippingData.postcode} onChange={(e) => setShippingData({ ...shippingData, postcode: e.target.value })} required />
+                                            <div className="input-group">
+                                                <input
+                                                    type="text"
+                                                    autoComplete="postal-code"
+                                                    className={`form-control form-control-lg bg-light border-0 ${errors.postcode ? 'is-invalid' : ''}`}
+                                                    value={shippingData.postcode}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value.toUpperCase();
+                                                        setShippingData({ ...shippingData, postcode: val });
+                                                        if (errors.postcode) setErrors({ ...errors, postcode: '' });
+                                                    }}
+                                                    onBlur={() => {
+                                                        if (shippingData.postcode && !PostcodeService.validate(shippingData.postcode)) {
+                                                            setErrors({ ...errors, postcode: 'Invalid UK postcode format' });
+                                                        }
+                                                    }}
+                                                    placeholder="e.g. SW1A 1AA"
+                                                    required
+                                                />
+                                                <button
+                                                    className="btn btn-dark btn-sm"
+                                                    type="button"
+                                                    onClick={async () => {
+                                                        if (!shippingData.postcode) return;
+                                                        if (!PostcodeService.validate(shippingData.postcode)) {
+                                                            setErrors({ ...errors, postcode: 'Invalid UK postcode format' });
+                                                            return;
+                                                        }
+                                                        setIsLookingUp(true);
+                                                        const res = await PostcodeService.lookup(shippingData.postcode);
+                                                        if (res.success) {
+                                                            setShippingData({ ...shippingData, city: res.result.city });
+                                                            toast.success('Address details updated');
+                                                        } else {
+                                                            toast.error(res.message);
+                                                        }
+                                                        setIsLookingUp(false);
+                                                    }}
+                                                    disabled={isLookingUp || !shippingData.postcode}
+                                                >
+                                                    {isLookingUp ? <span className="spinner-border spinner-border-sm"></span> : 'FIND'}
+                                                </button>
+                                            </div>
+                                            {errors.postcode && <div className="invalid-feedback d-block small">{errors.postcode}</div>}
                                         </div>
                                     </div>
                                 </div>

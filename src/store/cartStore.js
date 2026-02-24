@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../services/firebase';
 
+let syncTimer = null;
+
 export const useCartStore = create(
     persist(
         (set, get) => ({
@@ -16,12 +18,23 @@ export const useCartStore = create(
                     (item) => item.product.id === product.id && JSON.stringify(item.customization) === customizationKey
                 );
 
+                // Strip any remaining non-serializable fields from product just in case
+                const cleanProduct = {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    imageUrl: product.imageUrl,
+                    category: product.category,
+                    hasBulkPricing: product.hasBulkPricing || false,
+                    bulkPricing: product.bulkPricing || []
+                };
+
                 if (existingItemIndex > -1) {
                     const newItems = [...items];
                     newItems[existingItemIndex].quantity += quantity;
                     set({ items: newItems });
                 } else {
-                    set({ items: [...items, { product, customization, quantity, addedAt: new Date().toISOString() }] });
+                    set({ items: [...items, { product: cleanProduct, customization, quantity, addedAt: new Date().toISOString() }] });
                 }
 
                 get().syncWithFirestore();
@@ -50,12 +63,11 @@ export const useCartStore = create(
                 const user = auth.currentUser;
                 if (!user) return;
 
-                // Simple debounce implementation
-                if (get().syncTimer) {
-                    clearTimeout(get().syncTimer);
+                if (syncTimer) {
+                    clearTimeout(syncTimer);
                 }
 
-                const timer = setTimeout(async () => {
+                syncTimer = setTimeout(async () => {
                     try {
                         const cartRef = doc(db, 'carts', user.uid);
                         await setDoc(cartRef, {
@@ -65,18 +77,20 @@ export const useCartStore = create(
                             status: 'active',
                             updatedAt: serverTimestamp()
                         }, { merge: true });
-                        // Clear timer from state after execution
-                        set({ syncTimer: null });
+                        syncTimer = null;
                     } catch (e) {
                         console.error("Failed to sync cart to Firestore", e);
                     }
-                }, 800);
-
-                set({ syncTimer: timer });
+                }, 1000);
             }
         }),
         {
-            name: 'cmuk-cart-storage'
+            name: 'cmuk-cart-storage',
+            // Ensure timer isn't accidentally persisted if someone put it back in state
+            partialize: (state) => {
+                const { syncTimer: _, ...rest } = state;
+                return rest;
+            }
         }
     )
 );

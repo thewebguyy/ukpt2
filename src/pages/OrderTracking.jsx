@@ -18,40 +18,23 @@ const OrderTracking = () => {
         setOrderData(null);
 
         try {
-            // If logged in, try direct Firestore access (faster)
-            if (auth.currentUser) {
-                const orderRef = doc(db, 'orders', orderId.trim());
-                const orderSnap = await getDoc(orderRef);
-
-                if (orderSnap.exists()) {
-                    const data = orderSnap.data();
-                    if (data.email?.toLowerCase() === email.trim().toLowerCase()) {
-                        setOrderData({
-                            id: orderId.trim(),
-                            status: data.status || 'pending',
-                            trackingNumber: data.trackingNumber || null,
-                            estimatedDelivery: data.estimatedDelivery || null
-                        });
-                        toast.success('Order found!');
-                        return;
-                    }
-                }
-            }
-
-            // Fallback: Call Cloud Function (for guests or if direct access fails)
+            // Use Cloud Function for all tracking (Issue #11)
+            // This ensures email verification is done server-side
             const trackOrderFn = httpsCallable(functions, 'trackOrder');
-            const result = await trackOrderFn({ orderId: orderId.trim(), email: email.trim().toLowerCase() });
+            const result = await trackOrderFn({
+                orderId: orderId.trim(),
+                email: email.trim().toLowerCase()
+            });
 
             if (result.data.success) {
                 setOrderData(result.data.order);
                 toast.success('Order found!');
             } else {
-                toast.error(result.data.message || 'Order not found.');
+                toast.error(result.data.message || 'Order not found or email mismatch.');
             }
         } catch (error) {
             console.error('Order tracking error:', error);
-            toast.error('Failed to look up order. Please try again.');
-            setOrderData(null);
+            toast.error(error.message || 'Failed to look up order.');
         } finally {
             setLoading(false);
         }

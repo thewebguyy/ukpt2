@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { db } from '../../../services/firebase';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { db, functions } from '../../../services/firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 import { toast } from 'react-hot-toast';
 
 const AdminProducts = () => {
@@ -16,13 +17,15 @@ const AdminProducts = () => {
 
     const deleteMutation = useMutation({
         mutationFn: async (id) => {
-            await deleteDoc(doc(db, 'products', id));
+            const deleteFn = httpsCallable(functions, 'deleteProduct');
+            const result = await deleteFn({ productId: id });
+            if (!result.data.success) throw new Error('Delete failed');
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['admin-products']);
             toast.success('Product deleted');
         },
-        onError: () => toast.error('Failed to delete product')
+        onError: (err) => toast.error('Failed to delete product: ' + err.message)
     });
 
     const handleDelete = (id) => {

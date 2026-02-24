@@ -48,7 +48,26 @@ const ProductDetail = () => {
         }
     }, [product]);
 
-    if (isLoading) return <div className="text-center py-5"><div className="spinner-border"></div></div>;
+    if (isLoading) return (
+        <div className="container py-5">
+            <div className="row g-5">
+                <div className="col-md-6">
+                    <div className="skeleton skeleton-image" style={{ aspectRatio: '1/1' }}></div>
+                </div>
+                <div className="col-md-6">
+                    <div className="skeleton skeleton-title mb-4" style={{ width: '30%' }}></div>
+                    <div className="skeleton skeleton-title h1 mb-4" style={{ width: '80%' }}></div>
+                    <div className="skeleton skeleton-title h3 mb-5" style={{ width: '40%' }}></div>
+                    <div className="skeleton skeleton-text mb-4" style={{ height: '100px' }}></div>
+                    <div className="d-flex gap-2 mb-4">
+                        <div className="skeleton skeleton-text rounded-pill" style={{ height: '52px', width: '100%' }}></div>
+                        <div className="skeleton skeleton-text rounded-pill" style={{ height: '52px', width: '52px' }}></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     if (error || !product) return (
         <div className="container text-center py-5">
             <h2>Product Not Found</h2>
@@ -60,11 +79,17 @@ const ProductDetail = () => {
     const isWishlisted = isInWishlist(product.id);
 
     const handleFileUpload = async (e) => {
+        if (!user) {
+            toast.error('Please log in to upload artwork.');
+            e.target.value = '';
+            // Or navigate to login
+            return;
+        }
+
         const file = e.target.files[0];
         if (!file) return;
 
         const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-        const ALLOWED_TYPES = ['image/png', 'application/pdf', 'application/postscript', 'image/vnd.adobe.photoshop'];
         const ALLOWED_EXTENSIONS = ['.png', '.pdf', '.ai', '.psd'];
 
         if (file.size > MAX_FILE_SIZE) {
@@ -82,7 +107,7 @@ const ProductDetail = () => {
 
         setIsUploading(true);
         try {
-            const path = user ? `uploads/${user.uid}/${Date.now()}_${file.name}` : `uploads/guest/${Date.now()}_${file.name}`;
+            const path = `uploads/${user.uid}/${Date.now()}_${file.name}`;
             const storageRef = ref(storage, path);
             const snapshot = await uploadBytes(storageRef, file);
             const url = await getDownloadURL(snapshot.ref);
@@ -103,11 +128,17 @@ const ProductDetail = () => {
             return;
         }
 
+        // Additional validation for bulk products
+        if (product.hasBulkPricing && product.bulkPricing?.length > 0) {
+            const isValidTier = product.bulkPricing.some(t => t.quantity === quantity);
+            if (!isValidTier) {
+                toast.error('Please select a valid quantity tier.');
+                return;
+            }
+        }
+
         addItem(product, customization, quantity);
         toast.success('Added to cart!');
-        // Proactively open cart? Or just show toast. 
-        // The user rules says "be proactive but don't surprise". 
-        // I'll stick to toast for now as it's common in React apps unless they have an offcanvas ready.
     };
 
     const colors = ['Black', 'White', 'Navy', 'Red', 'Grey', 'Green'];

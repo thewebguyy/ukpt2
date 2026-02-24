@@ -1,53 +1,30 @@
-import { doc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from './firebase';
-import { EmailService } from './email.service';
-
-// Encode email to be safe as a Firestore document ID
-function emailToDocId(email) {
-    return email.toLowerCase().replace(/[.#$[\]/]/g, '_');
-}
+import { httpsCallable } from 'firebase/functions';
+import { functions } from './firebase';
 
 export const NewsletterService = {
     async subscribe(emailOrData) {
-        const email = typeof emailOrData === 'string' ? emailOrData : emailOrData?.email;
-        const firstName = typeof emailOrData === 'object' ? emailOrData?.firstName : '';
-        const lastName = typeof emailOrData === 'object' ? emailOrData?.lastName : '';
-
-        if (!email) return { success: false, message: 'Email is required.' };
+        const data = typeof emailOrData === 'string' ? { email: emailOrData } : emailOrData;
+        if (!data?.email) return { success: false, message: 'Email is required.' };
 
         try {
-            const docRef = doc(db, 'newsletter', emailToDocId(email));
-            await setDoc(docRef, {
-                email: email.toLowerCase(),
-                firstName: firstName || '',
-                lastName: lastName || '',
-                createdAt: serverTimestamp(),
-                source: 'react_website_footer',
-                subscribed: true
-            }, { merge: true });
-
-            // Send welcome email (fire and forget) - Firebase function uses Brevo
-            EmailService.sendWelcomeEmail(email.toLowerCase(), firstName, lastName);
-
-            return { success: true, message: 'Successfully subscribed!' };
+            const subscribeFn = httpsCallable(functions, 'subscribeNewsletter');
+            const result = await subscribeFn(data);
+            return result.data;
         } catch (error) {
             console.error('Newsletter subscription error:', error);
-            return { success: false, message: 'Failed to subscribe. Please try again later.' };
+            return { success: false, message: error.message || 'Failed to subscribe.' };
         }
     },
 
     async unsubscribe(email) {
+        if (!email) return { success: false, message: 'Email is required.' };
         try {
-            const docRef = doc(db, 'newsletter', emailToDocId(email));
-            await setDoc(docRef, {
-                subscribed: false,
-                unsubscribedAt: serverTimestamp()
-            }, { merge: true });
-
-            return { success: true, message: 'Successfully unsubscribed.' };
+            const unsubscribeFn = httpsCallable(functions, 'unsubscribeNewsletter');
+            const result = await unsubscribeFn({ email });
+            return result.data;
         } catch (error) {
             console.error('Newsletter unsubscribe error:', error);
-            return { success: false, message: 'Failed to unsubscribe. Please try again.' };
+            return { success: false, message: error.message || 'Failed to unsubscribe.' };
         }
     }
 };

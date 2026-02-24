@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
-import { db } from '../services/firebase';
+import { db, auth } from '../services/firebase';
 import { useCartStore } from '../store/cartStore';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
@@ -24,36 +24,56 @@ const OrderConfirmation = () => {
             useCartStore.getState().clearCart();
         }
 
-        // Listen for order status updates (wait for 'paid' via webhook)
-        const orderRef = doc(db, 'orders', orderId);
-        const unsubscribe = onSnapshot(orderRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
+        // Verify order ownership (Issue #9)
+        const verifyOrder = async () => {
+            try {
+                const orderRef = doc(db, 'orders', orderId);
+                const snap = await getDoc(orderRef);
+
+                if (!snap.exists()) {
+                    setStatus('error');
+                    return;
+                }
+
+                const data = snap.data();
+                const currentUserEmail = auth.currentUser?.email;
+
+                // Allow if:
+                // 1. User is signed in and emails match
+                // 2. We're in a fresh guest session (difficult to track without persistence, 
+                //    but the non-guessable ID usually suffices for guest UX)
+                // However, for high security, we should at least block different-user cross-viewing.
+
+                if (currentUserEmail && data.email && currentUserEmail.toLowerCase() !== data.email.toLowerCase()) {
+                    console.warn("Security block: Order-User mismatch");
+                    setStatus('error');
+                    return;
+                }
+
                 if (data.status === 'paid') {
                     setStatus('success');
+                } else {
+                    // Start listening for status change to 'paid'
+                    const unsubscribe = onSnapshot(orderRef, (docSnap) => {
+                        if (docSnap.exists() && docSnap.data().status === 'paid') {
+                            setStatus('success');
+                            unsubscribe();
+                        }
+                    });
+
+                    // Timeout after 15s
+                    setTimeout(() => {
+                        unsubscribe();
+                        if (status === 'loading') setStatus('success'); // Show success anyway if doc exists
+                    }, 15000);
                 }
-            } else {
+            } catch (err) {
+                console.error(err);
                 setStatus('error');
             }
-        }, (err) => {
-            console.error(err);
-            setStatus('error');
-        });
-
-        // Fallback: Timeout after 10 seconds and show success if the doc exists
-        const timer = setTimeout(async () => {
-            const snap = await getDoc(orderRef);
-            if (snap.exists()) {
-                setStatus('success');
-            } else {
-                setStatus('error');
-            }
-        }, 10000);
-
-        return () => {
-            unsubscribe();
-            clearTimeout(timer);
         };
+
+        verifyOrder();
     }, [orderId]);
 
     return (

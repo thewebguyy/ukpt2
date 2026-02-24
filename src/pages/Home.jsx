@@ -61,11 +61,13 @@ const Home = () => {
 
                     <div className="product-grid-four">
                         {isLoading ? (
-                            <div className="text-center w-100 py-5">
-                                <div className="spinner-border" role="status">
-                                    <span className="visually-hidden">Loading...</span>
+                            [...Array(4)].map((_, i) => (
+                                <div key={i} className="skeleton-card">
+                                    <div className="skeleton skeleton-image mb-3"></div>
+                                    <div className="skeleton skeleton-title mb-2"></div>
+                                    <div className="skeleton skeleton-text" style={{ width: '40%' }}></div>
                                 </div>
-                            </div>
+                            ))
                         ) : (
                             featuredProducts?.slice(0, 4).map(product => (
                                 <ProductCard key={product.id} product={product} />

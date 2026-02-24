@@ -4,21 +4,22 @@ import { persist } from 'zustand/middleware';
 export const useWishlistStore = create(
     persist(
         (set, get) => ({
-            items: [],
+            items: [], // These will now be product IDs only
 
             toggleItem: (product) => {
+                const productId = typeof product === 'string' ? product : product.id;
                 const items = get().items;
-                const index = items.findIndex(item => item.id === product.id);
+                const exists = items.includes(productId);
 
-                if (index > -1) {
-                    set({ items: items.filter(item => item.id !== product.id) });
+                if (exists) {
+                    set({ items: items.filter(id => id !== productId) });
                 } else {
-                    set({ items: [...items, product] });
+                    set({ items: [...items, productId] });
                 }
             },
 
             isInWishlist: (productId) => {
-                return get().items.some(item => item.id === productId);
+                return get().items.includes(productId);
             }
         }),
         {

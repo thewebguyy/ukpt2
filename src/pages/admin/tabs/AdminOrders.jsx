@@ -1,48 +1,43 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { db } from '../../../services/firebase';
-import { collection, getDocs, updateDoc, doc, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, orderBy, query, limit } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import { EmailService } from '../../../services/email.service';
 
 const AdminOrders = () => {
     const queryClient = useQueryClient();
+    const [pageLimit, setPageLimit] = useState(20);
 
     const { data: orders, isLoading } = useQuery({
-        queryKey: ['admin-orders'],
+        queryKey: ['admin-orders', pageLimit],
         queryFn: async () => {
-            const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+            const q = query(
+                collection(db, 'orders'),
+                orderBy('createdAt', 'desc'),
+                limit(pageLimit)
+            );
             const snap = await getDocs(q);
             return snap.docs.map(d => ({ id: d.id, ...d.data() }));
         }
     });
 
     const updateStatusMutation = useMutation({
-        mutationFn: async ({ order, status }) => {
-            await updateDoc(doc(db, 'orders', order.id), { status });
-            if (status === 'shipped' && order.email) {
-                const firstName = (order.shippingAddress?.name || '').trim().split(' ')[0] || 'Customer';
-                await EmailService.sendShippingNotification({
-                    email: order.email,
-                    firstName,
-                    orderId: order.id,
-                    trackingNumber: order.trackingNumber || 'Will be updated shortly',
-                    carrier: order.carrier || 'Royal Mail',
-                    estimatedDelivery: order.estimatedDelivery || '3-5 business days'
-                });
-            }
+        mutationFn: async ({ orderId, status }) => {
+            await updateDoc(doc(db, 'orders', orderId), { status });
+            // Notification is now handled by Cloud Function trigger 'onOrderStatusUpdated'
         },
         onSuccess: (_, { status }) => {
             queryClient.invalidateQueries(['admin-orders']);
-            toast.success(status === 'shipped' ? 'Order marked shipped & notification sent' : 'Order status updated');
+            toast.success(status === 'shipped' ? 'Order marked shipped (Notification triggered)' : 'Order status updated');
         },
-        onError: (err, { order, status }) => {
-            queryClient.invalidateQueries(['admin-orders']);
-            toast.error(status === 'shipped' ? 'Status updated but shipping email failed' : err.message);
+        onError: (err) => {
+            toast.error('Failed to update status: ' + err.message);
         }
     });
 
-    const handleStatusChange = (order, newStatus) => {
-        updateStatusMutation.mutate({ order, status: newStatus });
+    const handleStatusChange = (orderId, newStatus) => {
+        updateStatusMutation.mutate({ orderId, status: newStatus });
     };
 
     if (isLoading) return <div className="text-center py-5"><div className="spinner-border"></div></div>;
@@ -90,7 +85,7 @@ const AdminOrders = () => {
                                     <select
                                         className="form-select form-select-sm d-inline-block w-auto"
                                         value={order.status}
-                                        onChange={(e) => handleStatusChange(order, e.target.value)}
+                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="paid">Paid</option>
@@ -105,6 +100,13 @@ const AdminOrders = () => {
                 </table>
                 {(!orders || orders.length === 0) && (
                     <div className="text-center py-5 text-muted">No orders found.</div>
+                )}
+                {orders && orders.length >= pageLimit && (
+                    <div className="text-center mt-4">
+                        <button className="btn btn-outline-dark px-4" onClick={() => setPageLimit(prev => prev + 20)}>
+                            LOAD MORE ORDERS
+                        </button>
+                    </div>
                 )}
             </div>
         </div>

@@ -9,6 +9,9 @@ const CartOffcanvas = () => {
         return acc + calculateTotalPrice(item.product, item.quantity, item.customization);
     }, 0);
 
+    const shippingThreshold = 100;
+    const freeShippingProgress = Math.min((subtotal / shippingThreshold) * 100, 100);
+
     return (
         <div className="offcanvas offcanvas-end" tabIndex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
             <div className="offcanvas-header border-bottom">
@@ -30,6 +33,25 @@ const CartOffcanvas = () => {
                     </div>
                 ) : (
                     <>
+                        {/* Free Shipping Progress */}
+                        <div className="shipping-progress-banner mb-4 p-3 bg-white border rounded-3">
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                                <span className="small fw-bold text-uppercase">Free Shipping Progress</span>
+                                <span className="small fw-bold">{freeShippingProgress >= 100 ? 'UNLOCKED!' : `£${(shippingThreshold - subtotal).toFixed(2)} AWAY`}</span>
+                            </div>
+                            <div className="progress" style={{ height: '8px' }}>
+                                <div
+                                    className={`progress-bar ${freeShippingProgress >= 100 ? 'bg-success' : 'bg-danger'}`}
+                                    style={{ width: `${freeShippingProgress}%`, transition: 'width 0.3s ease' }}
+                                ></div>
+                            </div>
+                            <p className="small text-muted mt-2 mb-0">
+                                {freeShippingProgress >= 100
+                                    ? 'Congrats! Your order qualifies for FREE shipping.'
+                                    : `Add £${(shippingThreshold - subtotal).toFixed(2)} more to unlock free UK shipping.`}
+                            </p>
+                        </div>
+
                         <div className="cart-items-list">
                             {items.map((item, index) => {
                                 const itemTotal = calculateTotalPrice(item.product, item.quantity, item.customization);

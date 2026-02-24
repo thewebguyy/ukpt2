@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { EmailApiService } from '../services/emailApi.service';
 import { NewsletterService } from '../services/newsletter.service';
 import { toast } from 'react-hot-toast';
 

@@ -171,10 +171,10 @@ const Shop = () => {
                                 {isLoading ? (
                                     [...Array(6)].map((_, i) => (
                                         <div key={i} className="col-6">
-                                            <div className="placeholder-glow">
-                                                <div className="placeholder w-100" style={{ height: '250px' }}></div>
-                                                <div className="placeholder col-8 mt-2"></div>
-                                                <div className="placeholder col-4 mt-1"></div>
+                                            <div className="skeleton-card">
+                                                <div className="skeleton skeleton-image" style={{ height: '250px' }}></div>
+                                                <div className="skeleton skeleton-title mt-2" style={{ width: '80%' }}></div>
+                                                <div className="skeleton skeleton-text mt-1" style={{ width: '40%' }}></div>
                                             </div>
                                         </div>
                                     ))

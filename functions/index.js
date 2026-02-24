@@ -1,4 +1,5 @@
 const { onCall, HttpsError, onRequest } = require("firebase-functions/v2/https");
+const { onDocumentUpdated } = require("firebase-functions/v2/firestore");
 const { defineSecret } = require("firebase-functions/params");
 const stripe = require("stripe");
 const logger = require("firebase-functions/logger");
@@ -23,10 +24,24 @@ const emailUser = defineSecret("EMAIL_USER");
 const emailPass = defineSecret("EMAIL_PASSWORD");
 
 /**
+ * Helper: Verify if user is admin
+ */
+async function isAdmin(uid) {
+    if (!uid) return false;
+    const adminDoc = await admin.firestore().collection('admins').doc(uid).get();
+    return adminDoc.exists;
+}
+
+/**
  * Helper: Send an email via Brevo or Nodemailer fallback
  */
 async function sendEmail(params) {
     const { to, name, lastName, subject, html, text, type } = params;
+
+    if (!to) {
+        logger.error("Email 'to' address is missing");
+        return false;
+    }
 
     const apiKey = brevoApiKey.value();
     const fromVal = emailFrom.value() || "noreply@customisemeuk.com";
@@ -39,9 +54,11 @@ async function sendEmail(params) {
                 const htmlVal = html || templates.getWelcomeEmailHTML(to);
                 result = await brevo.sendWelcomeEmail(apiKey, to, name, lastName, fromVal, htmlVal);
             } else if (type === 'order') {
+                if (!params.order || !params.orderId) throw new Error("Missing order data for order email");
                 const htmlVal = html || templates.getOrderConfirmationHTML(params.order, params.orderId);
                 result = await brevo.sendOrderConfirmation(apiKey, params.order, params.orderId, fromVal, htmlVal);
             } else if (type === 'shipping') {
+                if (!params.orderId) throw new Error("Missing orderId for shipping email");
                 const htmlVal = html || templates.getShippingNotificationHTML({
                     orderId: params.orderId,
                     trackingNumber: params.trackingNumber,
@@ -61,6 +78,9 @@ async function sendEmail(params) {
                 result = await brevo.sendAccountWelcome(apiKey, { email: to, name }, fromVal, htmlVal);
             } else {
                 // Default generic transactional email via raw API
+                if (!subject || (!html && !text)) {
+                    throw new Error("Missing subject or content for generic email");
+                }
                 result = await brevo.sendTransactionalEmail(apiKey, {
                     to: [{ email: to, name }],
                     subject,
@@ -68,7 +88,7 @@ async function sendEmail(params) {
                     textContent: text
                 }, fromVal);
             }
-            logger.info(`Brevo email (${type}) sent to ${to}`);
+            logger.info(`Brevo email (${type || 'generic'}) sent to ${to}`);
             return true;
         } else if (emailUser.value() && emailPass.value()) {
             // Nodemailer Fallback
@@ -80,8 +100,8 @@ async function sendEmail(params) {
             await transporter.sendMail({
                 from: fromVal,
                 to,
-                subject,
-                html,
+                subject: subject || (type === 'shipping' ? `Your Order ${params.orderId} Has Shipped` : 'Notification from Customise Me UK'),
+                html: html || (type === 'shipping' ? templates.getShippingNotificationHTML(params) : ''),
                 text
             });
             logger.info(`Nodemailer email sent to ${to}`);
@@ -99,9 +119,18 @@ async function sendEmail(params) {
 /**
  * Create Stripe Checkout Session
  */
-exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (request) => {
+exports.createCheckoutSession = onCall({
+    secrets: [stripeSecret, brevoApiKey, emailFrom, emailUser, emailPass]
+}, async (request) => {
     const { items, email, shippingAddress, successUrl, cancelUrl, userId } = request.data;
 
+    // Validation (Issue #25)
+    if (!email || !email.includes('@')) {
+        throw new HttpsError('invalid-argument', 'Valid email is required.');
+    }
+    if (!shippingAddress || !shippingAddress.name || !shippingAddress.address || !shippingAddress.postcode) {
+        throw new HttpsError('invalid-argument', 'Complete shipping address is required.');
+    }
     if (!items || !items.length) {
         throw new HttpsError('invalid-argument', 'The cart is empty.');
     }
@@ -109,46 +138,73 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
     try {
         const stripeClient = stripe(stripeSecret.value());
 
-        // Recalculate Totals from Firestore
+        // Recalculate Totals from Firestore to prevent tampering
         let subtotal = 0;
+        const verifiedItems = [];
+
         for (const item of items) {
             const productDoc = await admin.firestore().collection('products').doc(item.productId).get();
-            if (productDoc.exists) {
-                const productData = productDoc.data();
-                const qty = item.quantity || 1;
-
-                if (productData.hasBulkPricing && productData.bulkPricing?.length > 0) {
-                    const tiers = [...productData.bulkPricing].sort((a, b) => b.quantity - a.quantity);
-                    const tier = tiers.find(t => qty >= t.quantity);
-                    subtotal += tier ? tier.price : (productData.price || 0) * qty;
-                } else {
-                    let unitPrice = productData.price || 0;
-                    if (item.customization?.printLocation === 'Front & Back') {
-                        unitPrice += 5;
-                    }
-                    subtotal += unitPrice * qty;
-                }
-            } else {
-                subtotal += (item.price || 0) * (item.quantity || 1);
+            if (!productDoc.exists) {
+                throw new HttpsError('not-found', `Product ${item.productId} not found.`);
             }
+
+            const productData = productDoc.data();
+            const qty = Math.max(1, parseInt(item.quantity) || 1);
+            let unitPrice = productData.price || 0;
+
+            if (productData.hasBulkPricing && productData.bulkPricing?.length > 0) {
+                const tiers = [...productData.bulkPricing].sort((a, b) => b.quantity - a.quantity);
+                const tier = tiers.find(t => qty >= t.quantity);
+                if (tier) {
+                    unitPrice = tier.price / tier.quantity; // Normalize to unit price
+                }
+            } else if (item.customization?.printLocation === 'Front & Back') {
+                unitPrice += 5;
+            }
+
+            subtotal += unitPrice * qty;
+            verifiedItems.push({
+                ...item,
+                price: unitPrice,
+                quantity: qty
+            });
         }
 
         const tax = subtotal * 0.20;
         const shippingCost = subtotal >= 100 ? 0 : 4.99;
 
-        // Generate sequential order ID
-        const counterRef = admin.firestore().collection('metadata').doc('order_counter');
+        // Atomic Order ID generation and Order creation (Issue #6)
         const orderId = await admin.firestore().runTransaction(async (transaction) => {
+            const counterRef = admin.firestore().collection('metadata').doc('order_counter');
             const counterDoc = await transaction.get(counterRef);
             let nextCount = 1;
             if (counterDoc.exists) {
                 nextCount = (counterDoc.data().count || 0) + 1;
             }
             transaction.set(counterRef, { count: nextCount }, { merge: true });
-            return `CMUK_${nextCount.toString().padStart(3, '0')}`;
+
+            // Non-sequential, non-guessable suffix (Issue #11)
+            const randomSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
+            const newOrderId = `CMUK_${nextCount.toString().padStart(3, '0')}_${randomSuffix}`;
+            const orderRef = admin.firestore().collection('orders').doc(newOrderId);
+
+            transaction.set(orderRef, {
+                items: verifiedItems,
+                subtotal,
+                tax,
+                shipping: shippingCost,
+                total: subtotal + tax + shippingCost,
+                email,
+                shippingAddress: shippingAddress || {},
+                userId: userId || null,
+                status: 'pending',
+                createdAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+            return newOrderId;
         });
 
-        const line_items = items.map(item => ({
+        const line_items = verifiedItems.map(item => ({
             price_data: {
                 currency: 'gbp',
                 product_data: {
@@ -182,20 +238,6 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
             });
         }
 
-        // Create PENDING order
-        await admin.firestore().collection('orders').doc(orderId).set({
-            items,
-            subtotal,
-            tax,
-            shipping: shippingCost,
-            total: subtotal + tax + shippingCost,
-            email,
-            shippingAddress: shippingAddress || {},
-            userId: userId || null,
-            status: 'pending',
-            createdAt: admin.firestore.FieldValue.serverTimestamp()
-        });
-
         const session = await stripeClient.checkout.sessions.create({
             line_items,
             mode: 'payment',
@@ -207,6 +249,7 @@ exports.createCheckoutSession = onCall({ secrets: [stripeSecret] }, async (reque
 
         return { url: session.url };
     } catch (error) {
+        if (error instanceof HttpsError) throw error;
         logger.error("Stripe Session Error:", error);
         throw new HttpsError('internal', error.message);
     }
@@ -236,18 +279,25 @@ exports.stripeWebhook = onRequest({
         if (orderId) {
             try {
                 const orderRef = admin.firestore().collection('orders').doc(orderId);
-                const orderDoc = await orderRef.get();
 
-                if (orderDoc.exists) {
+                // Transaction for idempotency (Issue #7)
+                await admin.firestore().runTransaction(async (transaction) => {
+                    const orderDoc = await transaction.get(orderRef);
+                    if (!orderDoc.exists) throw new Error(`Order ${orderId} not found`);
+
                     const orderData = orderDoc.data();
+                    if (orderData.status === 'paid') {
+                        logger.info(`Order ${orderId} already marked as paid, skipping.`);
+                        return;
+                    }
 
-                    await orderRef.update({
+                    transaction.update(orderRef, {
                         status: 'paid',
                         paidAt: admin.firestore.FieldValue.serverTimestamp(),
                         stripeSessionId: session.id
                     });
 
-                    // Send Order Confirmation
+                    // Send Order Confirmation (Can be outside transaction if needed, but here is fine for data consistency)
                     await sendEmail({
                         to: orderData.email,
                         name: orderData.shippingAddress?.name || 'Customer',
@@ -263,7 +313,7 @@ exports.stripeWebhook = onRequest({
                         html: `<h3>New Order from ${orderData.shippingAddress?.name || "Customer"}</h3><p>Total: &pound;${orderData.total.toFixed(2)}</p><p>Order ID: ${orderId}</p>`,
                         text: `New Order from ${orderData.shippingAddress?.name || "Customer"}. Total: £${orderData.total.toFixed(2)}. Order ID: ${orderId}`
                     });
-                }
+                });
             } catch (dbError) {
                 logger.error(`Webhook processing failed for order ${orderId}:`, dbError);
                 return res.status(500).send("Processing Failed");
@@ -275,6 +325,33 @@ exports.stripeWebhook = onRequest({
 });
 
 /**
+ * Trigger: Automatically send shipping notification (Issue #3)
+ */
+exports.onOrderStatusUpdated = onDocumentUpdated({
+    document: "orders/{orderId}",
+    secrets: [brevoApiKey, emailFrom, emailUser, emailPass]
+}, async (event) => {
+    const beforeData = event.data.before.data();
+    const afterData = event.data.after.data();
+    const orderId = event.params.orderId;
+
+    // Check if status changed to 'shipped'
+    if (beforeData.status !== 'shipped' && afterData.status === 'shipped') {
+        logger.info(`Order ${orderId} status changed to shipped, sending email.`);
+
+        await sendEmail({
+            to: afterData.email,
+            name: afterData.shippingAddress?.name?.split(' ')[0] || 'Customer',
+            type: 'shipping',
+            orderId: orderId,
+            trackingNumber: afterData.trackingNumber,
+            carrier: afterData.carrier,
+            estimatedDelivery: afterData.estimatedDelivery
+        });
+    }
+});
+
+/**
  * Send Welcome Email (Newsletter)
  */
 exports.sendWelcomeEmail = onCall({
@@ -283,6 +360,12 @@ exports.sendWelcomeEmail = onCall({
     const { email, firstName, lastName } = request.data || {};
     if (!email) throw new HttpsError('invalid-argument', 'Email is required.');
 
+    // Check if already subscribed to prevent spam (Issue #24)
+    const subSnap = await admin.firestore().collection('newsletter').doc(email).get();
+    if (subSnap.exists && subSnap.data().welcomeSent) {
+        return { success: true, alreadySent: true };
+    }
+
     const success = await sendEmail({
         to: email,
         name: firstName || 'there',
@@ -290,16 +373,28 @@ exports.sendWelcomeEmail = onCall({
         type: 'welcome'
     });
 
+    if (success) {
+        await admin.firestore().collection('newsletter').doc(email).set({
+            welcomeSent: true,
+            welcomeSentAt: admin.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+    }
+
     if (!success) throw new HttpsError('internal', 'Failed to send welcome email.');
     return { success: true };
 });
 
 /**
- * Send Order Confirmation (Manual/Admin)
+ * Send Order Confirmation (Manual/Admin Only)
  */
 exports.sendOrderConfirmation = onCall({
     secrets: [brevoApiKey, emailFrom, emailUser, emailPass]
 }, async (request) => {
+    // Admin check (Issue #4)
+    if (!(await isAdmin(request.auth?.uid))) {
+        throw new HttpsError('permission-denied', 'Admin only.');
+    }
+
     const { email, orderId, order } = request.data || {};
     if (!email || !orderId) throw new HttpsError('invalid-argument', 'Email and orderId are required.');
 
@@ -316,11 +411,16 @@ exports.sendOrderConfirmation = onCall({
 });
 
 /**
- * Send Shipping Notification
+ * Legacy: Manual Shipping Notification (Now handled by Trigger, but kept for manual retries)
  */
 exports.sendShippingNotification = onCall({
     secrets: [brevoApiKey, emailFrom, emailUser, emailPass]
 }, async (request) => {
+    // Admin check (Issue #4)
+    if (!(await isAdmin(request.auth?.uid))) {
+        throw new HttpsError('permission-denied', 'Admin only.');
+    }
+
     const { email, firstName, orderId, trackingNumber, carrier, estimatedDelivery } = request.data || {};
     if (!email || !orderId) throw new HttpsError('invalid-argument', 'Email and orderId are required.');
 
@@ -361,7 +461,7 @@ exports.sendAccountCreationEmail = onCall({
  * Submit Contact Form
  */
 exports.submitContact = onCall({
-    secrets: [brevoApiKey, emailFrom, adminEmail]
+    secrets: [brevoApiKey, emailFrom, adminEmail, emailUser, emailPass] // Added missing secrets (Issue #20)
 }, async (request) => {
     const data = request.data;
     const { name, email, service, message } = data;
@@ -394,11 +494,16 @@ exports.submitContact = onCall({
 });
 
 /**
- * Send Newsletter Campaign
+ * Send Newsletter Campaign (Admin Only)
  */
 exports.sendNewsletterCampaign = onCall({
     secrets: [brevoApiKey, emailFrom]
 }, async (request) => {
+    // Admin check (Issue #4)
+    if (!(await isAdmin(request.auth?.uid))) {
+        throw new HttpsError('permission-denied', 'Admin only.');
+    }
+
     const { subject, htmlContent } = request.data;
     if (!subject || !htmlContent) throw new HttpsError('invalid-argument', 'Subject and content required.');
 
@@ -452,7 +557,7 @@ exports.unsubscribeNewsletter = onCall(async (request) => {
 });
 
 /**
- * Track Order
+ * Track Order (Issue #11 - Secure)
  */
 exports.trackOrder = onCall(async (request) => {
     const { orderId, email } = request.data;
@@ -461,8 +566,10 @@ exports.trackOrder = onCall(async (request) => {
     try {
         const orderDoc = await admin.firestore().collection('orders').doc(orderId).get();
         if (!orderDoc.exists || orderDoc.data().email.toLowerCase() !== email.toLowerCase()) {
+            // Constant time-ish response for non-existent or wrong email (Issue #11)
             return { success: false, message: 'Order not found' };
         }
+
         const data = orderDoc.data();
         return {
             success: true,
@@ -478,5 +585,60 @@ exports.trackOrder = onCall(async (request) => {
         };
     } catch (error) {
         throw new HttpsError('internal', 'Unable to track order');
+    }
+});
+
+/**
+ * Admin: Delete Product (Issue #1)
+ */
+exports.deleteProduct = onCall(async (request) => {
+    if (!(await isAdmin(request.auth?.uid))) {
+        throw new HttpsError('permission-denied', 'Admin only.');
+    }
+    const { productId } = request.data;
+    if (!productId) throw new HttpsError('invalid-argument', 'Product ID required.');
+
+    await admin.firestore().collection('products').doc(productId).delete();
+    return { success: true };
+});
+
+/**
+ * Newsletter: Subscribe (Secure)
+ */
+exports.subscribeNewsletter = onCall(async (request) => {
+    const { email, firstName, lastName } = request.data || {};
+    if (!email) throw new HttpsError('invalid-argument', 'Email is required.');
+
+    try {
+        const docId = email.toLowerCase().replace(/[.#$[\]/]/g, '_');
+        const docRef = admin.firestore().collection('newsletter').doc(docId);
+
+        const existing = await docRef.get();
+        if (existing.exists && existing.data().subscribed) {
+            return { success: true, message: 'Already subscribed.' };
+        }
+
+        await docRef.set({
+            email: email.toLowerCase(),
+            firstName: firstName || '',
+            lastName: lastName || '',
+            subscribed: true,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            source: 'cloud_function_v1'
+        }, { merge: true });
+
+        // Trigger welcome email (Issue #24: Cloud function now checks welcomeSent flag)
+        // We can just call the helper directly or wait for a trigger. 
+        // Calling helper is more immediate for user feedback.
+        await sendEmail({
+            to: email,
+            name: firstName || 'there',
+            type: 'welcome'
+        });
+
+        return { success: true, message: 'Subscribed successfully.' };
+    } catch (error) {
+        logger.error('Subscription error:', error);
+        throw new HttpsError('internal', 'Unable to process subscription.');
     }
 });

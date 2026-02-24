@@ -60,16 +60,16 @@ export const EmailService = {
     },
 
     /**
-     * Send contact inquiry confirmation
+     * Send contact inquiry (submit contact form)
      */
-    async sendContactConfirmation({ email, name, subject, message }) {
+    async sendContactInquiry({ name, email, service, message }) {
         try {
-            const sendEmail = httpsCallable(functions, 'sendContactConfirmation');
-            const result = await sendEmail({ email, name, subject, message });
+            const submitContact = httpsCallable(functions, 'submitContact');
+            const result = await submitContact({ name, email, service, message });
             return result.data;
         } catch (error) {
-            console.error('Contact confirmation email error:', error);
-            return { success: false };
+            console.error('Contact inquiry error:', error);
+            return { success: false, message: error.message };
         }
     },
 

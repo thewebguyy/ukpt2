@@ -2153,8 +2153,52 @@ body.offcanvas-open {
 }
 
 /* ============================================
-   LOADING STATES - Better UX
+   LOADING & SKELETON STATES
    ============================================ */
+.progress-bar-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--color-black);
+  z-index: 10000;
+  transition: width 0.3s ease;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.skeleton-title {
+  height: 2rem;
+  margin-bottom: 1rem;
+  width: 60%;
+}
+
+.skeleton-image {
+  aspect-ratio: 1;
+  width: 100%;
+}
+
 .spinner-border {
   width: 2rem;
   height: 2rem;
@@ -2174,6 +2218,26 @@ body.offcanvas-open {
   width: 1rem;
   height: 1rem;
   border-width: 2px;
+}
+
+/* Form Validation */
+.is-invalid {
+  border: 1px solid #dc3545 !important;
+}
+
+.invalid-feedback {
+  display: none;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #dc3545;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.is-invalid~.invalid-feedback,
+.invalid-feedback.d-block {
+  display: block;
 }
 
 .visually-hidden {
@@ -3027,4 +3091,30 @@ body.offcanvas-open {
   height: 1.25rem;
   display: inline-block;
   vertical-align: middle;
+}
+
+/* ============================================
+   CART & SHIPPING PROGRESS
+   ============================================ */
+.shipping-progress-banner {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey-light);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.shipping-progress-banner:hover {
+  border-color: var(--color-grey);
+}
+
+.shipping-progress-banner .progress {
+  background-color: var(--color-grey-light);
+  border-radius: 0;
+  /* Consistent with brand sharp edges */
+  overflow: hidden;
+}
+
+.shipping-progress-banner .progress-bar {
+  border-radius: 0;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }

@@ -4,6 +4,8 @@ import { useAuthStore } from '../store/authStore';
 import { useQuery } from '@tanstack/react-query';
 import { OrderService } from '../services/order.service';
 import { AuthService } from '../services/auth.service';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../services/firebase';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 
@@ -12,6 +14,9 @@ const Dashboard = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ name: '', email: '' });
     const [isSaving, setIsSaving] = useState(false);
+    const [lookupId, setLookupId] = useState('');
+    const [lookupLoading, setLookupLoading] = useState(false);
+    const [foundOrder, setFoundOrder] = useState(null);
 
     useEffect(() => {
         if (user) {
@@ -42,6 +47,30 @@ const Dashboard = () => {
             toast.error('Error updating profile');
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleLookupOrder = async (e) => {
+        e.preventDefault();
+        setLookupLoading(true);
+        setFoundOrder(null);
+        try {
+            const trackOrderFn = httpsCallable(functions, 'trackOrder');
+            const result = await trackOrderFn({
+                orderId: lookupId.trim(),
+                email: user?.email.trim().toLowerCase()
+            });
+
+            if (result.data.success) {
+                setFoundOrder(result.data.order);
+                toast.success('Order found!');
+            } else {
+                toast.error(result.data.message || 'Order not found.');
+            }
+        } catch (err) {
+            toast.error('Error looking up order');
+        } finally {
+            setLookupLoading(false);
         }
     };
 
@@ -104,10 +133,23 @@ const Dashboard = () => {
 
                     {/* Orders List */}
                     <div className="col-lg-8">
-                        <h2 className="fw-bold h4 mb-4">ORDER HISTORY</h2>
+                        <div className="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+                            <h2 className="fw-bold h4 mb-0">ORDER HISTORY</h2>
+                            <div className="small text-muted border-start ps-3 py-1 d-none d-md-block">
+                                <i className="bi bi-info-circle me-1"></i>
+                                Just ordered? It may take a moment to appear.
+                            </div>
+                        </div>
 
                         {isLoading ? (
-                            <div className="text-center py-5"><div className="spinner-border"></div></div>
+                            <div className="card border-0 shadow-sm p-4 rounded-4">
+                                <div className="skeleton skeleton-title mb-4" style={{ width: '30%' }}></div>
+                                {[...Array(5)].map((_, i) => (
+                                    <div key={i} className="mb-3">
+                                        <div className="skeleton skeleton-text" style={{ height: '40px' }}></div>
+                                    </div>
+                                ))}
+                            </div>
                         ) : orders && orders.length > 0 ? (
                             <div className="table-responsive">
                                 <table className="table table-hover bg-white rounded-4 overflow-hidden shadow-sm">
@@ -136,11 +178,72 @@ const Dashboard = () => {
                                 </table>
                             </div>
                         ) : (
-                            <div className="card border-0 shadow-sm p-5 text-center rounded-4">
-                                <p className="text-muted mb-0">You haven't placed any orders yet.</p>
-                                <Link to="/shop" className="btn btn-link fw-bold text-dark text-decoration-none mt-2">Start Shopping &rarr;</Link>
+                            <div className="card border-0 shadow-sm p-5 text-center rounded-4 mb-4">
+                                <div className="mb-3">
+                                    <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="text-muted opacity-50"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                                </div>
+                                <h3 className="h5 fw-bold mb-2">NO ORDERS FOUND</h3>
+                                <p className="text-muted mb-4">If you've just placed an order, it might take a few minutes to show up in your history.</p>
+                                <div className="d-flex justify-content-center gap-2">
+                                    <Link to="/shop" className="btn btn-dark rounded-pill px-4">START SHOPPING</Link>
+                                    <Link to="/order-tracking" className="btn btn-outline-dark rounded-pill px-4">TRACK AS GUEST</Link>
+                                </div>
                             </div>
                         )}
+
+                        {/* Order Lookup Tool */}
+                        <div className="card border-0 shadow-sm p-4 rounded-4 bg-white mt-4">
+                            <h5 className="fw-bold mb-3">QUICK ORDER LOOKUP</h5>
+                            <p className="text-muted small mb-4">Can't find an order? Enter the order ID below to check its status. We'll check using your account email: <strong>{user?.email}</strong></p>
+
+                            <form onSubmit={handleLookupOrder} className="row g-2 mb-3">
+                                <div className="col-sm-8 col-md-9">
+                                    <input
+                                        type="text"
+                                        className="form-control form-control-lg bg-light border-0"
+                                        placeholder="e.g. CMUK_001"
+                                        required
+                                        value={lookupId}
+                                        onChange={(e) => setLookupId(e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-sm-4 col-md-3">
+                                    <button type="submit" className="btn btn-dark btn-lg w-100 py-3 rounded-pill fw-bold border-0" style={{ backgroundColor: '#635bff' }} disabled={lookupLoading}>
+                                        {lookupLoading ? <span className="spinner-border spinner-border-sm"></span> : 'LOOKUP'}
+                                    </button>
+                                </div>
+                            </form>
+
+                            {foundOrder && (
+                                <div className="alert alert-success border-0 rounded-4 p-4 mt-3">
+                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 className="fw-bold mb-0">ORDER FOUND: {foundOrder.id}</h6>
+                                        <span className={`badge rounded-pill px-3 py-2 ${foundOrder.status === 'paid' ? 'bg-success' : 'bg-warning text-dark'}`}>
+                                            {foundOrder.status.toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <div className="row g-3 small">
+                                        <div className="col-6 col-md-3">
+                                            <div className="text-muted">Placed on</div>
+                                            <div className="fw-bold">{foundOrder.createdAt ? new Date(foundOrder.createdAt).toLocaleDateString() : 'N/A'}</div>
+                                        </div>
+                                        <div className="col-6 col-md-3">
+                                            <div className="text-muted">Total</div>
+                                            <div className="fw-bold">£{foundOrder.total?.toFixed(2)}</div>
+                                        </div>
+                                        <div className="col-12 col-md-6 text-md-end">
+                                            <Link to="/order-tracking" className="btn btn-link btn-sm text-dark p-0 fw-bold text-decoration-none">View full tracking details &rarr;</Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="text-center pt-3 border-top mt-3">
+                                <p className="small text-muted mb-0">
+                                    Used a different email? <Link to="/order-tracking" className="text-dark fw-bold">Use our guest tracking tool &rarr;</Link>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
