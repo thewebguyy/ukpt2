@@ -133,33 +133,33 @@ const Header = () => {
                         <MegaMenu title="SHOP" link="/shop">
                             <div className="row">
                                 <div className="col-md-3">
-                                    <h6 className="mega-title">CATEGORIES</h6>
-                                    <Link className="dropdown-item" to="/shop">ALL PRODUCTS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=apparel">APPAREL</Link>
-                                    <Link className="dropdown-item" to="/shop?category=party-decor">DECORATIONS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=stickers">PRINTS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=accessories">ACCESSORIES</Link>
+                                    <h6 className="mega-title">Categories</h6>
+                                    <Link className="dropdown-item" to="/shop">All Products</Link>
+                                    <Link className="dropdown-item" to="/shop?category=apparel">Apparel</Link>
+                                    <Link className="dropdown-item" to="/shop?category=party-decor">Decorations</Link>
+                                    <Link className="dropdown-item" to="/shop?category=stickers">Prints</Link>
+                                    <Link className="dropdown-item" to="/shop?category=accessories">Accessories</Link>
                                 </div>
                                 <div className="col-md-3">
-                                    <h6 className="mega-title">APPAREL</h6>
-                                    <Link className="dropdown-item" to="/shop?category=apparel">T-SHIRTS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=apparel">HOODIES</Link>
-                                    <Link className="dropdown-item" to="/shop?category=apparel">BAGS</Link>
+                                    <h6 className="mega-title">Apparel</h6>
+                                    <Link className="dropdown-item" to="/shop?category=apparel">T-Shirts</Link>
+                                    <Link className="dropdown-item" to="/shop?category=apparel">Hoodies</Link>
+                                    <Link className="dropdown-item" to="/shop?category=apparel">Bags</Link>
                                 </div>
                                 <div className="col-md-3">
-                                    <h6 className="mega-title">PARTY ESSENTIALS</h6>
-                                    <Link className="dropdown-item" to="/shop?category=party-decor">VINYL BANNERS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=party-decor">PLATES, CUPS, UTENSILS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=party-decor">TABLE DECOR</Link>
-                                    <Link className="dropdown-item" to="/shop?category=party-decor">PARTY PACKS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=party-decor">CAKE DECOR</Link>
+                                    <h6 className="mega-title">Party Essentials</h6>
+                                    <Link className="dropdown-item" to="/shop?category=party-decor">Vinyl Banners</Link>
+                                    <Link className="dropdown-item" to="/shop?category=party-decor">Plates, Cups, Utensils</Link>
+                                    <Link className="dropdown-item" to="/shop?category=party-decor">Table Decor</Link>
+                                    <Link className="dropdown-item" to="/shop?category=party-decor">Party Packs</Link>
+                                    <Link className="dropdown-item" to="/shop?category=party-decor">Cake Decor</Link>
                                 </div>
                                 <div className="col-md-3">
-                                    <h6 className="mega-title">STICKERS & LABELS</h6>
-                                    <Link className="dropdown-item" to="/shop?category=stickers">VINYL STICKERS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=stickers">CUSTOM LABELS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=stickers">WALL DECALS</Link>
-                                    <Link className="dropdown-item" to="/shop?category=stickers">STICKER PACKS</Link>
+                                    <h6 className="mega-title">Stickers & Labels</h6>
+                                    <Link className="dropdown-item" to="/shop?category=stickers">Vinyl Stickers</Link>
+                                    <Link className="dropdown-item" to="/shop?category=stickers">Custom Labels</Link>
+                                    <Link className="dropdown-item" to="/shop?category=stickers">Wall Decals</Link>
+                                    <Link className="dropdown-item" to="/shop?category=stickers">Sticker Packs</Link>
                                 </div>
                             </div>
                         </MegaMenu>
@@ -168,15 +168,15 @@ const Header = () => {
                         <MegaMenu title="DESIGN STUDIO" link="/designstudio">
                             <div className="row">
                                 <div className="col-md-6">
-                                    <h6 className="mega-title">SERVICES</h6>
-                                    <Link className="dropdown-item" to="/designservice">DESIGN SERVICES</Link>
-                                    <Link className="dropdown-item" to="/designstudio#mockup">MOCKUP GENERATION</Link>
+                                    <h6 className="mega-title">Services</h6>
+                                    <Link className="dropdown-item" to="/designservice">Design Services</Link>
+                                    <Link className="dropdown-item" to="/designstudio#mockup">Mockup Generation</Link>
                                 </div>
                                 <div className="col-md-6">
-                                    <h6 className="mega-title">RESOURCES</h6>
-                                    <Link className="dropdown-item" to="/resources">DESIGN TEMPLATES</Link>
-                                    <Link className="dropdown-item" to="/resources">STYLE GUIDE</Link>
-                                    <Link className="dropdown-item" to="/faq">FAQs</Link>
+                                    <h6 className="mega-title">Resources</h6>
+                                    <Link className="dropdown-item" to="/designstudio#resources">Design Templates</Link>
+                                    <Link className="dropdown-item" to="/designstudio#resources">Style Guide</Link>
+                                    <Link className="dropdown-item" to="/designstudio#resources">FAQs</Link>
                                 </div>
                             </div>
                         </MegaMenu>
@@ -185,19 +185,19 @@ const Header = () => {
                         <MegaMenu title="PREMIUM SERVICES" link="/premiumservices">
                             <div className="row">
                                 <div className="col-md-4">
-                                    <h6 className="mega-title">SERVICES</h6>
-                                    <Link className="dropdown-item" to="/senditems">SEND ITEMS IN</Link>
-                                    <Link className="dropdown-item" to="/subscriptions">SUBSCRIPTIONS</Link>
+                                    <h6 className="mega-title">Services</h6>
+                                    <Link className="dropdown-item" to="/senditems">Send Items In</Link>
+                                    <Link className="dropdown-item" to="/subscriptions">Subscriptions</Link>
                                 </div>
                                 <div className="col-md-4">
-                                    <h6 className="mega-title">INSTALLATION</h6>
-                                    <Link className="dropdown-item" to="/installation">VINYL INSTALLATION</Link>
-                                    <Link className="dropdown-item" to="/premiumservices#event-setup">SETUP AT EVENT</Link>
+                                    <h6 className="mega-title">Installation</h6>
+                                    <Link className="dropdown-item" to="/installation">Vinyl Installation</Link>
+                                    <Link className="dropdown-item" to="/premiumservices#event-setup">Setup at Event</Link>
                                 </div>
                                 <div className="col-md-4">
-                                    <h6 className="mega-title">WORKSHOPS</h6>
-                                    <Link className="dropdown-item" to="/workshop">GROUP WORKSHOP</Link>
-                                    <Link className="dropdown-item" to="/workshop">STATION EXPERIENCE</Link>
+                                    <h6 className="mega-title">Workshops</h6>
+                                    <Link className="dropdown-item" to="/workshop">Group Workshop</Link>
+                                    <Link className="dropdown-item" to="/workshop">Station Experience</Link>
                                 </div>
                             </div>
                         </MegaMenu>

@@ -6,73 +6,45 @@ const About = () => {
         <div className="about-page">
             <Helmet>
                 <title>About Us - CustomiseMe UK</title>
+                <meta name="description" content="Learn about CustomiseMe UK, our mission, and our dedication to premium custom printing and design." />
             </Helmet>
 
-            <section className="section bg-light">
+            {/* Hero-style Header Section */}
+            <section className="py-5 text-center" style={{ backgroundColor: 'var(--color-grey-light)' }}>
                 <div className="container">
-                    <div className="text-center mb-5">
-                        <h1 className="display-4 fw-bold">ABOUT CUSTOMISEME UK</h1>
-                        <p className="text-grey-dark lead">Premium custom printing and design services</p>
-                    </div>
+                    <h1 className="display-4 fw-bold mb-3">ABOUT US</h1>
+                    <p className="lead text-grey-dark mx-auto" style={{ maxWidth: '600px' }}>
+                        Premium custom printing and design services crafted with care in the UK.
+                    </p>
+                </div>
+            </section>
 
-                    <div className="row g-5 align-items-center mb-5">
-                        <div className="col-lg-6">
-                            <h2 className="h3 fw-bold mb-4">OUR STORY</h2>
-                            <p className="text-grey-dark mb-3">
-                                CustomiseMe UK was founded with a simple mission: to make professional-quality
-                                custom printing accessible to everyone. Whether you're planning a party, launching
-                                a business, or creating memorable gifts, we're here to bring your vision to life.
-                            </p>
-                            <p className="text-grey-dark mb-3">
-                                Based in the UK, we combine cutting-edge printing technology with exceptional
-                                customer service to deliver products that exceed expectations. From small personal
-                                orders to large commercial projects, we treat every customer with the same dedication
-                                and attention to detail.
-                            </p>
-                        </div>
-                        <div className="col-lg-6">
-                            <div className="bg-grey-light p-5 rounded">
-                                <div className="text-center">
-                                    <div className="display-1 mb-3">🎨</div>
-                                    <h3 className="h4 fw-bold">QUALITY & CREATIVITY</h3>
-                                    <p className="text-muted">Our core values</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            {/* Content Section */}
+            <section className="section py-5">
+                <div className="container container-text text-center">
+                    <p className="mb-4">
+                        CustomiseMe UK was founded with a simple mission: to make professional-quality
+                        custom printing accessible to everyone. Whether you're planning a personal celebration,
+                        launching a new business venture, or creating unique branded gifts, we're here
+                        to bring your creative vision to life with precision and style.
+                    </p>
+                    <p className="mb-4">
+                        Based in the heart of the UK, we combine cutting-edge printing technology with
+                        a passion for exceptional design. Our range of services extends from small
+                        personalised orders to large-scale commercial installations, ensuring that every
+                        project receives the same dedicated attention to detail and quality finish
+                        that defines our brand.
+                    </p>
+                    <p className="mb-5">
+                        We believe in more than just printing; we believe in helping you create moments
+                        and build identities. From our 3D design studio to our professional on-site
+                        installation teams, every aspect of CustomiseMe UK is designed to provide
+                        a seamless, premium experience for every client.
+                    </p>
 
-                    <div className="row g-4 text-center mb-5">
-                        <div className="col-md-4">
-                            <div className="card border-0 shadow-sm p-4 h-100">
-                                <div className="h1 mb-3">⚡</div>
-                                <h3 className="h5 fw-bold mb-3">FAST TURNAROUND</h3>
-                                <p className="text-muted small mb-0">Most orders ship within 3-5 business days</p>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card border-0 shadow-sm p-4 h-100">
-                                <div className="h1 mb-3">✓</div>
-                                <h3 className="h5 fw-bold mb-3">QUALITY GUARANTEE</h3>
-                                <p className="text-muted small mb-0">Premium materials and professional printing</p>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card border-0 shadow-sm p-4 h-100">
-                                <div className="h1 mb-3">💬</div>
-                                <h3 className="h5 fw-bold mb-3">EXPERT SUPPORT</h3>
-                                <p className="text-muted small mb-0">Dedicated team ready to help with your project</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="text-center bg-dark text-white p-5 rounded">
-                        <h2 className="h3 fw-bold mb-3">READY TO START YOUR PROJECT?</h2>
-                        <p className="mb-4">Browse our products or get in touch to discuss custom solutions</p>
-                        <div className="d-flex gap-3 justify-content-center flex-wrap">
-                            <Link to="/shop" className="btn btn-light btn-lg px-5">BROWSE PRODUCTS</Link>
-                            <Link to="/contact" className="btn btn-outline-light btn-lg px-5">CONTACT US</Link>
-                        </div>
-                    </div>
+                    <Link to="/contact" className="btn btn-dark btn-lg px-5">
+                        GET IN TOUCH
+                    </Link>
                 </div>
             </section>
         </div>
@@ -80,3 +52,4 @@ const About = () => {
 };
 
 export default About;
+

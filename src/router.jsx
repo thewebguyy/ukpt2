@@ -23,9 +23,22 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Subscriptions from './pages/Subscriptions';
 import OrderTracking from './pages/OrderTracking';
+import Reviews from './pages/Reviews';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 const router = createBrowserRouter([
+    {
+        path: '/reviews',
+        element: <Reviews />,
+    },
+    {
+        path: '/senditems',
+        element: <SendItems />,
+    },
+    {
+        path: '/subscriptions',
+        element: <Subscriptions />,
+    },
     {
         path: '/',
         element: <Layout />,
@@ -40,7 +53,6 @@ const router = createBrowserRouter([
             { path: 'designservice', element: <DesignService /> },
             { path: 'premiumservices', element: <PremiumServices /> },
             { path: 'resources', element: <Resources /> },
-            { path: 'senditems', element: <SendItems /> },
             { path: 'installation', element: <Installation /> },
             { path: 'workshop', element: <Workshop /> },
             { path: 'wishlist', element: <Wishlist /> },
@@ -49,7 +61,6 @@ const router = createBrowserRouter([
             { path: 'about', element: <About /> },
             { path: 'privacy-policy', element: <Privacy /> },
             { path: 'terms-conditions', element: <Terms /> },
-            { path: 'subscriptions', element: <Subscriptions /> },
             { path: 'order-tracking', element: <OrderTracking /> },
             {
                 path: 'dashboard',

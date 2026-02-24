@@ -61,6 +61,7 @@ const DesignStudio = () => {
                     {/* 3D Viewport Placeholder */}
                     <div
                         ref={containerRef}
+                        id="mockup"
                         className="col studio-viewport d-flex align-items-center justify-content-center bg-light"
                         style={{ minHeight: '500px' }}
                     >
@@ -98,7 +99,7 @@ const DesignStudio = () => {
                 </div>
             </section>
 
-            <section className="section py-5 bg-light">
+            <section id="resources" className="section py-5 bg-light">
                 <div className="container text-center">
                     <h3 className="h4 fw-bold mb-3">NEED EXPERT HELP?</h3>
                     <p className="text-muted mb-4 mx-auto" style={{ maxWidth: '500px' }}>

@@ -4,13 +4,14 @@ import Icons from '../components/common/Icons';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import CartOffcanvas from '../components/cart/CartOffcanvas';
-
-import SubscriptionsHero from '../components/subscriptions/SubscriptionsHero';
-import ComingSoonSection from '../components/subscriptions/ComingSoonSection';
+import ReviewsHero from '../components/reviews/ReviewsHero';
+import ReviewsGrid from '../components/reviews/ReviewsGrid';
+import GallerySection from '../components/reviews/GallerySection';
+import ReviewsCTA from '../components/reviews/ReviewsCTA';
 
 import { useAuthStore } from '../store/authStore';
 
-const Subscriptions = () => {
+const Reviews = () => {
     const initListener = useAuthStore(state => state.initListener);
 
     useEffect(() => {
@@ -20,18 +21,21 @@ const Subscriptions = () => {
     }, [initListener]);
 
     return (
-        <div className="subscriptions-page">
+        <div className="reviews-page">
             <Helmet>
-                <title>Subscriptions | CustomiseMe UK</title>
-                <meta name="description" content="Exclusive membership plans and monthly curated custom items. Join the CustomiseMe UK community for premium benefits." />
+                <title>Customer Reviews & Gallery | CustomiseMe UK</title>
+                <meta name="description" content="Read what our community says about CustomiseMe UK. Explore our gallery of custom t-shirts, hoodies, embroidery, and event setups." />
             </Helmet>
 
+            {/* Inlined Core Layout Components as requested */}
             <Icons />
             <Header />
 
             <main>
-                <SubscriptionsHero />
-                <ComingSoonSection />
+                <ReviewsHero />
+                <ReviewsGrid />
+                <GallerySection />
+                <ReviewsCTA />
             </main>
 
             <Footer />
@@ -40,4 +44,4 @@ const Subscriptions = () => {
     );
 };
 
-export default Subscriptions;
+export default Reviews;

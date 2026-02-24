@@ -1,73 +1,102 @@
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-
-const workshops = [
-    {
-        title: 'SCREEN PRINTING 101',
-        description: 'Learn the fundamentals of screen printing. Create your own custom t-shirt in this hands-on session.',
-        duration: '3 hours',
-        price: '£45 per person'
-    },
-    {
-        title: 'DESIGN YOUR OWN BRAND',
-        description: 'From logo creation to brand guidelines. Leave with a complete brand identity package.',
-        duration: '4 hours',
-        price: '£65 per person'
-    },
-    {
-        title: 'TEAM BUILDING CREATIVE',
-        description: 'Perfect for corporate events. Your team designs and prints custom merchandise together.',
-        duration: '2-3 hours',
-        price: 'From £35 per person'
-    },
-    {
-        title: 'KIDS CREATIVE WORKSHOP',
-        description: 'Fun, supervised sessions where kids can design and create their own custom products.',
-        duration: '2 hours',
-        price: '£25 per child'
-    }
-];
+import BookingProgressBar from '../components/workshop/BookingProgressBar';
+import BookingStep from '../components/workshop/BookingStep';
+import StepChooseExperience from '../components/workshop/StepChooseExperience';
+import StepSessionDetails from '../components/workshop/StepSessionDetails';
+import StepContactInfo from '../components/workshop/StepContactInfo';
+import StepConfirmation from '../components/workshop/StepConfirmation';
 
 const Workshop = () => {
+    const [currentStep, setCurrentStep] = useState(1);
+    const [selection, setSelection] = useState('');
+    const [details, setDetails] = useState({ date: '', participants: '' });
+    const [info, setInfo] = useState({ name: '', email: '', phone: '', notes: '' });
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [currentStep]);
+
+    const handleDetailChange = (field, value) => {
+        setDetails(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleInfoChange = (field, value) => {
+        setInfo(prev => ({ ...prev, [field]: value }));
+    };
+
     return (
         <div className="workshop-page">
             <Helmet>
-                <title>Workshops - CustomiseMe UK</title>
+                <title>Book a Workshop | CustomiseMe UK</title>
+                <meta name="description" content="Book an immersive design and print workshop or a customisation station for your next event." />
             </Helmet>
 
-            <section className="py-5 bg-dark text-white">
-                <div className="container text-center">
-                    <h1 className="display-4 fw-bold mb-3">WORKSHOPS</h1>
-                    <p className="lead opacity-75 mx-auto" style={{ maxWidth: '600px' }}>
-                        Hands-on creative workshops for individuals, teams, and kids. Learn new skills and create something unique.
-                    </p>
-                </div>
-            </section>
-
-            <section className="section">
+            <section className="section py-5">
                 <div className="container">
-                    <div className="row g-4">
-                        {workshops.map((workshop, i) => (
-                            <div key={i} className="col-md-6">
-                                <div className="card border-0 shadow-sm p-4 h-100">
-                                    <h3 className="h5 fw-bold mb-2">{workshop.title}</h3>
-                                    <p className="text-muted mb-3">{workshop.description}</p>
-                                    <div className="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
-                                        <div className="small text-muted">
-                                            <span className="me-3">Duration: {workshop.duration}</span>
-                                        </div>
-                                        <span className="fw-bold">{workshop.price}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                    <div className="text-center mb-5">
+                        <h1 className="display-4 fw-bold mb-3">WORKSHOPS & EVENTS</h1>
+                        <p className="lead text-muted mx-auto" style={{ maxWidth: '700px' }}>
+                            Experience the magic of customisation first-hand. Choose a workshop or book a live station for your event.
+                        </p>
                     </div>
 
-                    <div className="text-center mt-5 pt-3">
-                        <p className="text-muted mb-3">Interested in booking a workshop? Get in touch with our team.</p>
-                        <Link to="/contact?service=workshop" className="btn btn-dark px-5">
-                            BOOK A WORKSHOP
-                        </Link>
+                    <BookingProgressBar currentStep={currentStep} />
+
+                    <div className="mx-auto" style={{ maxWidth: '800px' }}>
+                        {/* Step 1: Experience */}
+                        <BookingStep
+                            stepNumber="1"
+                            title="CHOOSE YOUR EXPERIENCE"
+                            isActive={currentStep === 1}
+                            isCompleted={currentStep > 1}
+                        >
+                            <StepChooseExperience
+                                selectedOption={selection}
+                                onSelect={setSelection}
+                                onNext={() => setCurrentStep(2)}
+                            />
+                        </BookingStep>
+
+                        {/* Step 2: Details */}
+                        <BookingStep
+                            stepNumber="2"
+                            title="SESSION DETAILS"
+                            isActive={currentStep === 2}
+                            isCompleted={currentStep > 2}
+                        >
+                            <StepSessionDetails
+                                details={details}
+                                onChange={handleDetailChange}
+                                onNext={() => setCurrentStep(3)}
+                            />
+                        </BookingStep>
+
+                        {/* Step 3: Contact */}
+                        <BookingStep
+                            stepNumber="3"
+                            title="CONTACT INFORMATION"
+                            isActive={currentStep === 3}
+                            isCompleted={currentStep > 3}
+                        >
+                            <StepContactInfo
+                                info={info}
+                                onChange={handleInfoChange}
+                                onSubmit={() => setCurrentStep(4)}
+                            />
+                        </BookingStep>
+
+                        {/* Step 4: Confirmation */}
+                        {currentStep === 4 && (
+                            <BookingStep
+                                stepNumber="4"
+                                title="CONFIRMATION"
+                                isActive={true}
+                                isCompleted={false}
+                            >
+                                <StepConfirmation />
+                            </BookingStep>
+                        )}
                     </div>
                 </div>
             </section>

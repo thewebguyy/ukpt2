@@ -23,10 +23,10 @@ const Footer = () => {
                             <li><Link to="/designstudio">DESIGN STUDIO</Link></li>
                             <li><Link to="/senditems">SEND ITEMS</Link></li>
                             <li><Link to="/workshop">WORKSHOP</Link></li>
-                            <li><Link to="/contact">CONTACT</Link></li>
+                            <li><Link to="/contact">Contact</Link></li>
                             <li><Link to="/faq">FAQ</Link></li>
-                            <li><Link to="/privacy-policy">PRIVACY POLICY</Link></li>
-                            <li><Link to="/terms-conditions">TERMS & CONDITIONS</Link></li>
+                            <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+                            <li><Link to="/terms-conditions">Terms & Conditions</Link></li>
                         </ul>
                     </div>
 

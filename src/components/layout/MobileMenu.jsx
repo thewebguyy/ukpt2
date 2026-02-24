@@ -54,23 +54,23 @@ const MobileMenu = ({ isOpen, onClose }) => {
                     <span>SHOP</span>
                 </button>
                 <ul className="mobile-menu-list">
-                    <li><Link to="/shop" className="mobile-menu-item" onClick={onClose}><span>ALL PRODUCTS</span></Link></li>
-                    <li><Link to="/shop?category=apparel" className="mobile-menu-item" onClick={onClose}><span>APPAREL</span></Link></li>
-                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>DECORATIONS</span></Link></li>
-                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>PRINTS</span></Link></li>
-                    <li><Link to="/shop?category=accessories" className="mobile-menu-item" onClick={onClose}><span>ACCESSORIES</span></Link></li>
-                    <li><Link to="/shop?category=apparel" className="mobile-menu-item" onClick={onClose}><span>T-SHIRTS</span></Link></li>
-                    <li><Link to="/shop?category=apparel" className="mobile-menu-item" onClick={onClose}><span>HOODIES</span></Link></li>
-                    <li><Link to="/shop?category=apparel" className="mobile-menu-item" onClick={onClose}><span>BAGS</span></Link></li>
-                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>VINYL BANNERS</span></Link></li>
-                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>PLATES, CUPS, UTENSILS</span></Link></li>
-                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>TABLE DECOR</span></Link></li>
-                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>PARTY PACKS</span></Link></li>
-                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>CAKE DECOR</span></Link></li>
-                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>VINYL STICKERS</span></Link></li>
-                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>CUSTOM LABELS</span></Link></li>
-                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>WALL DECALS</span></Link></li>
-                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>STICKER PACKS</span></Link></li>
+                    <li><Link to="/shop" className="mobile-menu-item" onClick={onClose}><span>All Products</span></Link></li>
+                    <li><Link to="/shop?category=apparel" className="mobile-menu-item" onClick={onClose}><span>Apparel</span></Link></li>
+                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>Decorations</span></Link></li>
+                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>Prints</span></Link></li>
+                    <li><Link to="/shop?category=accessories" className="mobile-menu-item" onClick={onClose}><span>Accessories</span></Link></li>
+                    <li><Link to="/shop?category=apparel" className="mobile-menu-item" onClick={onClose}><span>T-Shirts</span></Link></li>
+                    <li><Link to="/shop?category=apparel" className="mobile-menu-item" onClick={onClose}><span>Hoodies</span></Link></li>
+                    <li><Link to="/shop?category=apparel" className="mobile-menu-item" onClick={onClose}><span>Bags</span></Link></li>
+                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>Vinyl Banners</span></Link></li>
+                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>Plates, Cups, Utensils</span></Link></li>
+                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>Table Decor</span></Link></li>
+                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>Party Packs</span></Link></li>
+                    <li><Link to="/shop?category=party-decor" className="mobile-menu-item" onClick={onClose}><span>Cake Decor</span></Link></li>
+                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>Vinyl Stickers</span></Link></li>
+                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>Custom Labels</span></Link></li>
+                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>Wall Decals</span></Link></li>
+                    <li><Link to="/shop?category=stickers" className="mobile-menu-item" onClick={onClose}><span>Sticker Packs</span></Link></li>
                 </ul>
             </>
         ),
@@ -81,12 +81,12 @@ const MobileMenu = ({ isOpen, onClose }) => {
                     <span>DESIGN STUDIO</span>
                 </button>
                 <ul className="mobile-menu-list">
-                    <li><Link to="/designstudio" className="mobile-menu-item" onClick={onClose}><span>DESIGN STUDIO</span></Link></li>
-                    <li><Link to="/designservice" className="mobile-menu-item" onClick={onClose}><span>DESIGN SERVICES</span></Link></li>
-                    <li><Link to="/designstudio#mockup" className="mobile-menu-item" onClick={onClose}><span>MOCKUP GENERATION</span></Link></li>
-                    <li><Link to="/resources" className="mobile-menu-item" onClick={onClose}><span>DESIGN TEMPLATES</span></Link></li>
-                    <li><Link to="/resources" className="mobile-menu-item" onClick={onClose}><span>STYLE GUIDE</span></Link></li>
-                    <li><Link to="/faq" className="mobile-menu-item" onClick={onClose}><span>FAQs</span></Link></li>
+                    <li><Link to="/designstudio" className="mobile-menu-item" onClick={onClose}><span>Design Studio</span></Link></li>
+                    <li><Link to="/designservice" className="mobile-menu-item" onClick={onClose}><span>Design Services</span></Link></li>
+                    <li><Link to="/designstudio#mockup" className="mobile-menu-item" onClick={onClose}><span>Mockup Generation</span></Link></li>
+                    <li><Link to="/designstudio#resources" className="mobile-menu-item" onClick={onClose}><span>Design Templates</span></Link></li>
+                    <li><Link to="/designstudio#resources" className="mobile-menu-item" onClick={onClose}><span>Style Guide</span></Link></li>
+                    <li><Link to="/designstudio#resources" className="mobile-menu-item" onClick={onClose}><span>FAQs</span></Link></li>
                 </ul>
             </>
         ),
@@ -97,12 +97,12 @@ const MobileMenu = ({ isOpen, onClose }) => {
                     <span>PREMIUM SERVICES</span>
                 </button>
                 <ul className="mobile-menu-list">
-                    <li><Link to="/senditems" className="mobile-menu-item" onClick={onClose}><span>SEND ITEMS IN</span></Link></li>
-                    <li><Link to="/subscriptions" className="mobile-menu-item" onClick={onClose}><span>SUBSCRIPTIONS</span></Link></li>
-                    <li><Link to="/installation" className="mobile-menu-item" onClick={onClose}><span>VINYL INSTALLATION</span></Link></li>
-                    <li><Link to="/premiumservices#event-setup" className="mobile-menu-item" onClick={onClose}><span>SETUP AT EVENT</span></Link></li>
-                    <li><Link to="/workshop" className="mobile-menu-item" onClick={onClose}><span>GROUP WORKSHOP</span></Link></li>
-                    <li><Link to="/workshop" className="mobile-menu-item" onClick={onClose}><span>STATION EXPERIENCE</span></Link></li>
+                    <li><Link to="/senditems" className="mobile-menu-item" onClick={onClose}><span>Send Items In</span></Link></li>
+                    <li><Link to="/subscriptions" className="mobile-menu-item" onClick={onClose}><span>Subscriptions</span></Link></li>
+                    <li><Link to="/installation" className="mobile-menu-item" onClick={onClose}><span>Vinyl Installation</span></Link></li>
+                    <li><Link to="/premiumservices#event-setup" className="mobile-menu-item" onClick={onClose}><span>Setup at Event</span></Link></li>
+                    <li><Link to="/workshop" className="mobile-menu-item" onClick={onClose}><span>Group Workshop</span></Link></li>
+                    <li><Link to="/workshop" className="mobile-menu-item" onClick={onClose}><span>Station Experience</span></Link></li>
                 </ul>
             </>
         )
