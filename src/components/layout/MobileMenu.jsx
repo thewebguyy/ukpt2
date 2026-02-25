@@ -14,15 +14,28 @@ const MobileMenu = ({ isOpen, onClose }) => {
         if (isOpen) {
             setActiveView('main');
             document.body.style.overflow = 'hidden';
+            document.body.classList.add('mobile-menu-open');
         } else {
             document.body.style.overflow = '';
+            document.body.classList.remove('mobile-menu-open');
         }
+
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        if (isOpen) {
+            window.addEventListener('keydown', handleEscape);
+        }
+
         return () => {
             document.body.style.overflow = '';
+            document.body.classList.remove('mobile-menu-open');
+            window.removeEventListener('keydown', handleEscape);
         };
-    }, [isOpen, location]);
+    }, [isOpen, location, onClose]);
 
-    if (!isOpen) return null;
+
 
     const views = {
         main: (
@@ -81,10 +94,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
                     <span>DESIGN STUDIO</span>
                 </button>
                 <ul className="mobile-menu-list">
-                    <li><Link to="/designstudio" className="mobile-menu-item" onClick={onClose}><span>Design Studio</span></Link></li>
                     <li><Link to="/designservice" className="mobile-menu-item" onClick={onClose}><span>Design Services</span></Link></li>
-                    <li><Link to="/designstudio#mockup" className="mobile-menu-item" onClick={onClose}><span>Mockup Generation</span></Link></li>
-                    <li><Link to="/designstudio#resources" className="mobile-menu-item" onClick={onClose}><span>Design Templates</span></Link></li>
                     <li><Link to="/designstudio#resources" className="mobile-menu-item" onClick={onClose}><span>Style Guide</span></Link></li>
                     <li><Link to="/designstudio#resources" className="mobile-menu-item" onClick={onClose}><span>FAQs</span></Link></li>
                 </ul>
@@ -109,9 +119,14 @@ const MobileMenu = ({ isOpen, onClose }) => {
     };
 
     return (
-        <div className={`mobile-menu-overlay ${isOpen ? 'active' : ''}`} id="mobileMenuOverlay">
-            <div className="mobile-menu-container">
+        <div
+            className={`mobile-menu-overlay ${isOpen ? 'active' : ''}`}
+            id="mobileMenuOverlay"
+            onClick={onClose}
+        >
+            <div className="mobile-menu-container" onClick={(e) => e.stopPropagation()}>
                 <div className="mobile-menu-header">
+
                     <Link to="/" className="mobile-menu-logo" onClick={onClose}>
                         <img src="/icon.png" alt="CustomiseMe UK" />
                     </Link>

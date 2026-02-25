@@ -4,6 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { ProductService } from '../services/product.service';
 import ProductCard from '../components/product/ProductCard';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReviewsSection from '../components/home/ReviewsSection';
+import NewsletterSection from '../components/home/NewsletterSection';
+
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -116,49 +119,12 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Subscriptions */}
-            <section className="section bg-white">
-                <div className="container">
-                    <h2 className="section-title">SUBSCRIPTION PLANS</h2>
-                    <p className="section-subtitle">Regular deliveries and exclusive benefits</p>
+            {/* Client Reviews */}
+            <ReviewsSection />
 
-                    <div className="row g-4 justify-content-center">
-                        <div className="col-md-5">
-                            <div className="service-card text-center p-4 border h-100">
-                                <h3 className="service-title h4 mb-3">MONTHLY ESSENTIALS</h3>
-                                <p className="service-description mb-4">Curated party supplies and custom items delivered monthly</p>
-                                <ul className="text-start mb-4">
-                                    <li>15% discount on all orders</li>
-                                    <li>Priority customer support</li>
-                                    <li>Free shipping included</li>
-                                    <li>Cancel anytime</li>
-                                </ul>
-                                <Link to="/subscriptions" className="btn btn-primary w-100">
-                                    <span>SUBSCRIBE NOW</span>
-                                    <svg className="icon-sm ms-2"><use xlinkHref="#icon-star" /></svg>
-                                </Link>
-                            </div>
-                        </div>
+            {/* Newsletter Signup */}
+            <NewsletterSection />
 
-                        <div className="col-md-5">
-                            <div className="service-card text-center p-4 border h-100">
-                                <h3 className="service-title h4 mb-3">BUSINESS PACKAGE</h3>
-                                <p className="service-description mb-4">Bulk ordering and custom designs for businesses and event planners</p>
-                                <ul className="text-start mb-4">
-                                    <li>Dedicated account manager</li>
-                                    <li>Wholesale pricing</li>
-                                    <li>Custom design services</li>
-                                    <li>Flexible delivery schedule</li>
-                                </ul>
-                                <Link to="/contact?service=business" className="btn btn-primary w-100">
-                                    <span>CONTACT SALES</span>
-                                    <svg className="icon-sm ms-2"><use xlinkHref="#icon-truck" /></svg>
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
     );
 };

@@ -2350,7 +2350,11 @@ body.offcanvas-open {
     flex-direction: column;
   }
 
-  .product-grid-four,
+  .product-grid-four {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: var(--spacing-sm);
+  }
+
   .product-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: var(--spacing-sm);
@@ -2506,7 +2510,12 @@ body.offcanvas-open {
     padding: var(--spacing-md) 0;
   }
 
-  .product-grid-four,
+  .product-grid-four {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) 0;
+  }
+
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-sm);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
@@ -13,6 +13,11 @@ const Header = () => {
     const wishlistItems = useWishlistStore(state => state.items);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+
+    const handleMobileMenuClose = useCallback(() => {
+        setIsMobileMenuOpen(false);
+    }, []);
+
 
     const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
     const wishlistCount = wishlistItems.length;
@@ -206,8 +211,9 @@ const Header = () => {
             </nav>
 
             {/* Mobile Menu Overlay */}
-            <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+            <MobileMenu isOpen={isMobileMenuOpen} onClose={handleMobileMenuClose} />
         </header>
+
     );
 };
 

@@ -26,7 +26,8 @@ const Shop = () => {
     const filteredProducts = useMemo(() => {
         if (!allProducts) return [];
 
-        let filtered = [...allProducts];
+        let filtered = allProducts.filter(p => p && p.id && p.name && p.price !== undefined);
+
 
         // Category Filter
         if (categoryFilter !== 'all') {
@@ -187,7 +188,7 @@ const Shop = () => {
 
                                     <>
                                         {visibleProducts.map(product => (
-                                            <div key={product.id} className="col-6">
+                                            <div key={product.id} className="col-6 col-md-4">
                                                 <ProductCard product={product} />
                                             </div>
                                         ))}
