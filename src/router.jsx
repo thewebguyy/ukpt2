@@ -40,6 +40,10 @@ const router = createBrowserRouter([
         element: <Subscriptions />,
     },
     {
+        path: '/designstudio',
+        element: <DesignStudio />,
+    },
+    {
         path: '/',
         element: <Layout />,
         children: [
@@ -49,7 +53,6 @@ const router = createBrowserRouter([
             { path: 'account', element: <Account /> },
             { path: 'checkout', element: <Checkout /> },
             { path: 'order-confirmation', element: <OrderConfirmation /> },
-            { path: 'designstudio', element: <DesignStudio /> },
             { path: 'designservice', element: <DesignService /> },
             { path: 'premiumservices', element: <PremiumServices /> },
             { path: 'resources', element: <Resources /> },

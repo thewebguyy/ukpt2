@@ -30,12 +30,6 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Newsletter */}
-                    <div className="col-md-3 footer-section mb-4 mb-md-0">
-                        <h3 className="footer-title">NEWSLETTER</h3>
-                        <p className="text-grey-dark small">Subscribe for exclusive offers, new arrivals, and 10% off your first order.</p>
-                        <NewsletterForm />
-                    </div>
 
                     {/* Contact */}
                     <div className="col-md-3 footer-section">

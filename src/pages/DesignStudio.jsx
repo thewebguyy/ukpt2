@@ -1,119 +1,92 @@
-import { useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Icons from '../components/common/Icons';
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
+import CartOffcanvas from '../components/cart/CartOffcanvas';
+import { useAuthStore } from '../store/authStore';
 
 const DesignStudio = () => {
-    const containerRef = useRef(null);
+    const initListener = useAuthStore(state => state.initListener);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        const unsubscribe = initListener();
+        return () => unsubscribe();
+    }, [initListener]);
 
     return (
         <div className="design-studio-page">
             <Helmet>
-                <title>3D Design Studio - CustomiseMe UK</title>
+                <title>Design Studio | CustomiseMe UK</title>
+                <meta name="description" content="Bring your creative visions to life with our expert design team, from concept to delivery." />
             </Helmet>
 
-            <section className="hero-section bg-dark text-white py-5">
-                <div className="container text-center">
-                    <h1 className="display-4 fw-bold mb-3 text-uppercase">3D DESIGN STUDIO</h1>
-                    <p className="lead opacity-75 mx-auto" style={{ maxWidth: '600px' }}>
-                        Bring your creative vision to life in full 3D. Customize materials, colors, and generate high-fidelity mockups instantly.
-                    </p>
-                </div>
-            </section>
+            <Icons />
+            <Header />
 
-            <div className="container-fluid p-0 bg-light vh-75 position-relative studio-container">
-                <div className="row g-0 h-100">
-                    {/* Sidebar Controls */}
-                    <div className="col-lg-auto h-100 bg-white shadow-lg p-4 studio-sidebar" style={{ width: '320px', zIndex: 10 }}>
-                        <h5 className="fw-bold mb-4 border-bottom pb-2">CONFIGURATION</h5>
-
-                        <div className="config-group mb-4">
-                            <label className="small fw-bold text-uppercase mb-2 d-block">Select Base Model</label>
-                            <select className="form-select border-0 bg-light">
-                                <option value="tshirt">Heavyweight T-Shirt</option>
-                                <option value="hoodie">Premium Hoodie (Coming Soon)</option>
-                                <option value="tote">Canvas Tote Bag (Coming Soon)</option>
-                            </select>
-                        </div>
-
-                        <div className="config-group mb-4">
-                            <label className="small fw-bold text-uppercase mb-2 d-block">Fabric Color</label>
-                            <div className="d-flex gap-2 flex-wrap">
-                                {['#000000', '#ffffff', '#000080', '#e63946', '#6b7280', '#059669'].map(c => (
-                                    <button key={c} className="rounded-circle border-0 shadow-sm" style={{ width: '30px', height: '30px', backgroundColor: c }}></button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="config-group mb-4">
-                            <label className="small fw-bold text-uppercase mb-2 d-block">Overlay Artwork</label>
-                            <button className="btn btn-outline-dark btn-sm w-100 py-3 d-flex align-items-center justify-content-center gap-2">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                Upload PNG
-                            </button>
-                        </div>
-
-                        <div className="mt-4 pt-4 border-top">
-                            <button className="btn btn-dark w-100 py-3 fw-bold rounded-0">ADD TO CART</button>
-                            <p className="small text-muted text-center mt-2 mb-0">Rendering via CustomiseMe 3D Engine v2.1</p>
+            <main>
+                {/* Hero Section */}
+                <section className="ds-hero">
+                    <div className="ds-hero-overlay"></div>
+                    <div className="container">
+                        <div className="ds-hero-content">
+                            <h1>Design Service</h1>
+                            <p>Bring your creative visions to life with our expert design team, from concept to delivery.</p>
                         </div>
                     </div>
+                </section>
 
-                    {/* 3D Viewport Placeholder */}
-                    <div
-                        ref={containerRef}
-                        id="mockup"
-                        className="col studio-viewport d-flex align-items-center justify-content-center bg-light"
-                        style={{ minHeight: '500px' }}
-                    >
-                        <div className="text-center p-5">
-                            <h2 className="display-6 fw-bold mb-3">STUDIO COMING SOON</h2>
-                            <p className="text-muted mb-4 lead">We are building an amazing 3D design experience for you.<br />Launching Q3 2026.</p>
-                            <div className="bg-white p-3 rounded shadow-sm d-inline-block border">
-                                <img src="/assets/tshirt-mockup.png" alt="Preview" style={{ maxWidth: '200px', opacity: 0.5 }} />
-                                <p className="small text-muted mt-2 mb-0">2D Preview Mode</p>
+                {/* Services Grid Section */}
+                <section id="services" className="ds-services-section">
+                    <div className="container">
+                        <div className="ds-services-grid">
+                            {/* Card 1: Design Services */}
+                            <div className="ds-card">
+                                <div className="ds-card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122l9.37-9.37a2.85 2.85 0 114.03 4.03l-9.37 9.37a4.5 4.5 0 01-1.897 1.13L4.93 22.11l1.958-4.735a4.5 4.5 0 011.13-1.897l9.37-9.37zm0 0L9 15.5m2.71-2.71L11.25 12.25" />
+                                    </svg>
+                                </div>
+                                <h3>Design Services</h3>
+                                <p>Get professional assistance from our design experts to perfect your branding and custom products.</p>
+                                <ul className="ds-bullet-list">
+                                    <li>Custom Logo Design</li>
+                                    <li>Apparel & Merch Layouts</li>
+                                    <li>High-fidelity Mockups</li>
+                                    <li>Brand Guidelines Consultation</li>
+                                </ul>
+                                <Link to="/designservice" className="btn btn-dark w-100 mt-4">Book Design Service</Link>
+                            </div>
+
+                            {/* Card 2: Resources */}
+                            <div className="ds-card">
+                                <div className="ds-card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" />
+                                    </svg>
+                                </div>
+                                <h3>Resources</h3>
+                                <p>Access our comprehensive library of design templates, style guides, and printing specifications.</p>
+                                <Link to="/resources" className="btn btn-dark w-100 mt-auto">Go to Resources</Link>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </section>
 
-            <section className="section py-5 bg-white">
-                <div className="container">
-                    <div className="row g-4 text-center">
-                        <div className="col-md-4">
-                            <div className="h1 mb-3">⚡</div>
-                            <h5 className="fw-bold">REAL-TIME PREVIEW</h5>
-                            <p className="text-muted small">See every detail of your design from every angle with our physical-based rendering.</p>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="h1 mb-3">🎨</div>
-                            <h5 className="fw-bold">HIGH DEFINITION</h5>
-                            <p className="text-muted small">Export 4K mockups of your customized products for social media and branding.</p>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="h1 mb-3">🛠️</div>
-                            <h5 className="fw-bold">BESPOKE QUALITY</h5>
-                            <p className="text-muted small">What you see is what you get. Every 3D model is calibrated to our production equipment.</p>
-                        </div>
+                {/* Call to Action Section */}
+                <section className="ds-cta-section">
+                    <div className="container text-center">
+                        <h2>Ready to get started?</h2>
+                        <p>Have questions about our design process? Our team is here to help you every step of the way.</p>
+                        <Link to="/contact" className="btn btn-outline-white mt-4">Contact Our Team</Link>
                     </div>
-                </div>
-            </section>
+                </section>
+            </main>
 
-            <section id="resources" className="section py-5 bg-light">
-                <div className="container text-center">
-                    <h3 className="h4 fw-bold mb-3">NEED EXPERT HELP?</h3>
-                    <p className="text-muted mb-4 mx-auto" style={{ maxWidth: '500px' }}>
-                        Our design team can bring your vision to life. Book a consultation or explore our resource library.
-                    </p>
-                    <div className="d-flex justify-content-center gap-3 flex-wrap">
-                        <Link to="/designservice" className="btn btn-dark btn-lg fw-bold px-4">Book Consultation</Link>
-                        <Link to="/resources" className="btn btn-outline-dark btn-lg fw-bold px-4">Check Out Resources</Link>
-                    </div>
-                    <div className="mt-4">
-                        <Link to="/contact?service=design" className="text-dark fw-bold">Have questions? Contact our design team &rarr;</Link>
-                    </div>
-                </div>
-            </section>
+            <Footer />
+            <CartOffcanvas />
         </div>
     );
 };
