@@ -37,59 +37,65 @@ const Installation = () => {
                                 <h3 className="text-center fw-bold mb-5">Our Installation Services</h3>
                                 <div className="row">
                                     {/* Service 1: Window Vinyls */}
-                                    <div className="service-tile bg-white border shadow-sm p-4 h-100">
-                                        <div className="mb-4" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
-                                            <img
-                                                src="/window vinyl image.png"
-                                                alt="Window Vinyl Installation"
-                                                className="w-100 h-100"
-                                                style={{ objectFit: 'cover' }}
-                                            />
+                                    <div className="col-lg-4 col-md-6 col-12 mb-4">
+                                        <div className="service-tile bg-white border shadow-sm p-4 h-100">
+                                            <div className="mb-4" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
+                                                <img
+                                                    src="/window vinyl image.png"
+                                                    alt="Window Vinyl Installation"
+                                                    className="w-100 h-100"
+                                                    style={{ objectFit: 'cover' }}
+                                                />
+                                            </div>
+                                            <div className="d-flex align-items-center gap-2 mb-3">
+                                                <svg className="icon-sm text-dark"><use xlinkHref="#icon-star" /></svg>
+                                                <h4 className="h5 fw-bold mb-0">Window Vinyls</h4>
+                                            </div>
+                                            <ul className="list-unstyled text-grey-dark small">
+                                                <li className="mb-2">• Frosted privacy films</li>
+                                                <li className="mb-2">• Full-color retail graphics</li>
+                                                <li className="mb-2">• Perforated one-way vision</li>
+                                                <li>• Seasonal promotion decals</li>
+                                            </ul>
                                         </div>
-                                        <div className="d-flex align-items-center gap-2 mb-3">
-                                            <svg className="icon-sm text-dark"><use xlinkHref="#icon-star" /></svg>
-                                            <h4 className="h5 fw-bold mb-0">Window Vinyls</h4>
-                                        </div>
-                                        <ul className="list-unstyled text-grey-dark small">
-                                            <li className="mb-2">• Frosted privacy films</li>
-                                            <li className="mb-2">• Full-color retail graphics</li>
-                                            <li className="mb-2">• Perforated one-way vision</li>
-                                            <li>• Seasonal promotion decals</li>
-                                        </ul>
                                     </div>
 
                                     {/* Service 2: Wall Vinyls */}
-                                    <div className="service-tile bg-white border shadow-sm p-4 h-100">
-                                        <div className="mb-4 d-flex align-items-center justify-content-center bg-grey-light" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
-                                            <span className="text-grey small fw-bold">WALL VINYL IMAGE</span>
+                                    <div className="col-lg-4 col-md-6 col-12 mb-4">
+                                        <div className="service-tile bg-white border shadow-sm p-4 h-100">
+                                            <div className="mb-4 d-flex align-items-center justify-content-center bg-grey-light" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
+                                                <span className="text-grey small fw-bold">WALL VINYL IMAGE</span>
+                                            </div>
+                                            <div className="d-flex align-items-center gap-2 mb-3">
+                                                <svg className="icon-sm text-dark"><use xlinkHref="#icon-package" /></svg>
+                                                <h4 className="h5 fw-bold mb-0">Wall Vinyls</h4>
+                                            </div>
+                                            <ul className="list-unstyled text-grey-dark small">
+                                                <li className="mb-2">• Custom branded murals</li>
+                                                <li className="mb-2">• Office wayfinding graphics</li>
+                                                <li className="mb-2">• Textured surface vinyls</li>
+                                                <li>• Removable interior decals</li>
+                                            </ul>
                                         </div>
-                                        <div className="d-flex align-items-center gap-2 mb-3">
-                                            <svg className="icon-sm text-dark"><use xlinkHref="#icon-package" /></svg>
-                                            <h4 className="h5 fw-bold mb-0">Wall Vinyls</h4>
-                                        </div>
-                                        <ul className="list-unstyled text-grey-dark small">
-                                            <li className="mb-2">• Custom branded murals</li>
-                                            <li className="mb-2">• Office wayfinding graphics</li>
-                                            <li className="mb-2">• Textured surface vinyls</li>
-                                            <li>• Removable interior decals</li>
-                                        </ul>
                                     </div>
 
                                     {/* Service 3: Backdrops */}
-                                    <div className="service-tile bg-white border shadow-sm p-4 h-100">
-                                        <div className="mb-4 d-flex align-items-center justify-content-center bg-grey-light" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
-                                            <span className="text-grey small fw-bold">BACKDROP IMAGE</span>
+                                    <div className="col-lg-4 col-12 mb-4">
+                                        <div className="service-tile bg-white border shadow-sm p-4 h-100">
+                                            <div className="mb-4 d-flex align-items-center justify-content-center bg-grey-light" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
+                                                <span className="text-grey small fw-bold">BACKDROP IMAGE</span>
+                                            </div>
+                                            <div className="d-flex align-items-center gap-2 mb-3">
+                                                <svg className="icon-sm text-dark"><use xlinkHref="#icon-globe" /></svg>
+                                                <h4 className="h5 fw-bold mb-0">Backdrops</h4>
+                                            </div>
+                                            <ul className="list-unstyled text-grey-dark small">
+                                                <li className="mb-2">• Media wall installation</li>
+                                                <li className="mb-2">• Event photo backgrounds</li>
+                                                <li className="mb-2">• Stage and theater sets</li>
+                                                <li>• Tension fabric displays</li>
+                                            </ul>
                                         </div>
-                                        <div className="d-flex align-items-center gap-2 mb-3">
-                                            <svg className="icon-sm text-dark"><use xlinkHref="#icon-globe" /></svg>
-                                            <h4 className="h5 fw-bold mb-0">Backdrops</h4>
-                                        </div>
-                                        <ul className="list-unstyled text-grey-dark small">
-                                            <li className="mb-2">• Media wall installation</li>
-                                            <li className="mb-2">• Event photo backgrounds</li>
-                                            <li className="mb-2">• Stage and theater sets</li>
-                                            <li>• Tension fabric displays</li>
-                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -125,41 +131,49 @@ const Installation = () => {
                             <div className="installation-benefits pb-5">
                                 <h3 className="text-center fw-bold mb-5">Why Choose Us</h3>
                                 <div className="row">
-                                    <div className="benefit-tile p-4 border text-center bg-white h-100">
-                                        <div className="mb-3">
-                                            <svg className="icon-sm text-dark" style={{ width: '2rem', height: '2rem' }}>
-                                                <use xlinkHref="#icon-check" />
-                                            </svg>
+                                    <div className="col-lg-3 col-md-6 col-12 mb-4">
+                                        <div className="benefit-tile p-4 border text-center bg-white h-100">
+                                            <div className="mb-3">
+                                                <svg className="icon-sm text-dark" style={{ width: '2rem', height: '2rem' }}>
+                                                    <use xlinkHref="#icon-check" />
+                                                </svg>
+                                            </div>
+                                            <h5 className="fw-bold small">EXPERT TEAM</h5>
+                                            <p className="small text-grey-dark mb-0">Certified installers with years of experience.</p>
                                         </div>
-                                        <h5 className="fw-bold small">EXPERT TEAM</h5>
-                                        <p className="small text-grey-dark mb-0">Certified installers with years of experience.</p>
                                     </div>
-                                    <div className="benefit-tile p-4 border text-center bg-white h-100">
-                                        <div className="mb-3">
-                                            <svg className="icon-sm text-dark" style={{ width: '2rem', height: '2rem' }}>
-                                                <use xlinkHref="#icon-check" />
-                                            </svg>
+                                    <div className="col-lg-3 col-md-6 col-12 mb-4">
+                                        <div className="benefit-tile p-4 border text-center bg-white h-100">
+                                            <div className="mb-3">
+                                                <svg className="icon-sm text-dark" style={{ width: '2rem', height: '2rem' }}>
+                                                    <use xlinkHref="#icon-check" />
+                                                </svg>
+                                            </div>
+                                            <h5 className="fw-bold small">FULLY INSURED</h5>
+                                            <p className="small text-grey-dark mb-0">Public liability insurance for your peace of mind.</p>
                                         </div>
-                                        <h5 className="fw-bold small">FULLY INSURED</h5>
-                                        <p className="small text-grey-dark mb-0">Public liability insurance for your peace of mind.</p>
                                     </div>
-                                    <div className="benefit-tile p-4 border text-center bg-white h-100">
-                                        <div className="mb-3">
-                                            <svg className="icon-sm text-dark" style={{ width: '2rem', height: '2rem' }}>
-                                                <use xlinkHref="#icon-check" />
-                                            </svg>
+                                    <div className="col-lg-3 col-md-6 col-12 mb-4">
+                                        <div className="benefit-tile p-4 border text-center bg-white h-100">
+                                            <div className="mb-3">
+                                                <svg className="icon-sm text-dark" style={{ width: '2rem', height: '2rem' }}>
+                                                    <use xlinkHref="#icon-check" />
+                                                </svg>
+                                            </div>
+                                            <h5 className="fw-bold small">NATIONWIDE</h5>
+                                            <p className="small text-grey-dark mb-0">Serving London and the entire United Kingdom.</p>
                                         </div>
-                                        <h5 className="fw-bold small">NATIONWIDE</h5>
-                                        <p className="small text-grey-dark mb-0">Serving London and the entire United Kingdom.</p>
                                     </div>
-                                    <div className="benefit-tile p-4 border text-center bg-white h-100">
-                                        <div className="mb-3">
-                                            <svg className="icon-sm text-dark" style={{ width: '2rem', height: '2rem' }}>
-                                                <use xlinkHref="#icon-check" />
-                                            </svg>
+                                    <div className="col-lg-3 col-md-6 col-12 mb-4">
+                                        <div className="benefit-tile p-4 border text-center bg-white h-100">
+                                            <div className="mb-3">
+                                                <svg className="icon-sm text-dark" style={{ width: '2rem', height: '2rem' }}>
+                                                    <use xlinkHref="#icon-check" />
+                                                </svg>
+                                            </div>
+                                            <h5 className="fw-bold small">WARRANTED</h5>
+                                            <p className="small text-grey-dark mb-0">Installation guarantee on all of our workmanship.</p>
                                         </div>
-                                        <h5 className="fw-bold small">WARRANTED</h5>
-                                        <p className="small text-grey-dark mb-0">Installation guarantee on all of our workmanship.</p>
                                     </div>
                                 </div>
                             </div>

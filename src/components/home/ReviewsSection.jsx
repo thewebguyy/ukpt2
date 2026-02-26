@@ -70,9 +70,7 @@ const ReviewsSection = () => {
                         ))
                     ) : (
                         reviews.map((review, index) => (
-                            <div key={index} className="col-md-4">
-                                <ReviewCard {...review} />
-                            </div>
+                            <ReviewCard key={index} {...review} />
                         ))
                     )}
                 </div>
