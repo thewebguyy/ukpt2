@@ -603,6 +603,61 @@ exports.deleteProduct = onCall(async (request) => {
 });
 
 /**
+ * Submit Design Service Request
+ */
+exports.submitDesignService = onCall({
+    secrets: [brevoApiKey, emailFrom, adminEmail, emailUser, emailPass]
+}, async (request) => {
+    const data = request.data;
+    const { name, email, projectType, description, date, time } = data;
+
+    if (!name || !email || !projectType || !description) {
+        throw new HttpsError('invalid-argument', 'Missing required fields.');
+    }
+
+    try {
+        // Save to Firestore
+        const docRef = await admin.firestore().collection('design_projects').add({
+            ...data,
+            status: 'pending',
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Notify Admin
+        try {
+            await sendEmail({
+                to: adminEmail.value(),
+                subject: `New Design Project: ${projectType} from ${name}`,
+                html: `<h3>New Design Project Request</h3>
+                       <p><strong>Customer:</strong> ${name} (${email})</p>
+                       <p><strong>Type:</strong> ${projectType}</p>
+                       <p><strong>Description:</strong> ${description}</p>
+                       <p><strong>Preferred Consultation:</strong> ${date} at ${time}</p>
+                       <p><strong>ID:</strong> ${docRef.id}</p>`
+            });
+
+            // Auto-reply to customer
+            await sendEmail({
+                to: email,
+                name: name,
+                subject: "Your Design Request Received - Customise Me UK",
+                html: `<p>Hi ${name},</p>
+                       <p>Thank you for your design request for <strong>${projectType}</strong>. We've received your details and preferred consultation time (${date} at ${time}).</p>
+                       <p>A designer will confirm your slot within 24 hours.</p>
+                       <p>Best regards,<br>The CMUK Design Team</p>`
+            });
+        } catch (emailErr) {
+            logger.warn('Design project saved but emails failed:', emailErr);
+        }
+
+        return { success: true, projectId: docRef.id };
+    } catch (error) {
+        logger.error("Design service submission failed:", error);
+        throw new HttpsError('internal', 'Failed to process design request.');
+    }
+});
+
+/**
  * Newsletter: Subscribe (Secure)
  */
 exports.subscribeNewsletter = onCall(async (request) => {
@@ -628,17 +683,21 @@ exports.subscribeNewsletter = onCall(async (request) => {
         }, { merge: true });
 
         // Trigger welcome email (Issue #24: Cloud function now checks welcomeSent flag)
-        // We can just call the helper directly or wait for a trigger. 
-        // Calling helper is more immediate for user feedback.
-        await sendEmail({
-            to: email,
-            name: firstName || 'there',
-            type: 'welcome'
-        });
+        // Wrapped in internal try/catch to ensure success response even if email fails
+        try {
+            await sendEmail({
+                to: email,
+                name: firstName || 'there',
+                type: 'welcome'
+            });
+        } catch (emailErr) {
+            logger.warn('Newsletter record saved but email failed (check secrets):', emailErr);
+        }
 
         return { success: true, message: 'Subscribed successfully.' };
     } catch (error) {
         logger.error('Subscription error:', error);
+        if (error instanceof HttpsError) throw error;
         throw new HttpsError('internal', 'Unable to process subscription.');
     }
 });

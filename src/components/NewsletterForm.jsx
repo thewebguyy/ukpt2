@@ -49,12 +49,18 @@ export default function NewsletterForm() {
 
             const result = await NewsletterService.subscribe(data);
             if (result.success) {
-                setMessage({ type: 'success', text: 'Successfully subscribed to our newsletter! Check your inbox for your 10% discount code.' });
-                setEmail('');
-                setFirstName('');
-                setLastName('');
-                setConsent(false);
-                toast.success('Successfully subscribed!');
+                const isAlready = result.message === 'Already subscribed.';
+                setMessage({
+                    type: 'success',
+                    text: isAlready ? 'You are already subscribed to our newsletter!' : 'Successfully subscribed! Check your inbox for your 10% discount code.'
+                });
+                if (!isAlready) {
+                    setEmail('');
+                    setFirstName('');
+                    setLastName('');
+                    setConsent(false);
+                }
+                toast.success(isAlready ? 'Status: Subscribed' : 'Successfully subscribed!');
             } else {
                 setMessage({ type: 'error', text: result.message || 'Subscription failed.' });
             }

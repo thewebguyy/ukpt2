@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { DesignService as BackendDesignService } from '../services/design.service';
+import { toast } from 'react-hot-toast';
 
 const DesignService = () => {
     const [step, setStep] = useState(1);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         projectType: '',
         name: '',
@@ -20,9 +23,28 @@ const DesignService = () => {
     const progress = (step - 1) * 33.33;
 
     const handleNext = (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         if (step < 4) setStep(step + 1);
         window.scrollTo(0, 0);
+    };
+
+    const handleProjectSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        try {
+            const result = await BackendDesignService.submitProject(formData);
+            if (result.success) {
+                toast.success('Design request submitted!');
+                setStep(3); // Proceed to "Draft Review" step
+            } else {
+                toast.error(result.message || 'Failed to submit request.');
+            }
+        } catch (err) {
+            toast.error('An error occurred. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const resetForm = () => {
@@ -252,7 +274,7 @@ const DesignService = () => {
                         <h3 className="fw-bold mb-3 text-uppercase">2. Book Consultation</h3>
                         <p className="text-muted mb-4 small">Select a time for a quick 15-minute call to finalize requirements.</p>
 
-                        <form onSubmit={handleNext}>
+                        <form onSubmit={handleProjectSubmit}>
                             <div className="row g-3 mb-3">
                                 <div className="col-md-6">
                                     <label className="form-label small fw-bold text-uppercase">Preferred Date</label>
@@ -274,8 +296,14 @@ const DesignService = () => {
                                 <textarea className="form-control bg-light border-0" rows="3" placeholder="Anything else we should know?" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })}></textarea>
                             </div>
                             <div className="d-flex gap-2">
-                                <button type="button" className="btn btn-outline-dark btn-lg rounded-pill px-4" onClick={() => setStep(1)}>&larr;</button>
-                                <button type="submit" className="btn btn-dark btn-lg flex-grow-1 rounded-pill fw-bold">CONFIRM & VIEW DRAFTS</button>
+                                <button type="button" className="btn btn-outline-dark btn-lg rounded-pill px-4" onClick={() => setStep(1)} disabled={isSubmitting}>&larr;</button>
+                                <button type="submit" className="btn btn-dark btn-lg flex-grow-1 rounded-pill fw-bold" disabled={isSubmitting}>
+                                    {isSubmitting ? (
+                                        <><span className="spinner-border spinner-border-sm me-2"></span>SUBMITTING...</>
+                                    ) : (
+                                        'CONFIRM & VIEW DRAFTS'
+                                    )}
+                                </button>
                             </div>
                         </form>
                     </div>

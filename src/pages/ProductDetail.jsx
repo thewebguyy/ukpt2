@@ -256,7 +256,17 @@ const ProductDetail = () => {
                                         onChange={handleFileUpload}
                                         accept=".png,.pdf,.ai,.psd"
                                     />
-                                    <label htmlFor="artwork" className="btn btn-outline-dark py-3 cursor-pointer">
+                                    <label
+                                        htmlFor={user ? "artwork" : "login-prompt"}
+                                        className="btn btn-outline-dark py-3 cursor-pointer"
+                                        onClick={(e) => {
+                                            if (!user) {
+                                                e.preventDefault();
+                                                toast.error('Please log in to upload artwork.');
+                                                navigate('/account');
+                                            }
+                                        }}
+                                    >
                                         {isUploading ? (
                                             <span className="spinner-border spinner-border-sm me-2"></span>
                                         ) : (
@@ -264,7 +274,7 @@ const ProductDetail = () => {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                             </svg>
                                         )}
-                                        {customization.artworkName || 'Upload Your File'}
+                                        {user ? (customization.artworkName || 'Upload Your File') : 'Login to Upload Artwork'}
                                     </label>
                                     <p className="small text-muted mt-1">PNG, PDF, AI, PSD (Min 300 DPI recommended)</p>
                                 </div>
