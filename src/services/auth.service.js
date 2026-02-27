@@ -27,8 +27,8 @@ export const AuthService = {
                 handleCodeInApp: false
             });
 
-            // Sign out user until verified
-            await signOut(auth);
+            // UX-001: Keep user signed in after registration instead of immediate signOut
+            // await signOut(auth);
 
             // Create user doc in Firestore
             try {
@@ -46,7 +46,7 @@ export const AuthService = {
 
             return {
                 success: true,
-                message: 'Account created! Please check your email to verify before logging in.'
+                message: 'Account created! Please check your email to verify your address for full access.'
             };
         } catch (error) {
             console.error('Registration error:', error);

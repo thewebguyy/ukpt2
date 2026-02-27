@@ -38,8 +38,8 @@ const Dashboard = () => {
             if (result.success) {
                 toast.success('Profile updated successfully!');
                 setIsEditing(false);
-                // Trigger a refresh or manual update of auth state if possible
-                // authStore listener will handle it if it picks up changes from Firestore
+                // FUNC-001: Manually update authStore so UI reflects name change immediately
+                useAuthStore.getState().setUser({ ...user, name: editData.name });
             } else {
                 toast.error(result.message || 'Failed to update profile');
             }

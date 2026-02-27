@@ -29,10 +29,11 @@ const Checkout = () => {
         return acc + calculateTotalPrice(item.product, item.quantity, item.customization);
     }, 0);
 
-    const tax = subtotal * 0.20;
+    // UX-002: UK VAT is inclusive. Extract instead of adding.
+    const tax = subtotal - (subtotal / 1.2);
     const shippingThreshold = 100;
     const shippingCost = subtotal >= shippingThreshold ? 0 : 4.99;
-    const total = subtotal + tax + shippingCost;
+    const total = subtotal + shippingCost;
 
     const freeShippingProgress = Math.min((subtotal / shippingThreshold) * 100, 100);
 
@@ -54,6 +55,14 @@ const Checkout = () => {
             setErrors(newErrors);
             toast.error('Please correct the errors in the form');
             return;
+        }
+
+        // TECH-003: Final stock validation before checkout
+        for (const item of items) {
+            if (item.product.stock !== undefined && item.quantity > item.product.stock) {
+                toast.error(`${item.product.name} only has ${item.product.stock} units available.`);
+                return;
+            }
         }
 
         setIsProcessing(true);
@@ -137,7 +146,16 @@ const Checkout = () => {
                                                     <div className="quantity-controls d-flex border rounded overflow-hidden">
                                                         <button className="btn btn-light btn-sm px-2 border-0" onClick={() => updateQuantity(index, item.quantity - 1)}>-</button>
                                                         <input type="text" className="form-control form-control-sm text-center border-0 p-0" style={{ width: '35px' }} value={item.quantity} readOnly />
-                                                        <button className="btn btn-light btn-sm px-2 border-0" onClick={() => updateQuantity(index, item.quantity + 1)}>+</button>
+                                                        <button
+                                                            className="btn btn-light btn-sm px-2 border-0"
+                                                            onClick={() => {
+                                                                try {
+                                                                    updateQuantity(index, item.quantity + 1);
+                                                                } catch (e) {
+                                                                    toast.error(e.message);
+                                                                }
+                                                            }}
+                                                        >+</button>
                                                     </div>
                                                 </div>
                                                 <div className="text-end fw-bold h6 mb-0">
@@ -299,11 +317,11 @@ const Checkout = () => {
                         <div className="card border-0 shadow-sm p-4 rounded-4 sticky-top" style={{ top: '100px' }}>
                             <h2 className="h5 fw-bold mb-4">ORDER SUMMARY</h2>
                             <div className="d-flex justify-content-between mb-2">
-                                <span className="text-muted">Subtotal (ex. VAT)</span>
+                                <span className="text-muted">Subtotal</span>
                                 <span>£{subtotal.toFixed(2)}</span>
                             </div>
                             <div className="d-flex justify-content-between mb-2">
-                                <span className="text-muted">Estimated Tax (20%)</span>
+                                <span className="text-muted">Includes VAT (20%)</span>
                                 <span>£{tax.toFixed(2)}</span>
                             </div>
                             <div className="d-flex justify-content-between mb-2">

@@ -141,8 +141,9 @@ const ProductDetail = () => {
         toast.success('Added to cart!');
     };
 
-    const colors = ['Black', 'White', 'Navy', 'Red', 'Grey', 'Green'];
-    const sizes = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
+    // FUNC-003: Use product-specific options instead of hardcoded globals
+    const colors = product.availableColors || ['Black', 'White', 'Navy', 'Red', 'Grey', 'Green'];
+    const sizes = product.availableSizes || ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
 
     return (
         <div className="product-page">
@@ -190,38 +191,43 @@ const ProductDetail = () => {
                             {/* Customization Groups */}
                             {!product.hasBulkPricing && (
                                 <>
-                                    <div className="mb-4">
-                                        <label className="fw-bold small mb-2 text-uppercase">Select Color</label>
-                                        <div className="d-flex gap-2">
-                                            {colors.map(c => (
-                                                <button
-                                                    key={c}
-                                                    className={`color-swatch-btn ${customization.color === c ? 'active' : ''}`}
-                                                    style={{
-                                                        width: '32px', height: '32px', borderRadius: '50%',
-                                                        backgroundColor: c.toLowerCase(), border: customization.color === c ? '2px solid #000' : '1px solid #ddd'
-                                                    }}
-                                                    onClick={() => setCustomization({ ...customization, color: c })}
-                                                    title={c}
-                                                />
-                                            ))}
+                                    {product.hasColors !== false && (
+                                        <div className="mb-4">
+                                            <label className="fw-bold small mb-2 text-uppercase">Select Color</label>
+                                            <div className="d-flex gap-2">
+                                                {colors.map(c => (
+                                                    <button
+                                                        key={c}
+                                                        className={`color-swatch-btn ${customization.color === c ? 'active' : ''}`}
+                                                        style={{
+                                                            width: '32px', height: '32px', borderRadius: '50%',
+                                                            backgroundColor: c.toLowerCase() === 'white' ? '#fff' : c.toLowerCase(),
+                                                            border: customization.color === c ? '2px solid #000' : '1px solid #ddd'
+                                                        }}
+                                                        onClick={() => setCustomization({ ...customization, color: c })}
+                                                        title={c}
+                                                    />
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
 
-                                    <div className="mb-4">
-                                        <label className="fw-bold small mb-2 text-uppercase">Select Size</label>
-                                        <div className="d-flex flex-wrap gap-2">
-                                            {sizes.map(s => (
-                                                <button
-                                                    key={s}
-                                                    className={`btn btn-sm ${customization.size === s ? 'btn-dark' : 'btn-outline-dark'}`}
-                                                    onClick={() => setCustomization({ ...customization, size: s })}
-                                                >
-                                                    {s}
-                                                </button>
-                                            ))}
+                                    {product.hasSizes !== false && (
+                                        <div className="mb-4">
+                                            <label className="fw-bold small mb-2 text-uppercase">Select Size</label>
+                                            <div className="d-flex flex-wrap gap-2">
+                                                {sizes.map(s => (
+                                                    <button
+                                                        key={s}
+                                                        className={`btn btn-sm ${customization.size === s ? 'btn-dark' : 'btn-outline-dark'}`}
+                                                        onClick={() => setCustomization({ ...customization, size: s })}
+                                                    >
+                                                        {s}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
                                 </>
                             )}
 
@@ -256,14 +262,15 @@ const ProductDetail = () => {
                                         onChange={handleFileUpload}
                                         accept=".png,.pdf,.ai,.psd"
                                     />
+                                    {/* FUNC-002: Improved login prompt and redirect */}
                                     <label
-                                        htmlFor={user ? "artwork" : "login-prompt"}
+                                        htmlFor={user ? "artwork" : ""}
                                         className="btn btn-outline-dark py-3 cursor-pointer"
                                         onClick={(e) => {
                                             if (!user) {
                                                 e.preventDefault();
                                                 toast.error('Please log in to upload artwork.');
-                                                navigate('/account');
+                                                navigate('/account', { state: { from: `/product/${id}` } });
                                             }
                                         }}
                                     >

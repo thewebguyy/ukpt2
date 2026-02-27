@@ -12,11 +12,22 @@ export const useCartStore = create(
 
             addItem: (product, customization = {}, quantity = 1) => {
                 const items = get().items;
-                // Create a unique key for the item based on ID and customization
                 const customizationKey = JSON.stringify(customization);
                 const existingItemIndex = items.findIndex(
                     (item) => item.product.id === product.id && JSON.stringify(item.customization) === customizationKey
                 );
+
+                // TECH-003: Stock validation
+                const currentInCart = existingItemIndex > -1 ? items[existingItemIndex].quantity : 0;
+                const totalRequested = currentInCart + quantity;
+
+                if (product.stock !== undefined && totalRequested > product.stock) {
+                    const availableToAdd = Math.max(0, product.stock - currentInCart);
+                    if (availableToAdd === 0) {
+                        throw new Error(`Sorry, only ${product.stock} items are available in total.`);
+                    }
+                    quantity = availableToAdd;
+                }
 
                 // Strip any remaining non-serializable fields from product just in case
                 const cleanProduct = {
@@ -25,13 +36,14 @@ export const useCartStore = create(
                     price: product.price,
                     imageUrl: product.imageUrl,
                     category: product.category,
+                    stock: product.stock, // Keep stock info in cart for validation
                     hasBulkPricing: product.hasBulkPricing || false,
                     bulkPricing: product.bulkPricing || []
                 };
 
                 if (existingItemIndex > -1) {
                     const newItems = [...items];
-                    newItems[existingItemIndex].quantity += quantity;
+                    newItems[existingItemIndex].quantity = currentInCart + quantity;
                     set({ items: newItems });
                 } else {
                     set({ items: [...items, { product: cleanProduct, customization, quantity, addedAt: new Date().toISOString() }] });
@@ -48,6 +60,13 @@ export const useCartStore = create(
 
             updateQuantity: (index, quantity) => {
                 if (quantity < 1) return;
+                const item = get().items[index];
+
+                // TECH-003: Stock validation on update
+                if (item.product.stock !== undefined && quantity > item.product.stock) {
+                    throw new Error(`Only ${item.product.stock} items are available.`);
+                }
+
                 const newItems = [...get().items];
                 newItems[index].quantity = quantity;
                 set({ items: newItems });

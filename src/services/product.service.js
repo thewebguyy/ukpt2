@@ -36,8 +36,22 @@ export const ProductService = {
                 q = query(q, startAfter(filters.startAfterDoc));
             }
 
-            const limitCount = filters.limit || 50;
-            q = query(q, limit(limitCount));
+            // TECH-002: Move price filtering to server-side query
+            if (filters.minPrice) {
+                q = query(q, where('price', '>=', parseFloat(filters.minPrice)));
+            }
+
+            if (filters.maxPrice) {
+                q = query(q, where('price', '<=', parseFloat(filters.maxPrice)));
+            }
+
+            if (filters.search) {
+                // Fetch more results to make client-side search effective for common terms
+                q = query(q, limit(100));
+            } else {
+                const limitCount = filters.limit || 50;
+                q = query(q, limit(limitCount));
+            }
 
             const querySnapshot = await getDocs(q);
             let products = [];
@@ -46,12 +60,13 @@ export const ProductService = {
                 products.push(this.formatProduct(doc));
             });
 
-            // Price filter (Client side)
-            if (filters.minPrice) products = products.filter(p => p.price >= parseFloat(filters.minPrice));
-            if (filters.maxPrice) products = products.filter(p => p.price <= parseFloat(filters.maxPrice));
+            // TECH-002: Client-side search (limited by the fetch above)
             if (filters.search) {
                 const term = filters.search.toLowerCase();
-                products = products.filter(p => p.name.toLowerCase().includes(term));
+                products = products.filter(p =>
+                    p.name.toLowerCase().includes(term) ||
+                    (p.description && p.description.toLowerCase().includes(term))
+                );
             }
 
             return products;
