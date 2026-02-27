@@ -73,7 +73,11 @@ export const ProductService = {
     },
 
     async getFeaturedProducts() {
-        return this.getProducts({ featured: true, limit: 4 });
+        const featured = await this.getProducts({ featured: true, limit: 4 });
+        if (featured.length > 0) return featured;
+
+        // Fallback: If no products are marked as featured, return the 4 most recent ones
+        return this.getProducts({ featured: false, limit: 4 });
     },
 
     async getReviews(productId) {

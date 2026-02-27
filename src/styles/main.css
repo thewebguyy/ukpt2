@@ -2511,9 +2511,15 @@ body.offcanvas-open {
   }
 
   .product-grid-four {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-sm);
     padding: var(--spacing-md) 0;
+  }
+
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 
   .product-grid {
