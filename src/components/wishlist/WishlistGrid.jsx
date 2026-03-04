@@ -11,7 +11,7 @@ const WishlistGrid = ({ items }) => {
                 padding: '2rem 0'
             }}
         >
-            {items.map(item => (
+            {items.filter(item => typeof item === 'object' && item !== null).map(item => (
                 <ProductCard key={item.id} product={item} />
             ))}
         </div>

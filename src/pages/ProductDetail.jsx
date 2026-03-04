@@ -115,18 +115,25 @@ const ProductDetail = () => {
             setCustomization(prev => ({ ...prev, artwork: url, artworkName: file.name }));
             toast.success('Artwork uploaded successfully!');
         } catch (err) {
-            console.error(err);
-            toast.error('Failed to upload artwork.');
+            console.error('Artwork upload error:', err);
+            // Provide more context if it's a permission error
+            if (err.code === 'storage/unauthorized') {
+                toast.error('Permission denied: You can only upload to your own folder.');
+            } else {
+                toast.error(`Upload failed: ${err.message || 'Unknown error'}`);
+            }
         } finally {
             setIsUploading(false);
         }
     };
-
     const handleAddToCart = () => {
+        // Made in demand: ignore stock
+        /*
         if (product.stock <= 0) {
             toast.error('Out of stock');
             return;
         }
+        */
 
         // Additional validation for bulk products
         if (product.hasBulkPricing && product.bulkPricing?.length > 0) {
@@ -295,10 +302,10 @@ const ProductDetail = () => {
                                     <button className="btn btn-link text-decoration-none px-2" onClick={() => setQuantity(q => q + 1)}>+</button>
                                 </div>
                                 <button
-                                    className={`btn btn-lg flex-grow-1 ${product.stock > 0 ? 'btn-dark' : 'btn-secondary disabled'}`}
+                                    className="btn btn-dark btn-lg flex-grow-1"
                                     onClick={handleAddToCart}
                                 >
-                                    {product.stock > 0 ? 'ADD TO CART' : 'OUT OF STOCK'}
+                                    ADD TO CART
                                 </button>
                                 <button
                                     className={`btn btn-lg border ${isWishlisted ? 'text-danger' : 'text-muted'}`}

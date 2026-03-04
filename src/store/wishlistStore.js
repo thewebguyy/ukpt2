@@ -7,19 +7,19 @@ export const useWishlistStore = create(
             items: [], // These will now be product IDs only
 
             toggleItem: (product) => {
-                const productId = typeof product === 'string' ? product : product.id;
                 const items = get().items;
-                const exists = items.includes(productId);
+                // Handle both object and string items for legacy support
+                const exists = items.some(item => (typeof item === 'string' ? item : item.id) === product.id);
 
                 if (exists) {
-                    set({ items: items.filter(id => id !== productId) });
+                    set({ items: items.filter(item => (typeof item === 'string' ? item : item.id) !== product.id) });
                 } else {
-                    set({ items: [...items, productId] });
+                    set({ items: [...items, product] });
                 }
             },
 
             isInWishlist: (productId) => {
-                return get().items.includes(productId);
+                return get().items.some(item => (typeof item === 'string' ? item : item.id) === productId);
             }
         }),
         {

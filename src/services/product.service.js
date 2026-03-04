@@ -143,7 +143,7 @@ export const ProductService = {
             id: doc.id,
             category: Array.isArray(data.categories) ? data.categories[0] : (data.category || 'Uncategorized'),
             imageUrl: Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : (data.imageUrl || ''),
-            stock: typeof data.stock === 'number' ? data.stock : 0
+            stock: 999 // Made on demand
         };
     }
 };
