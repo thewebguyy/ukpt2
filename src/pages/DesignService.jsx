@@ -134,16 +134,6 @@ const DesignService = () => {
                     border-radius: 8px;
                     text-align: center;
                 }
-                .header-stack {
-                    position: sticky;
-                    top: 0;
-                    z-index: 1040;
-                    background: #fff;
-                }
-                .icon-header {
-                    width: 20px;
-                    height: 20px;
-                }
                 @media (max-width: 768px) {
                     .delivery-grid {
                         grid-template-columns: 1fr;
@@ -154,51 +144,7 @@ const DesignService = () => {
                 }
             `}</style>
 
-            {/* Fixed Header Stack (Inline) */}
-            <div className="header-stack border-bottom">
-                <div className="announcement-banner bg-light py-2 border-bottom">
-                    <div className="container text-center small fw-bold text-uppercase d-flex justify-content-center gap-4">
-                        <span>Free Delivery Over £100</span>
-                        <span className="d-none d-md-inline">|</span>
-                        <span>Custom Designs Available</span>
-                    </div>
-                </div>
-                <div className="top-bar py-3">
-                    <div className="container d-flex justify-content-between align-items-center">
-                        <Link to="/" className="navbar-brand">
-                            <img src="/icon.png" alt="CustomiseMe UK" style={{ height: '40px' }} />
-                        </Link>
-                        <div className="search-bar d-none d-lg-block flex-grow-1 mx-5">
-                            <div className="position-relative">
-                                <input type="text" className="form-control bg-light border-0 py-2 ps-4" placeholder="Search designs..." />
-                                <svg className="position-absolute end-0 top-50 translate-middle-y me-3" width="16" height="16">
-                                    <use xlinkHref="#icon-search" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="icons d-flex gap-3 align-items-center">
-                            <Link to="/wishlist" className="text-dark">
-                                <svg width="24" height="24"><use xlinkHref="#icon-heart" /></svg>
-                            </Link>
-                            <button className="btn p-0 text-dark border-0">
-                                <svg width="24" height="24"><use xlinkHref="#icon-shopping-bag" /></svg>
-                            </button>
-                            <Link to="/account" className="text-dark">
-                                <svg width="24" height="24"><use xlinkHref="#icon-user" /></svg>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-                <div className="main-nav py-2 border-top">
-                    <div className="container">
-                        <ul className="nav justify-content-center fw-bold small">
-                            <li className="nav-item"><Link className="nav-link text-dark py-1" to="/shop">SHOP</Link></li>
-                            <li className="nav-item"><Link className="nav-link text-dark py-1" to="/designstudio">DESIGN STUDIO</Link></li>
-                            <li className="nav-item"><Link className="nav-link text-dark py-1" to="/premiumservices">PREMIUM SERVICES</Link></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+
 
             {/* Design Service Hero */}
             <section className="section py-5">
@@ -381,54 +327,6 @@ const DesignService = () => {
                 </div>
             </div>
 
-            {/* Footer (Inline) */}
-            <footer className="bg-white border-top py-5 px-3">
-                <div className="container">
-                    <div className="row g-4 mb-5">
-                        <div className="col-md-5">
-                            <h6 className="fw-bold mb-3 text-uppercase letter-spacing-1 h6">CustomiseMe UK</h6>
-                            <p className="text-muted small pe-md-5">Premium design services and custom branding solutions for individual creators and enterprise businesses. Based in the United Kingdom.</p>
-                            <div className="d-flex gap-3 mt-4">
-                                <svg width="20" height="20" className="text-muted"><use xlinkHref="#icon-globe" /></svg>
-                                <svg width="20" height="20" className="text-muted"><use xlinkHref="#icon-instagram" /></svg>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <h6 className="fw-bold mb-3 text-uppercase letter-spacing-1 h6">Service Links</h6>
-                            <div className="row">
-                                <div className="col-6">
-                                    <ul className="list-unstyled small">
-                                        <li className="mb-2"><Link to="/shop" className="text-decoration-none text-muted">Shop All</Link></li>
-                                        <li className="mb-2"><Link to="/designstudio" className="text-decoration-none text-muted">Studio</Link></li>
-                                        <li className="mb-2"><Link to="/contact" className="text-decoration-none text-muted">Contact</Link></li>
-                                    </ul>
-                                </div>
-                                <div className="col-6">
-                                    <ul className="list-unstyled small">
-                                        <li className="mb-2"><Link to="/faq" className="text-decoration-none text-muted">FAQ</Link></li>
-                                        <li className="mb-2"><Link to="/terms-conditions" className="text-decoration-none text-muted">Terms</Link></li>
-                                        <li className="mb-2"><Link to="/privacy-policy" className="text-decoration-none text-muted">Privacy</Link></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <h6 className="fw-bold mb-3 text-uppercase letter-spacing-1 h6">Reach Us</h6>
-                            <p className="text-muted small mb-2 fw-bold">info@customisemeuk.com</p>
-                            <p className="text-muted small mb-0">Hotline: 07588770901</p>
-                        </div>
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-4 border-top">
-                        <div className="payment-icons d-flex gap-2">
-                            <div className="bg-light px-2 py-1 rounded small fw-bold opacity-50">VISA</div>
-                            <div className="bg-light px-2 py-1 rounded small fw-bold opacity-50">MC</div>
-                            <div className="bg-light px-2 py-1 rounded small fw-bold opacity-50">AMEX</div>
-                            <div className="bg-light px-2 py-1 rounded small fw-bold opacity-50">STRIPE</div>
-                        </div>
-                        <p className="text-muted small mb-0 opacity-50">© 2026 Customise Me UK. All rights reserved.</p>
-                    </div>
-                </div>
-            </footer>
         </div>
     );
 };
