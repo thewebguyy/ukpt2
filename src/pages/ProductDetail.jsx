@@ -168,12 +168,12 @@ const ProductDetail = () => {
                 </nav>
 
                 <div className="row g-5">
-                    {/* Images */}
+                    {/* Left Column: Visual & Detail */}
                     <div className="col-md-6">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="product-main-image bg-light rounded shadow-sm overflow-hidden"
+                            className="product-main-image bg-light rounded shadow-sm overflow-hidden mb-4"
                             style={{ aspectRatio: '1/1', position: 'relative' }}
                         >
                             <img
@@ -182,71 +182,171 @@ const ProductDetail = () => {
                                 className="w-100 h-100 object-fit-cover"
                             />
                         </motion.div>
-                        <div className="mt-4 text-grey-dark">
-                            <h5 className="fw-bold mb-3">DESCRIPTION</h5>
-                            <p>{product.description}</p>
+
+                        <div className="product-description mt-5 d-none d-md-block">
+                            <h5 className="fw-bold mb-3 text-uppercase letter-spacing-1">Description</h5>
+                            <div className="text-grey-dark" style={{ lineHeight: '1.6' }}>
+                                {product.description}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Details & Customization */}
+                    {/* Right Column: Information & Customization (Sticky) */}
                     <div className="col-md-6">
-                        <div className="product-info-panel">
-                            <span className="badge bg-light text-dark mb-2 text-uppercase">{product.category}</span>
-                            <h1 className="h2 fw-bold mb-3">{product.name}</h1>
-                            <div className="h3 fw-bold mb-4">£{totalPrice.toFixed(2)}</div>
+                        <div className="product-info-sticky" style={{ position: 'sticky', top: '160px' }}>
+                            {/* 1. Category Badge */}
+                            <span className="badge bg-light text-dark mb-2 text-uppercase px-3 py-2 letter-spacing-1" style={{ fontSize: '0.7rem', fontWeight: 600 }}>
+                                {product.category}
+                            </span>
 
-                            {/* Customization Groups */}
-                            {!product.hasBulkPricing && (
-                                <>
-                                    {product.hasColors !== false && (
-                                        <div className="mb-4">
-                                            <label className="fw-bold small mb-2 text-uppercase">Select Color</label>
-                                            <div className="d-flex gap-2">
-                                                {colors.map(c => (
-                                                    <button
-                                                        key={c}
-                                                        className={`color-swatch-btn ${customization.color === c ? 'active' : ''}`}
-                                                        style={{
-                                                            width: '32px', height: '32px', borderRadius: '50%',
-                                                            backgroundColor: c.toLowerCase() === 'white' ? '#fff' : c.toLowerCase(),
-                                                            border: customization.color === c ? '2px solid #000' : '1px solid #ddd'
-                                                        }}
-                                                        onClick={() => setCustomization({ ...customization, color: c })}
-                                                        title={c}
-                                                    />
-                                                ))}
-                                            </div>
+                            {/* 2. Product Title */}
+                            <h1 className="display-6 fw-bold mb-4 text-uppercase letter-spacing-1">{product.name}</h1>
+
+                            {/* 3. Customization Options */}
+                            <div className="customization-groups mb-4">
+                                {/* Color Swatches - Hidden for stickers */}
+                                {product.category?.toLowerCase() !== 'stickers' && product.hasColors !== false && (
+                                    <div className="mb-4">
+                                        <label className="fw-bold small mb-2 text-uppercase d-block letter-spacing-1">Select Color</label>
+                                        <div className="d-flex flex-wrap gap-2">
+                                            {colors.map(c => (
+                                                <button
+                                                    key={c}
+                                                    className={`color-swatch-btn ${customization.color === c ? 'active' : ''}`}
+                                                    style={{
+                                                        width: '36px', height: '36px', borderRadius: '50%',
+                                                        backgroundColor: c.toLowerCase() === 'white' ? '#fff' : c.toLowerCase(),
+                                                        border: customization.color === c ? '2px solid #000' : '1px solid #eee',
+                                                        padding: 0, cursor: 'pointer', transition: 'all 0.2s'
+                                                    }}
+                                                    onClick={() => setCustomization({ ...customization, color: c })}
+                                                    title={c}
+                                                />
+                                            ))}
                                         </div>
-                                    )}
+                                    </div>
+                                )}
 
-                                    {product.hasSizes !== false && (
-                                        <div className="mb-4">
-                                            <label className="fw-bold small mb-2 text-uppercase">Select Size</label>
+                                {/* Size Buttons - Hidden for stickers, label for tote bags */}
+                                {product.category?.toLowerCase() !== 'stickers' && product.hasSizes !== false && (
+                                    <div className="mb-4">
+                                        <label className="fw-bold small mb-2 text-uppercase d-block letter-spacing-1">Select Size</label>
+                                        {product.category?.toLowerCase() === 'tote bags' || product.category?.toLowerCase() === 'bags' ? (
+                                            <span className="badge border text-dark fw-bold px-3 py-2">ONE SIZE</span>
+                                        ) : (
                                             <div className="d-flex flex-wrap gap-2">
                                                 {sizes.map(s => (
                                                     <button
                                                         key={s}
-                                                        className={`btn btn-sm ${customization.size === s ? 'btn-dark' : 'btn-outline-dark'}`}
+                                                        className={`btn btn-sm px-3 py-2 rounded-0 ${customization.size === s ? 'btn-dark' : 'btn-outline-dark'}`}
+                                                        style={{ minWidth: '50px', fontWeight: 600 }}
                                                         onClick={() => setCustomization({ ...customization, size: s })}
                                                     >
                                                         {s}
                                                     </button>
                                                 ))}
                                             </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                                        )}
+                                    </div>
+                                )}
 
-                            {/* Bulk Pricing Quantities */}
-                            {product.hasBulkPricing && (
+                                {/* Print Location - Hidden for stickers */}
+                                {product.category?.toLowerCase() !== 'stickers' && (
+                                    <div className="mb-4">
+                                        <label className="fw-bold small mb-2 text-uppercase d-block letter-spacing-1">Print Location</label>
+                                        <div className="d-flex flex-wrap gap-2">
+                                            {['Front Only', 'Back Only', 'Front & Back'].map(loc => (
+                                                <button
+                                                    key={loc}
+                                                    className={`btn btn-sm px-3 py-2 rounded-0 ${customization.printLocation === loc ? 'btn-dark' : 'btn-outline-dark'}`}
+                                                    style={{ fontWeight: 600 }}
+                                                    onClick={() => setCustomization({ ...customization, printLocation: loc })}
+                                                >
+                                                    {loc.toUpperCase()}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Design Position - Hidden for stickers */}
+                                {product.category?.toLowerCase() !== 'stickers' && (
+                                    <div className="mb-4">
+                                        <label className="fw-bold small mb-2 text-uppercase d-block letter-spacing-1">Design Position</label>
+                                        <div className="d-flex flex-wrap gap-2">
+                                            {['Centre', 'Full Front'].map(pos => (
+                                                <button
+                                                    key={pos}
+                                                    className={`btn btn-sm px-3 py-2 rounded-0 ${customization.designPosition === pos ? 'btn-dark' : 'btn-outline-dark'}`}
+                                                    style={{ fontWeight: 600 }}
+                                                    onClick={() => setCustomization({ ...customization, designPosition: pos })}
+                                                >
+                                                    {pos.toUpperCase()}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Artwork Upload Area */}
                                 <div className="mb-4">
-                                    <label className="fw-bold small mb-2 text-uppercase">Select Quantity</label>
+                                    <label className="fw-bold small mb-2 text-uppercase d-block letter-spacing-1">Artwork</label>
+                                    <input
+                                        type="file"
+                                        id="artwork"
+                                        className="visually-hidden"
+                                        onChange={handleFileUpload}
+                                        accept=".png,.pdf,.ai,.psd"
+                                    />
+                                    <div className={`d-grid gap-2 ${product.category?.toLowerCase() === 'stickers' ? '' : 'd-md-flex'}`}>
+                                        <label
+                                            htmlFor={user ? "artwork" : ""}
+                                            className={`btn btn-outline-dark py-3 rounded-0 flex-grow-1 d-flex align-items-center justify-content-center`}
+                                            style={{ cursor: 'pointer', fontWeight: 600 }}
+                                            onClick={(e) => {
+                                                if (!user) {
+                                                    e.preventDefault();
+                                                    toast.error('Please log in to upload artwork.');
+                                                    navigate('/account', { state: { from: `/product/${id}` } });
+                                                }
+                                            }}
+                                        >
+                                            {isUploading ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-upload me-2"></i>}
+                                            {customization.artworkName || 'UPLOAD FILE'}
+                                        </label>
+
+                                        {/* Hidden Design Studio button for stickers */}
+                                        {product.category?.toLowerCase() !== 'stickers' && (
+                                            <Link
+                                                to="/designservice"
+                                                className="btn btn-dark py-3 rounded-0 flex-grow-1 d-flex align-items-center justify-content-center"
+                                                style={{ fontWeight: 600 }}
+                                            >
+                                                DESIGN IN STUDIO
+                                            </Link>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 4. Price */}
+                            <div className="h2 fw-bold mb-4">£{totalPrice.toFixed(2)}</div>
+
+                            {/* 5. Quantity Selector */}
+                            <div className="mb-4">
+                                <label className="fw-bold small mb-2 text-uppercase d-block letter-spacing-1">Quantity</label>
+                                {product.hasBulkPricing || product.category?.toLowerCase() === 'stickers' ? (
                                     <div className="row g-2">
-                                        {product.bulkPricing.map(tier => (
+                                        {(product.bulkPricing || [
+                                            { quantity: 10, price: 0 },
+                                            { quantity: 20, price: 0 },
+                                            { quantity: 50, price: 0 },
+                                            { quantity: 100, price: 0 }
+                                        ]).map(tier => (
                                             <div key={tier.quantity} className="col-3">
                                                 <button
-                                                    className={`btn btn-sm w-100 ${quantity === tier.quantity ? 'btn-dark' : 'btn-outline-dark'}`}
+                                                    className={`btn btn-sm w-100 rounded-0 py-2 ${quantity === tier.quantity ? 'btn-dark' : 'btn-outline-dark'}`}
+                                                    style={{ fontWeight: 600 }}
                                                     onClick={() => setQuantity(tier.quantity)}
                                                 >
                                                     {tier.quantity}
@@ -254,61 +354,28 @@ const ProductDetail = () => {
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            )}
-
-                            {/* Artwork Upload */}
-                            <div className="mb-4">
-                                <label className="fw-bold small mb-2 text-uppercase d-block">Upload Artwork</label>
-                                <div className="d-grid gap-2">
-                                    <input
-                                        type="file"
-                                        id="artwork"
-                                        className="visually-hidden"
-                                        style={{ position: 'absolute', opacity: 0, width: 1, height: 1 }}
-                                        onChange={handleFileUpload}
-                                        accept=".png,.pdf,.ai,.psd"
-                                    />
-                                    {/* FUNC-002: Improved login prompt and redirect */}
-                                    <label
-                                        htmlFor={user ? "artwork" : ""}
-                                        className="btn btn-outline-dark py-3 cursor-pointer"
-                                        onClick={(e) => {
-                                            if (!user) {
-                                                e.preventDefault();
-                                                toast.error('Please log in to upload artwork.');
-                                                navigate('/account', { state: { from: `/product/${id}` } });
-                                            }
-                                        }}
-                                    >
-                                        {isUploading ? (
-                                            <span className="spinner-border spinner-border-sm me-2"></span>
-                                        ) : (
-                                            <svg width="20" height="20" className="me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                            </svg>
-                                        )}
-                                        {user ? (customization.artworkName || 'Upload Your File') : 'Login to Upload Artwork'}
-                                    </label>
-                                    <p className="small text-muted mt-1">PNG, PDF, AI, PSD (Min 300 DPI recommended)</p>
-                                </div>
+                                ) : (
+                                    <div className="d-flex align-items-center">
+                                        <div className="quantity-ctrl d-flex align-items-center border" style={{ height: '48px' }}>
+                                            <button className="btn btn-link text-decoration-none px-3 text-dark border-0" onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
+                                            <span className="px-3 fw-bold" style={{ minWidth: '40px', textAlign: 'center' }}>{quantity}</span>
+                                            <button className="btn btn-link text-decoration-none px-3 text-dark border-0" onClick={() => setQuantity(q => q + 1)}>+</button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="d-flex gap-2 mb-4">
-                                <div className="quantity-ctrl d-flex align-items-center border px-2 rounded" style={{ display: product.hasBulkPricing ? 'none' : 'flex' }}>
-                                    <button className="btn btn-link text-decoration-none px-2" onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
-                                    <span className="px-3 fw-bold">{quantity}</span>
-                                    <button className="btn btn-link text-decoration-none px-2" onClick={() => setQuantity(q => q + 1)}>+</button>
-                                </div>
+                            {/* 6. Add to Cart + Wishlist row */}
+                            <div className="d-flex gap-2 mb-3">
                                 <button
-                                    className="btn btn-dark btn-lg flex-grow-1"
+                                    className="btn btn-dark btn-lg flex-grow-1 rounded-0 py-3 fw-bold"
                                     onClick={handleAddToCart}
+                                    style={{ letterSpacing: '1px' }}
                                 >
                                     ADD TO CART
                                 </button>
                                 <button
-                                    className={`btn btn-lg border ${isWishlisted ? 'text-danger' : 'text-muted'}`}
+                                    className={`btn btn-lg border rounded-0 px-4 ${isWishlisted ? 'text-danger' : 'text-muted'}`}
                                     onClick={() => {
                                         toggleItem(product);
                                         toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
@@ -320,49 +387,64 @@ const ProductDetail = () => {
                                 </button>
                             </div>
 
-                            {/* Meta Info */}
-                            <div className="bg-light p-4 rounded mt-5">
-                                <div className="d-flex gap-3 mb-3">
-                                    <svg className="text-muted" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {/* 7. Request Custom Design */}
+                            <Link
+                                to={`/contact?service=custom&product=${product.id}`}
+                                className="btn btn-outline-dark w-100 rounded-0 py-3 mb-4 fw-bold"
+                                style={{ letterSpacing: '1px' }}
+                            >
+                                REQUEST CUSTOM DESIGN
+                            </Link>
+
+                            {/* 8. Meta Info Box */}
+                            <div className="bg-light p-4 rounded-0 mb-5">
+                                <div className="d-flex gap-3 mb-3 align-items-center">
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                                     </svg>
                                     <div>
-                                        <h6 className="mb-0 fw-bold">FREE UK SHIPPING</h6>
+                                        <h6 className="mb-0 fw-bold small text-uppercase letter-spacing-1">Free UK Shipping</h6>
                                         <p className="small text-muted mb-0">On orders over £100</p>
                                     </div>
                                 </div>
-                                <div className="d-flex gap-3">
-                                    <svg className="text-muted" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="d-flex gap-3 align-items-center">
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
                                     <div>
-                                        <h6 className="mb-0 fw-bold">QUALITY GUARANTEE</h6>
+                                        <h6 className="mb-0 fw-bold small text-uppercase letter-spacing-1">Quality Guarantee</h6>
                                         <p className="small text-muted mb-0">Premium materials & craftsmanship</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Design CTAs */}
-                            <div className="d-grid gap-2 mt-4">
-                                <Link to="/designservice" className="btn btn-outline-dark btn-lg fw-bold">DESIGN IN STUDIO</Link>
-                                <Link to="/contact?service=custom" className="btn btn-outline-secondary fw-bold">REQUEST CUSTOM DESIGN</Link>
+                            {/* Description for Mobile */}
+                            <div className="product-description mt-4 d-md-none border-top pt-4">
+                                <h5 className="fw-bold mb-3 text-uppercase letter-spacing-1">Description</h5>
+                                <div className="text-grey-dark" style={{ lineHeight: '1.6' }}>
+                                    {product.description}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Related Products */}
+                {/* Related Products: Full Width Grid */}
                 <div className="mt-5 pt-5 border-top">
-                    <h3 className="h4 fw-bold mb-4">YOU MIGHT ALSO LIKE</h3>
-                    <div className="row g-4">
+                    <h3 className="h4 fw-bold mb-5 text-center text-uppercase letter-spacing-2">You Might Also Like</h3>
+                    <div className="product-grid-four row g-4">
                         {relatedProducts?.filter(p => p.id !== product.id).slice(0, 4).map(p => (
                             <div key={p.id} className="col-6 col-md-3">
-                                <div className="card h-100 border-0 shadow-sm hover-shadow transition">
+                                <div className="product-card-mini h-100">
                                     <Link to={`/product/${p.id}`} className="text-decoration-none text-dark">
-                                        <img src={p.imageUrl || '/placeholder.png'} className="card-img-top object-fit-cover" style={{ height: '200px' }} alt={p.name} />
-                                        <div className="card-body p-3">
-                                            <h6 className="fw-bold mb-1 text-truncate">{p.name}</h6>
-                                            <p className="small text-muted mb-0">£{p.price?.toFixed(2)}</p>
+                                        <div className="card h-100 border-0 shadow-sm hover-shadow transition overflow-hidden rounded-0">
+                                            <div className="ratio ratio-1x1 bg-light">
+                                                <img src={p.imageUrl || '/placeholder.png'} className="object-fit-cover" alt={p.name} />
+                                            </div>
+                                            <div className="card-body p-3 text-center">
+                                                <h6 className="fw-bold mb-1 text-truncate text-uppercase small letter-spacing-1">{p.name}</h6>
+                                                <p className="small text-muted mb-0">£{p.price?.toFixed(2)}</p>
+                                            </div>
                                         </div>
                                     </Link>
                                 </div>
